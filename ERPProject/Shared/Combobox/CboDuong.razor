@@ -1,0 +1,98 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using Syncfusion.Blazor.DropDowns;
+<style>
+    .column-width {
+        width: 75px;
+    }
+</style>
+<SfDropDownList Placeholder="Chọn..." @ref="cb"
+                @bind-Value="@Value" TValue="int?"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                TItem="@duong"
+                AllowFiltering="true"
+                FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                CssClass="e-multi-column"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="ten_duong" Value="ms_duong"></DropDownListFieldSettings>
+    <DropDownListTemplates TItem="@duong">
+        <HeaderTemplate>
+            <table>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên Đường</th>
+                </tr>
+            </table>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="e-text-center column-width">
+                            @((context as duong).ms_duong)
+                        </td>
+                        <td>@((context as duong).ten_duong)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </ItemTemplate>
+        <ValueTemplate>
+            <span>@((context as duong).ms_duong) - @((context as duong).ten_duong) </span>
+        </ValueTemplate>
+    </DropDownListTemplates>
+    <DropDownListEvents TValue="int?" TItem="@duong" ValueChange="ValueChange" Filtering="onFilter"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int?, duong> cb;
+    private List<duong> Data = new List<duong>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int? Value { get; set; }
+    [Parameter]
+    public EventCallback<int?> ValueChanged { get; set; }
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int?, duong> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+        Data = duongService.GetToComBo().Data;
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+    [Parameter]
+    public EventCallback<Syncfusion.Blazor.DropDowns.FilteringEventArgs> Filtering { get; set; }
+
+    public async void onFilter(Syncfusion.Blazor.DropDowns.FilteringEventArgs args)
+    {
+        args.PreventDefaultAction = true;
+        if (args.Text == null || args.Text.Trim() == "")
+        {
+            Data = duongService.GetToComBo().Data;
+        }
+        else
+        {
+            Data = duongService.GetByKeyword(args.Text).Data;
+        }
+        await cb.FilterAsync(Data);
+        StateHasChanged();
+    }
+
+
+
+}

@@ -1,0 +1,98 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using Syncfusion.Blazor.DropDowns;
+<style>
+    .column-width {
+        width: 75px;
+    }
+</style>
+<SfDropDownList Placeholder="Chọn..." @ref="cb"
+                @bind-Value="@Value" TValue="int"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                TItem="@tuyen_doc"
+                AllowFiltering="true"
+                FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                CssClass="e-multi-column"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="mo_ta_tuyen" Value="ms_tuyen"></DropDownListFieldSettings>
+    <DropDownListTemplates TItem="@tuyen_doc">
+        <HeaderTemplate>
+            <table>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên Tuyến</th>
+                </tr>
+            </table>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="e-text-center column-width">
+                            @((context as tuyen_doc).ms_tuyen)
+                        </td>
+                        <td>@((context as tuyen_doc).mo_ta_tuyen)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </ItemTemplate>
+        <ValueTemplate>
+            <span>@((context as tuyen_doc).ms_tuyen) - @((context as tuyen_doc).mo_ta_tuyen) </span>
+        </ValueTemplate>
+    </DropDownListTemplates>
+    <DropDownListEvents TValue="int" TItem="@DAO.Models.DanhMuc.tuyen_doc" ValueChange="ValueChange" Filtering="onFilter"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int, tuyen_doc> cb;
+    private List<tuyen_doc> Data = new List<tuyen_doc>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int Value { get; set; }
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DAO.Models.DanhMuc.tuyen_doc> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+        Data = tuyen_docService.GetToComBo().Data;
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+    [Parameter]
+    public EventCallback<Syncfusion.Blazor.DropDowns.FilteringEventArgs> Filtering { get; set; }
+
+    public async void onFilter(Syncfusion.Blazor.DropDowns.FilteringEventArgs args)
+    {
+        args.PreventDefaultAction = true;
+        if (args.Text == null || args.Text.Trim() == "")
+        {
+            Data = tuyen_docService.GetToComBo().Data;
+        }
+        else
+        {
+            Data = tuyen_docService.GetByKeyword(args.Text).Data;
+        }
+        await cb.FilterAsync(Data);
+        StateHasChanged();
+    }
+
+
+
+}

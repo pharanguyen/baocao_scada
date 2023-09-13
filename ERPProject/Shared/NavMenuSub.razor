@@ -1,0 +1,15 @@
+﻿@inject NavigationManager nav;
+@inject Services.AppDataScoped AppData
+
+<ul class="nav nav-group-sub" data-submenu-title="@Title">
+    @SubMenuItems
+</ul>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment SubMenuItems { get; set; }
+
+}

@@ -1,0 +1,59 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using ERPProject.Libs;
+@using Syncfusion.Blazor.DropDowns;
+@using DAO.Models.CommonModels;
+@using DAO.Models.PhanQuyen;
+@using DAO.Services.PhanQuyen;
+<SfDropDownList Placeholder="Chọn..." @ref="cb" @bind-Value="@Value" TValue="string" Width="@Width" PopupWidth="@PopupWidth"
+                TItem="@ds_quyen"
+                AllowFiltering="true" FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                ShowClearButton="true" DataSource="list">
+
+    <DropDownListFieldSettings Text="dsquyen_name" Value="dsquyen_id"></DropDownListFieldSettings>
+    <DropDownListEvents TValue="string" TItem="@ds_quyen" ValueChange="ValueChange"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    public SfDropDownList<string, ds_quyen> cb;
+    public List<ds_quyen> Data = new List<ds_quyen>();
+    public List<ds_quyen> list = new List<ds_quyen>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public string Value { get; set; }
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+    public void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, ds_quyen> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+
+        
+        Data = ds_quyenService.GetAll().Data;
+        foreach(ds_quyen quyen in Data)
+        {
+            int k = glb.g_CapNode(quyen.dsquyen_id.ToString(), "22222");
+            if (k == 1)
+            {
+                list.Add(quyen);
+            }
+        }
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+
+    public clsGlobal glb = new clsGlobal();
+}

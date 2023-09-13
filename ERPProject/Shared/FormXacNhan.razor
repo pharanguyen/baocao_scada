@@ -1,0 +1,69 @@
+﻿
+<SfDialog @ref="dlgXacNhan" @bind-Visible="isShow" Width="@ChieuRong"  IsModal="true" AllowDragging="true" ShowCloseIcon="true">
+    <DialogTemplates>
+        <Header>
+            <i class="far fa-question-circle"></i> Xác nhận
+        </Header>
+        <Content>
+            <span style="font-size:16px;">
+                @NoiDung
+            </span>
+            
+        </Content>
+
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButtons>
+            <DialogButton CssClass="e-flat" IconCss="icon-checkmark" Content="Đồng ý" IsPrimary="true" OnClick="XacNhan">
+            </DialogButton>
+            <DialogButton CssClass="e-flat e-danger" IconCss="icon-cross" Content="Hủy bỏ" OnClick="Huy">
+            </DialogButton>
+        </DialogButtons>
+    </DialogButtons>
+</SfDialog>
+@code{
+
+    private SfDialog dlgXacNhan;
+    private string NoiDung { get; set; }
+
+    [Parameter]
+    public string ChieuRong { get; set; } = "400px";
+
+    [Parameter]
+    public Action<bool> OnXacNhan { get; set; }
+
+    [Parameter]
+    public System.Action OnDaXacNhan { get; set; }
+
+    protected bool isShow = false;
+
+    public void XacNhan()
+    {
+        isShow = false;
+        if (OnXacNhan != null) OnXacNhan.Invoke(true);
+        if (OnDaXacNhan != null) OnDaXacNhan.Invoke();
+    }
+
+    public void Huy()
+    {
+        isShow = false;
+    }
+
+    public void Show(string strNoiDung)
+    {
+        NoiDung = strNoiDung;
+        dlgXacNhan.Show();
+    }
+
+    public void Show(string strNoiDung, string strChieuRong, System.Action act)
+    {
+        NoiDung = strNoiDung;
+        ChieuRong = strChieuRong;
+        OnDaXacNhan = act;
+        isShow = true;
+        StateHasChanged();
+    }
+
+
+
+}

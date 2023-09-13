@@ -1,0 +1,44 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using Syncfusion.Blazor.DropDowns;
+
+<SfDropDownList Placeholder="Chọn..." @ref="cb" @bind-Value="@Value" TValue="int?" Width="@Width" PopupWidth="@PopupWidth"
+                TItem="@chi_nhanh"
+                AllowFiltering="true" FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="ten_chinhanh" Value="ms_chinhanh"></DropDownListFieldSettings>
+    <DropDownListEvents TValue="int?" TItem="@chi_nhanh" ValueChange="ValueChange"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int?, chi_nhanh> cb;
+    private List<chi_nhanh> Data = new List<chi_nhanh>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int? Value { get; set; }
+    [Parameter]
+    public EventCallback<int?> ValueChanged { get; set; }
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int?, chi_nhanh> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+        Data = chi_nhanhService.GetToComBo().Data;
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+}

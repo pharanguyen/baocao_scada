@@ -1,0 +1,34 @@
+﻿@inject Services.AppDataScoped AppData
+<div class="page-header page-header-dark" >
+    <div class="page-header-content header-elements-inline">
+        <div class="page-title">
+            <h5>
+                <i class="icon-arrow-left52 mr-2" style="font-size:16px;margin-top:-3px;"></i>
+                <span class="LayoutTitle2">
+                    @((MarkupString)AppData.LayoutTitle)
+                </span>
+                <small class="text-muted LayoutSubTitle">@AppData.LayoutSubTitle</small>
+            </h5>
+        </div>
+        <div class="header-elements d-flex align-items-center">
+        </div>
+    </div>
+</div>
+
+@*<h1>@Menu</h1>*@
+
+@code{
+    [Parameter]
+    public string display { get; set; } = "none";
+
+    private string Menu = "";
+    protected override void OnInitialized()
+    {
+        AppData.OnChange += ChangeTitile;
+
+    }
+    protected void ChangeTitile()
+    {
+        StateHasChanged();
+    }
+}

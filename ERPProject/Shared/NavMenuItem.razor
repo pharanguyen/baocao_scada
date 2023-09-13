@@ -1,0 +1,43 @@
+﻿@if (isTitle)
+{
+    <li class="nav-item-header">
+        <div class="text-uppercase font-size-xs line-height-xs">@Title</div>
+        <i class="icon-menu" title="@Title"></i>
+    </li>
+}
+else
+{
+    <li class="nav-item @((ChildCount >0)?"nav-item-submenu":"")">
+        <a href="@Link" class="nav-link" title="@Title">
+            @if (CssIcon != null)
+            {
+                <i class="@CssIcon"></i>
+            }
+            <span>
+                @Title
+                @if (SubTitle != null)
+                {
+                    <span class="d-block font-weight-normal opacity-50" style="font-size: 13px;opacity: 0.8;">@SubTitle</span>
+                }
+            </span>
+        </a>
+        @ChildContent
+    </li>
+}
+
+@code {
+    [Parameter]
+    public int ChildCount { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string SubTitle { get; set; }
+    [Parameter]
+    public string Link { get; set; }
+    [Parameter]
+    public string CssIcon { get; set; }
+    [Parameter]
+    public bool isTitle { get; set; } = false;
+}

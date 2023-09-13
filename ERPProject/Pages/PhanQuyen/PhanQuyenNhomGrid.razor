@@ -1,0 +1,187 @@
+﻿@page "/ds_nhomquyen/"
+@inherits PhanQuyenNhomGridBase;
+@using DAO.Models.PhanQuyen;
+<style type="text/css">
+    #tbPG {
+        height: calc(100vh - 146px);
+        max-height: calc(100vh - 146px);
+    }
+
+    th.sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: #00676B;
+        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    .tdCenter {
+        text-align: center;
+    }
+</style>
+<BodyCard>
+    <SfToolbar OverflowMode="OverflowMode.Popup">
+        <ToolbarItems>
+
+            <Syncfusion.Blazor.Navigations.ToolbarItem Type="ItemType.Separator">
+            </Syncfusion.Blazor.Navigations.ToolbarItem>
+
+            <Syncfusion.Blazor.Navigations.ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" @onclick="onTaiLai" IconCss="icon-loop3">Tải lại</SfButton>
+                </Template>
+            </Syncfusion.Blazor.Navigations.ToolbarItem>
+            <Syncfusion.Blazor.Navigations.ToolbarItem Type="ItemType.Separator" />
+            <Syncfusion.Blazor.Navigations.ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-floppy-disk" @onclick="onLuuQuyen">Lưu lại</SfButton>
+                </Template>
+            </Syncfusion.Blazor.Navigations.ToolbarItem>
+            <Syncfusion.Blazor.Navigations.ToolbarItem Type="ItemType.Separator" />
+            
+        </ToolbarItems>
+    </SfToolbar>
+    <div style="width:calc(100vw - 20rem); height:calc(100vh - 7rem);">
+        <SfGrid @ref="myGrid" DataSource="@lstQuyen" AllowResizing="true" EnableStickyHeader="true" ShowColumnChooser="true" 
+            Height="100%" Width="100%" GridLines="GridLine.Both">
+            <GridColumns>
+                <GridColumn AutoFit Field="dsquyen_id" HeaderText="ID" Visible="false" HeaderTextAlign="@TextAlign.Center" TextAlign="@TextAlign.Center"></GridColumn>
+                <GridColumn Width="250px" Field=dsquyen_name HeaderText="Danh Sách Quyền" Visible="true" HeaderTextAlign="@TextAlign.Left">
+                    <Template>
+                        @{
+                            var m = (context as Quyen);
+                            int k = glb.g_CapNode(m.dsquyen_id.ToString(), "22222");
+                            if (k == 1)
+                            {
+                                <span>@m.dsquyen_name</span>
+                            }
+                            else if (k == 2)
+                            {
+                                <span>&nbsp; &nbsp; &nbsp; @m.dsquyen_name</span>
+
+                            }
+                            else if (k == 3)
+                            {
+                                <span>&nbsp; &nbsp; &nbsp; </span>
+                                <span>&nbsp; &nbsp; &nbsp;@m.dsquyen_name </span>
+                            }
+                            else if (k == 4)
+                            {
+                                <span>&nbsp; &nbsp; &nbsp; </span>
+                                <span>&nbsp; &nbsp; &nbsp; </span>
+                                <span>&nbsp; &nbsp; &nbsp;@m.dsquyen_name </span>
+                            }
+
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="1. Quản trị hệ thống"
+                            TextAlign="@TextAlign.Center" 
+                            AutoFit >
+                            <Template>
+                                @{
+                                    var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col1"></SfCheckBox>
+                                }
+                            </Template>
+                </GridColumn>
+                <GridColumn HeaderText="2. Quản lý"
+                            TextAlign="@TextAlign.Center">
+                            <Template>
+                                @{
+                                    var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col2"></SfCheckBox>
+                                }
+                            </Template>
+                </GridColumn>
+                <GridColumn HeaderText="3. Đồng hồ"
+                            TextAlign="@TextAlign.Center">
+                    <Template>
+                        @{
+                            var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col3"></SfCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="4. Dịch vụ khách hàng"
+                            TextAlign="@TextAlign.Center">
+                    <Template>
+                        @{
+                            var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col4"></SfCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="5. Kế Toán"
+                            TextAlign="@TextAlign.Center">
+                    <Template>
+                        @{
+                            var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col5"></SfCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+              
+                <GridColumn HeaderText="6. Hóa đơn"
+                            TextAlign="@TextAlign.Center">
+                    <Template>
+                        @{
+                            var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col6"></SfCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="7. Nhập khách hàng"
+                            TextAlign="@TextAlign.Center">
+                    <Template>
+                        @{
+                            var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col8"></SfCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="10.Chi nhánh"
+                            TextAlign="@TextAlign.Center">
+                    <Template>
+                        @{
+                            var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col11"></SfCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="8.Tổ quản lý"
+                            TextAlign="@TextAlign.Center">
+                    <Template>
+                        @{
+                            var temp = (context as Quyen);
+                            <SfCheckBox @bind-Checked="temp.col12"></SfCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                @*@{
+
+                    int nCountNhom = lstNhomQuyen.Count();
+                    for (int j = 1; j <= nCountNhom; j++)
+                    {
+                        string str = lstNhomQuyen.ElementAt(j - 1).nhomquyen_name;
+                        bool isChecked = false;
+                        int temp = j;
+
+                        string index = arr_Nhom[j].ToString() + ",";
+
+                        <GridColumn HeaderText="@str" 
+                                    TextAlign="@TextAlign.Center" 
+                                    AutoFit 
+                                    Field="@str">
+
+                           
+                        </GridColumn>
+                    }
+                }*@
+            </GridColumns>
+        </SfGrid>
+    </div>
+</BodyCard>
+@code {
+    
+}

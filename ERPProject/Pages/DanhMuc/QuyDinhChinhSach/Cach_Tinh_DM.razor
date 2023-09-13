@@ -1,0 +1,78 @@
+﻿@page "/cach_tinh_dm"
+@using DAO.Models.DanhMuc.QuyDinhChinhSach
+@inherits Cach_Tinh_DMBase
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+
+    <SfGrid id="gdv"
+            DataSource="@listCach_Tinh_DM"
+            AllowReordering="true"
+            Width="100%"
+            @ref="gdv"
+            GridLines="GridLine.Both"
+            AllowResizing="true"
+            AllowExcelExport="true"
+            AllowFiltering="true">
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+                <Template>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as cach_tinh_dm).ms_cach_tinh))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as cach_tinh_dm).ms_cach_tinh))"></SfButton>
+                </Template>
+            </GridColumn>
+            <GridColumn Field="ms_cach_tinh"
+                        IsPrimaryKey="true"
+                        HeaderText="Mã"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="40">
+
+            </GridColumn>
+            <GridColumn Field="mo_ta"
+                        HeaderText="Mô tả"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="cach_tinh"
+                        HeaderText="Cách tính"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120">
+
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</BodyCard>
+<Cach_Tinh_DM_CapNhat @ref="fCapNhat" OnLuu="XacNhanLuu"></Cach_Tinh_DM_CapNhat>
+<FormXacNhan @ref="frmXacNhan"> </FormXacNhan>

@@ -1,0 +1,117 @@
+﻿@using DAO.Models.DanhMuc
+@using ERPProject.Shared.Combobox
+@inherits Khach_Hang_CapNhatBase
+<style type="text/css">
+    .e-upload {
+        border: none;
+    }
+
+        .e-upload e-control-wrapper e-lib e-keyboard {
+            border: none;
+        }
+
+        .e-upload .e-file-select-wrap, .e-bigger.e-small .e-upload .e-file-select-wrap {
+            padding: 5px;
+            height: 0px;
+        }
+
+    .e-file-drop, .e-upload-files {
+        display: none;
+    }
+
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: left;
+    }
+</style>
+
+<SfDialog @bind-Visible="isShow" IsModal="true" ShowCloseIcon="true" Width="900" ZIndex="101">
+    <DialogTemplates>
+        <Header>
+            <h3><i class="@((isThemMoi)?"icon-plus2":"icon-pencil")">@TieuDe</i></h3>
+        </Header>
+        <Content>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Mã KH</label>
+                        <SfNumericTextBox TValue="int" @bind-Value="objModel.ms_kh"
+                                          ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                          CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tên Khách Hàng</label>
+                        <SfTextBox TValue="string" @bind-Value="objModel.ten_kh"></SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Điện Thoại</label>
+                        <SfTextBox TValue="string" @bind-Value="objModel.dien_thoai"></SfTextBox>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Địa Chỉ</label>
+                        <SfTextBox TValue="string" @bind-Value="objModel.dia_chi_kh"></SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Mã - Tên Đường</label>
+                        <CboDuong @bind-Value="objModel.ms_duong" Width="100%" PopupWidth="100%"></CboDuong>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Ngày nhập</label>
+                        <SfDatePicker @bind-Value="objModel.ngay_nhap_kh" ShowClearButton="true"
+                                      TValue="DateTime" Format="dd/MM/yyyy"></SfDatePicker>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Số Tài Khoản</label>
+                        <SfTextBox TValue="string" @bind-Value="objModel.so_tai_khoan"></SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Mã Số Thuế</label>
+                        <SfTextBox TValue="string" @bind-Value="objModel.ms_thue"></SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Mở tại</label>
+                        <SfTextBox TValue="string" @bind-Value="objModel.mo_tai"></SfTextBox>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Loại khách hàng</label>
+                        <CbLoaiKhachHang @bind-Value="objModel.ms_loai_kh" Width="100%" PopupWidth="100%"></CbLoaiKhachHang>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tình Trạng Khách Hàng</label>
+                        <CbTinhTrangKH @bind-Value="objModel.ms_tt_kh" Width="100%" PopupWidth="100%"></CbTinhTrangKH>
+                    </div>
+                </div>                
+            </div>
+        </Content>
+        <FooterTemplate>
+            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onSave">Lưu</SfButton>
+            <SfButton CssClass="e-flat e-danger" IconCss="icon-cross" OnClick="onClose">Đóng</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogEvents Closed="@(()=>{ OnLuu.Invoke(isDaCapNhatDuLieu); })"></DialogEvents>
+</SfDialog>

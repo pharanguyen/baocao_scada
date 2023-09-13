@@ -1,0 +1,239 @@
+﻿@using System.Security.Claims
+@using DAO.Services.PhanQuyen
+@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inject Services.AppDataScoped AppData
+<AuthorizeView>
+    <NotAuthorized>
+        @{
+            //chưa xác thực đăng nhập
+            isAuthorized = true;
+            string url = System.Web.HttpUtility.UrlEncode(NavigationManager.Uri);
+            NavigationManager.NavigateTo("/dang-nhap?url=" + url, true);
+        }
+    </NotAuthorized>
+    <Authorized>
+        @{
+            try
+            {              
+                //Console.WriteLine("Authorized");
+                nhansu = System.Text.Json.JsonSerializer.Deserialize<DAO.Models.PhanQuyen.ds_thanhvien>(context.User.FindFirst("User").Value);
+                if (nhansu == null) throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                localStorage.ClearAsync();
+                string url = System.Web.HttpUtility.UrlEncode(NavigationManager.Uri);
+                NavigationManager.NavigateTo("/dang-nhap?url=" + url, true);
+            }
+         }
+        <NavBar></NavBar>
+        
+        <div class="page-content">
+            <div class="sidebar sidebar-dark sidebar-main sidebar-fixed sidebar-expand-md">
+                 <div class="sidebar-mobile-toggler text-center">
+                    <a href="#" class="sidebar-mobile-main-toggle">
+                        <i class="icon-arrow-left8"></i>
+                    </a>
+                    Chức năng
+                    <a href="#" class="sidebar-mobile-expand">
+                        <i class="icon-screen-full"></i>
+                        <i class="icon-screen-normal"></i>
+                    </a>
+                </div>
+                <div class="sidebar-content">
+                    <div class="card card-sidebar-mobile">
+                         <ul id="_NavMenu" class="nav nav-sidebar" data-nav-type="accordion">
+                            <NavMenuItem Title="I. Quản Lý Khách Hàng" CssIcon="icon-home"></NavMenuItem>                           
+                          
+                            @{
+                                
+                                var dsquyentheotvid = ds_quyenService.prc_ds_quyen_theothanhvienId(nhansu.thanhvien_id);
+                                listMenuCha = new List<DAO.Models.PhanQuyen.ds_quyen>();
+                                foreach (var dsqCap1 in dsquyentheotvid.Data)
+                                {
+                                    string dsquyen_id = dsqCap1.dsquyen_id;
+                                    int k = glb.g_CapNode(dsquyen_id.ToString(), "22222");
+                                    if (k == 1)
+                                    {
+                                        <NavMenuItem Title="@(dsqCap1.dsquyen_name)" Link="@(dsqCap1.link)" ChildCount="2">
+                                        @{
+                                            string temp2kytudauCap1 = dsqCap1.dsquyen_id.Substring(0, 2);
+                                            foreach (var dsqCap2 in dsquyentheotvid.Data)
+                                            {                                           
+                                                                
+                                                int k2 = glb.g_CapNode(dsqCap2.dsquyen_id.ToString(), "22222");
+                                                if (k2 == 2 && temp2kytudauCap1.Equals(dsqCap2.dsquyen_id.ToString().Substring(0, 2)))
+                                                {
+                                                    <NavMenuSub>
+                                                        <SubMenuItems>
+                                                            <NavMenuItem Title="@(dsqCap2.dsquyen_name)" Link="@(dsqCap2.link)" CssIcon="@(dsqCap2.css_icon)" ChildCount="@(dsqCap2.childcount)">
+                                                                @{
+                                                                    string temp4kytudauCap2 = dsqCap2.dsquyen_id.Substring(0, 4);
+                                                                    foreach (var dsqCap3 in dsquyentheotvid.Data)
+                                                                    {                                                                               
+                 
+                                                                        int k3 = glb.g_CapNode(dsqCap3.dsquyen_id.ToString(), "22222");
+                                                                        if (k3 == 3 && temp4kytudauCap2.Equals(dsqCap3.dsquyen_id.ToString().Substring(0, 4)))
+                                                                        {
+                                                                            <NavMenuSub>
+                                                                                <SubMenuItems>
+                                                                                    <NavMenuItem Title="@(dsqCap3.dsquyen_name)" Link="@(dsqCap3.link)"></NavMenuItem>
+
+
+                                                                                </SubMenuItems>
+                                                                            </NavMenuSub>
+                                                                        }                                                                                        
+                                                                                                                                                       
+                                                                    }
+                                                                }
+                                                            </NavMenuItem>
+                                                        </SubMenuItems>
+                                                    </NavMenuSub>
+                                                }                                                              
+                                
+                                            }
+                                        }
+
+                                     </NavMenuItem>
+                                    }
+
+                                }
+                              }                             
+                            
+                            <NavMenuItem Title="II. Quản Lý Nhân Sự" CssIcon="icon-user"></NavMenuItem>
+                            <NavMenuItem Title="III. Quản Lý Thiết Bị" CssIcon="icon-chart"></NavMenuItem>
+                         </ul>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="content-wrapper">
+                <PageTitleC></PageTitleC>
+                <div class="content pt-0 ">
+                   @Body
+                </div>
+            </div>
+        </div>
+        <Toast @ref="mainToast"></Toast>
+        <Syncfusion.Blazor.Popups.SfDialogProvider />
+        <LoadingPanel @ref="AppData.loadingPanel"></LoadingPanel>
+        @{
+            isAuthorized = true;
+            Console.WriteLine("2");
+        }        
+    </Authorized>
+
+    <Authorizing>
+        <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;text-align: center; min-height: 100vh;width:100%;">
+            <img src="/assets/imgs/loading.gif" width="100px">
+            <span style="color:navy;">Đang kiểm tra trạng thái đăng nhập ...</span>
+        </div>
+        @{
+            isAuthorized = false;
+            Console.WriteLine("1");
+        }
+    </Authorizing>
+</AuthorizeView>
+
+
+
+@code {
+    private Toast mainToast;
+    private bool isAuthorized = false;
+    private DAO.Models.PhanQuyen.ds_thanhvien nhansu;
+    [Inject]
+    protected Services.AppUser appUser { get; set; }
+    List<DAO.Models.PhanQuyen.ds_quyen> listMenuCha = new List<DAO.Models.PhanQuyen.ds_quyen>();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            while (!isAuthorized)
+            {
+                await Task.Delay(50);
+                //   Console.WriteLine("loop");
+            }
+            // Console.WriteLine("loop");
+            await InvokeAsync(async () =>
+            {
+                await JsRuntime.InvokeVoidAsync("KhoiTaoApp");
+            });
+        }
+        await JsRuntime.InvokeVoidAsync("ChonMenu", active);
+    }
+    //1.khoi tao
+    protected override void OnInitialized()
+    {
+
+        Task.Run(() =>
+        {
+            InvokeAsync(async () =>
+            {
+                if (await localStorage.ContainKeyAsync("Token"))
+                {
+                    var accessKey = await localStorage.GetItemAsync<string>("Token");
+                    accessKey = MsUtils.Encryption.DecryptString(accessKey);
+                    var strInfo = accessKey.Split("@MS@");
+                    if (strInfo.Length != 5) return;
+                    refreshToken();
+                }
+                CheckLink();
+                AppData.OnChange += CheckLink;
+            });
+        });
+
+        base.OnInitialized();
+    }
+    private void refreshToken()
+    {
+        Task.Run(async () =>
+        {
+            //  var _t = new Random().Next(100);
+            while (true)
+            {
+                // Console.WriteLine(_t);
+                await Task.Delay(3000);
+                var _tokenE = await localStorage.GetItemAsync<string>("Token");
+                if (_tokenE != null)
+                {
+                    var _token = MsUtils.Encryption.DecryptString(_tokenE);
+                    var strInfo = _token.Split("@MS@");
+                    if (strInfo.Length == 5)
+                    {
+                        var ticks = Convert.ToInt64(strInfo[4]);
+                        if ((DateTime.UtcNow.AddHours(7) - new DateTime(ticks)).TotalSeconds >= 3)
+                        {
+                            var newToken = $"{strInfo[0]}@MS@{strInfo[1]}@MS@{strInfo[2]}@MS@{strInfo[3]}@MS@{DateTime.UtcNow.AddHours(7).Ticks}";
+                            await localStorage.SetItemAsync("Token", MsUtils.Encryption.EncryptString(newToken));
+                        }
+                    }
+                }
+            }
+
+        });
+    }
+
+  
+    protected string active = "";
+    protected void CheckLink()
+    {
+        active = new Uri(NavigationManager.Uri).AbsolutePath;
+        active = active.Substring(1, active.Length - 1);
+        int index = active.IndexOf(@"/");
+        if (index != -1)
+            active = active.Substring(0, index);
+        active = "/" + active;
+
+        //  Console.WriteLine(active);
+        StateHasChanged();
+
+    }
+
+    clsGlobal glb = new clsGlobal();
+}

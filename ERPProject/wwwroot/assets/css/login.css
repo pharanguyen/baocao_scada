@@ -1,0 +1,60 @@
+﻿body {
+    background-image: url('../imgs/backgrounds/bgLogin.jpg');
+    background-repeat: repeat;
+    background-size: auto;
+}
+
+.content-wrapper {
+    background-color: transparent !important;
+}
+
+#loginCard {
+    min-width: 300px;
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    z-index: 9999;
+    opacity: 95%;
+}
+
+/*.LogoMS {
+    margin-bottom: 10px;
+    width: 200px;
+    height: auto;
+}*/
+
+.MsName {
+    color: black;
+    font-weight: bold;
+    font-size: larger;
+/*    color: navy;*/
+}
+.MsCopyright {
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    /*font-size: large;*/
+    /*    color: navy;*/
+}
+
+.LogoMS {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    width: 280px;
+    height: auto;
+}
+
+.QuenMatKhauText {
+    color: navy;
+/*    text-align: right;*/
+    display: block;
+}
+
+#particles-js {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: 50% 50%;
+    position: fixed;
+    top: 0px;
+    z-index: 1;
+}

@@ -1,0 +1,30 @@
+﻿@inject Services.ToastService ToastService;
+<SfToast @ref="obj" ShowCloseButton="true" ID="toast_type">
+    <ToastPosition X="Right" Y="Top"></ToastPosition>
+    <ToastAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.None"></ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.None"></ToastHideAnimationSettings>
+    </ToastAnimationSettings>
+</SfToast>
+
+@code {
+    private SfToast obj;
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast;
+    }
+
+    public void ShowToast(string _content, string _title,Services.ToastLevel level)
+    {
+        ToastModel _toastModel = new ToastModel
+        {
+            Title = "",
+            Content = _content,
+            CssClass = "e-toast-" + level.ToString() + "",
+            Icon = "e-" + level.ToString() + " toast-icons",
+            Width = "auto"
+    };
+        this.obj.Show(_toastModel);
+    }
+}

@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace ERPProject.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />  
+
+    <link href="~/assets/css/icons/icomoon/styles.min.css" rel="stylesheet" />
+    <link href="~/assets/css/icons/googleicon/style.css" rel="stylesheet" />
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/layout.min.css" rel="stylesheet" />
+    <link href="~/assets/css/bootstrap4.css" rel="stylesheet" />
+    <script src="_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
+    <link href="~/assets/css/bootstrapCustom.css" rel="stylesheet" />
+    <link href="~/assets/css/SynfusionCustom.css" rel="stylesheet" />
+    <link href="~/assets/css/site.css" rel="stylesheet" />
+
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+<body class="navbar-top">
+    <app>
+        @RenderBody()
+    </app>
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            Có lỗi xảy ra, Cần tải lại trang web để sử dụng.
+        </environment>
+        <environment include="Development">
+            Có lỗi xảy ra, Cần tải lại trang web để sử dụng.
+        </environment>
+        <a href="" class="reload">Tải lại</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="~/assets/js/ms.js"></script>
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/jquery.number.min.js"></script>
+    <script src="~/assets/js/loginAnimation.js"></script>
+    <script>
+        Blazor.defaultReconnectionHandler._reconnectCallback = function (e) {
+            document.location.reload();
+        }
+    </script>
+</body>
+</html>
+

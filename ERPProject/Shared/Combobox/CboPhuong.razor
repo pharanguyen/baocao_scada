@@ -1,0 +1,102 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using Syncfusion.Blazor.DropDowns;
+<style>
+    .column-width {
+        width: 75px;
+    }
+</style>
+<SfDropDownList Placeholder="Chọn..." @ref="cb"
+@bind-Value="@Value" TValue="int"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                TItem="@prc_phuong"
+                AllowFiltering="true"
+                FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                CssClass="e-multi-column"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="ten_phuong" Value="ms_phuong"></DropDownListFieldSettings>
+    <DropDownListTemplates TItem="@prc_phuong">
+        <HeaderTemplate>
+            <table>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên Phường</th>
+                    <th>Vị trí</th>
+                    <th>Tên Quận</th>
+                </tr>
+            </table>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="e-text-center column-width">
+                            @((context as prc_phuong).ms_phuong)
+                        </td>
+                        <td>@((context as prc_phuong).ten_phuong)</td>
+                        <td>@((context as prc_phuong).vi_tri)</td>
+                        <td>@((context as prc_phuong).ten_quan)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </ItemTemplate>
+        <ValueTemplate>
+            <span>@((context as prc_phuong).ms_phuong) - @((context as prc_phuong).ten_phuong) </span>
+        </ValueTemplate>
+    </DropDownListTemplates>
+    <DropDownListEvents TValue="int" TItem="@DAO.Models.DanhMuc.prc_phuong" ValueChange="ValueChange" Filtering="onFilter"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int, prc_phuong> cb;
+    private List<prc_phuong> Data = new List<prc_phuong>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int Value { get; set; }
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DAO.Models.DanhMuc.prc_phuong> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+        Data = phuongService.GetAll_prc_phuong().Data;
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+    [Parameter]
+    public EventCallback<Syncfusion.Blazor.DropDowns.FilteringEventArgs> Filtering { get; set; }
+
+    public async void onFilter(Syncfusion.Blazor.DropDowns.FilteringEventArgs args)
+    {
+        args.PreventDefaultAction = true;
+        if (args.Text == null || args.Text.Trim() == "")
+        {
+            Data = phuongService.GetAll_prc_phuong().Data;
+        }
+        else
+        {
+            Data = phuongService.GetPrcPhuongByKeyword(args.Text).Data;
+        }
+        await cb.FilterAsync(Data);
+        StateHasChanged();
+    }
+
+
+
+}

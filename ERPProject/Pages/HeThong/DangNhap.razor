@@ -1,0 +1,131 @@
+﻿@page "/dang-nhap"
+@layout LoginLayout
+@using DAO.Services.PhanQuyen;
+@using System.Security.Claims;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime jsRunTime
+
+
+<link href="/assets/css/login.css" rel="stylesheet" />
+
+<div class="card mb-0" id="loginCard">
+    <div class="card-body">
+        <div class="text-center mb-3">
+            <!--<i class="icon-reading icon-2x text-slate-300 border-slate-300 border-3 rounded-round p-3 mb-3 mt-1"></i>-->
+           @* <img class="LogoMS" src="/assets/imgs/logo/logocapnuoc.png" alt="HPWater">*@
+          @*  <span class="d-block MsName">© 2023 by <a style="color: #00676B;" href="https:capnuochaiphong.com.vn">HPWater</a></span>*@
+        </div>
+        <EditForm Model="@objModel" OnValidSubmit="@ValidateUser">
+            @{
+                if (LoginMesssage != null)
+                {
+                    <div class="alert alert-warning alert-styled-left">
+                        @LoginMesssage
+                    </div>
+                }
+                if (isDaDangNhap)
+                {
+                    <div class="alert alert-success alert-styled-left">
+                        Đăng nhập thành công !
+                    </div>
+                }
+            }
+            <div class="form-group form-group-feedback form-group-feedback-left">
+                <input id="tbTaiKhoan" type="text" class="form-control" placeholder="Tài khoản" @bind="objModel.tendangnhap" autofocus autocomplete="off">
+                <div class="form-control-feedback">
+                    <i class="icon-user text-muted"></i>
+                </div>
+            </div>
+            <div class="form-group form-group-feedback form-group-feedback-left">
+                <input id="tbMatKhau" type="password" class="form-control" placeholder="Mật khẩu" @bind="objModel.matkhau">
+                <div class="form-control-feedback">
+                    <i class="icon-lock2 text-muted"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <SfCheckBox TChecked="bool" @bind-Checked="isTuDongDangNhap" Label="Luôn giữ trạng thái đã đăng nhập ..."></SfCheckBox>
+            </div>
+            <div class="form-group">
+                <button id="btDangNhap" type="submit" class="btn btn-primary btn-block">Đăng nhập <i class="icon-circle-right2 ml-2"></i></button>
+                <br />
+                <NavLink href="/cap-lai-mat-khau" class="ml-auto QuenMatKhauText">
+                    Quên mật khẩu?
+                </NavLink>
+
+            </div>
+        </EditForm>
+    </div>
+
+</div>
+<div id="particles-js"></div>
+@code {
+    private DAO.Models.PhanQuyen.ds_thanhvien objModel = new DAO.Models.PhanQuyen.ds_thanhvien();
+    private string LoginMesssage { get; set; }
+    private bool isDaDangNhap { get; set; } = false;
+    private bool isTuDongDangNhap = false;
+    [QueryStringParameter]
+    public string url { get; set; }
+    [Inject]
+    AuthenticationStateProvider authenticationState { get; set; }
+
+    ClaimsPrincipal claimsPrincipal;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await jsRunTime.InvokeVoidAsync("setTitle", "Đăng nhập");
+            await jsRunTime.InvokeVoidAsync("KhoiTaoDangNhap");
+        }
+    }
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        this.SetParametersFromQueryString(NavigationManager);
+        return base.SetParametersAsync(parameters);
+    }
+    private async Task<bool> ValidateUser()
+    {
+        var ns = new DAO.Models.PhanQuyen.ds_thanhvien();
+        var rsModel = new DAO.Models.CommonModels.ResultModel<DAO.Models.PhanQuyen.ds_thanhvien>();
+        //lay ds_thanhvien theo user, mk đăng nhập
+        await Task.Run(() => { rsModel = ds_thanhvienService.GetByUserName(objModel.tendangnhap, objModel.matkhau); });
+        if (rsModel.isThanhCong)
+        {
+            ns = rsModel.Data;
+        }
+        else
+        {
+            ns = null;
+        }
+        if (ns != null)
+        {
+            LoginMesssage = null;
+            isDaDangNhap = true;
+            StateHasChanged();
+            await Task.Delay(100);
+            //1@MS@admin@MS@1@MS@False@MS@638235466378057987
+            var _token = $"{ns.thanhvien_id}@MS@{ns.tendangnhap}@MS@{ns.matkhau}@MS@{isTuDongDangNhap}@MS@{DateTime.UtcNow.AddHours(7).Ticks}";
+            await localStorage.SetItemAsync("Ten", ns.thanhvien_name);
+            await localStorage.SetItemAsync("TenDangNhap", ns.tendangnhap);
+            await localStorage.SetItemAsync("Token", MsUtils.Encryption.EncryptString(_token));
+            await authenticationState.GetAuthenticationStateAsync();
+            if (url != null) NavigationManager.NavigateTo(System.Web.HttpUtility.UrlDecode(url));
+            else NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            //toastService.ShowToast("Thông tin đăng nhập không chính xác !", "", ToastLevel.warning);
+            if (LoginMesssage != null)
+            {
+                LoginMesssage = null;
+                StateHasChanged();
+                await Task.Delay(100);
+            }
+
+            LoginMesssage = "Thông tin đăng nhập không chính xác !";
+        }
+
+        return await Task.FromResult(true);
+    }
+}

@@ -1,0 +1,390 @@
+﻿@using DAO.Models.DanhMuc
+@using ERPProject.Shared.Combobox
+@inherits KhachHang_MoiNoi_CapNhatBase
+<style type="text/css">
+    .e-upload {
+        border: none;
+    }
+
+        .e-upload e-control-wrapper e-lib e-keyboard {
+            border: none;
+        }
+
+        .e-upload .e-file-select-wrap, .e-bigger.e-small .e-upload .e-file-select-wrap {
+            padding: 5px;
+            height: 0px;
+        }
+
+    .e-file-drop, .e-upload-files {
+        display: none;
+    }
+
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: left;
+    }
+
+    .lb {
+        font-weight: bold
+    }
+
+    .e-tab .e-tab-header:not(.e-vertical) .e-indicator, .e-tab .e-tab-header.e-vertical .e-indicator {
+        transition: none;
+    }
+</style>
+
+<SfDialog @bind-Visible="isShow" IsModal="true" ShowCloseIcon="true" Width="1000" ZIndex="101">
+    <DialogTemplates>
+        <Header>
+            <h3><i class="@((isThemMoi)?"icon-plus2":"icon-pencil")">@TieuDe</i></h3>
+        </Header>
+        <Content>
+            <SfTab LoadOn="ContentLoad.Init" @bind-SelectedItem="selectedTabIndex" >
+                <TabItems>
+                    <TabAnimationSettings>
+                        <TabAnimationPrevious Effect="Syncfusion.Blazor.AnimationEffect.None"></TabAnimationPrevious>
+                        <TabAnimationNext Effect="Syncfusion.Blazor.AnimationEffect.None"></TabAnimationNext>
+                    </TabAnimationSettings>
+                    <TabItem>
+                        <HeaderTemplate>Thông tin khách hàng</HeaderTemplate>
+                        <ContentTemplate>
+                            <div class="panel-group">
+                                @* <div style="font-weight:bold">Thông tin khách hàng</div> *@
+                                <div class="panel panel-default" style="border: 2px solid #EEEEEE">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            @* <div class="col-md-3">
+                                            <div class="form-group">
+                                            <label class="lb">Mã KH</label>
+                                            <SfNumericTextBox TValue="int" @bind-Value="objModel.ms_kh" Enabled="false"
+                                            ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                            CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                            </div>
+                                            </div> *@
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="lb">Tên Khách Hàng</label>
+                                                    <SfTextBox TValue="string" @bind-Value="objModel.ten_kh"></SfTextBox>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="lb">Ngày nhập</label>
+                                                    <SfDatePicker @bind-Value="objModel.ngay_nhap_kh" ShowClearButton="true"
+                                                                  TValue="DateTime" Format="dd/MM/yyyy"></SfDatePicker>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="lb">CCCD</label>
+                                                    <SfTextBox TValue="string"></SfTextBox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="lb">Mã số thuế</label>
+                                                    <SfTextBox TValue="string" @bind-Value="objModel.ms_thue"></SfTextBox>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="lb">Số TK</label>
+                                                    <SfTextBox TValue="string" @bind-Value="objModel.so_tai_khoan"></SfTextBox>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="lb">Mở tại</label>
+                                                    <SfTextBox TValue="string" @bind-Value="objModel.mo_tai"></SfTextBox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="lb">Địa chỉ trụ sở</label>
+                                                    <SfTextBox TValue="string" @bind-Value="objModel.dia_chi_kh"></SfTextBox>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="lb">Loại khách hàng</label>
+                                                    <CbLoaiKhachHang @bind-Value="objModel.ms_loai_kh" Width="100%" PopupWidth="100%"></CbLoaiKhachHang>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="lb">Tình Trạng Khách Hàng</label>
+                                                    <CbTinhTrangKH @bind-Value="objModel.ms_tt_kh" Width="100%" PopupWidth="100%"></CbTinhTrangKH>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div style="font-weight:bold">Thông tin điểm dùng</div>
+                                <div class="panel panel-default" style="border: 2px solid #EEEEEE">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="lb">Mã Điểm Dùng</label>
+                                                <SfNumericTextBox TValue="int" @bind-Value="objModel.ms_mnoi" Enabled="false"
+                                                                  ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                                  CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="lb">Người Đại Diện</label>
+                                                <SfTextBox TValue="string" @bind-Value="objModel.nguoi_thue" Width="100%" PopupWidth="100%"></SfTextBox>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label></label>
+                                                <SfCheckBox Label="ĐK tự đọc số" style="color:red" @bind-Checked="objModel.dk_tu_doc" ShowClearButton="true">
+                                                </SfCheckBox>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="lb">Địa Chỉ</label>
+                                                <SfTextBox TValue="string" @bind-Value="objModel.dia_chi_mnoi"></SfTextBox>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="lb">Mã - Tên Đường</label>
+                                                <CboDuong @bind-Value="objModel.ms_duong" Width="100%" PopupWidth="100%"></CboDuong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="lb">Điện Thoại</label>
+                                                <SfTextBox TValue="string" @bind-Value="objModel.dien_thoai"></SfTextBox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="lb">Đường</label>
+                                                <SfTextBox TValue="string" @bind-Value="objModel.ten_duong"></SfTextBox>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="lb">Phường</label>
+                                                @* <SfTextBox TValue="string" @bind-Value="objModel.ten_phuong"></SfTextBox> *@
+                                                <CboPhuong @bind-Value="objModel.ms_phuong" Width="100%" PopupWidth="100%"></CboPhuong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="lb">Loại Điểm Dùng</label>
+                                                <SfTextBox TValue="string" @bind-Value="objModel.ten_loai_mn"></SfTextBox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <label class="lb">Tuyến</label>
+                                                <CboTuyenDoc @bind-Value="objModel.ms_tuyen" Width="100%" PopupWidth="100%"></CboTuyenDoc>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="lb">Số thứ tự</label>
+                                                @{
+                                                    if (objModel.stt_lo_trinh == null || objModel.stt_lo_trinh == 0)
+                                                    {
+                                                        <SfNumericTextBox TValue="int" @bind-Value="objModel.stt_lo_trinh"
+                                                                          ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                                          CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <SfNumericTextBox TValue="int" @bind-Value="objModel.max_stt"
+                                                                          ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                                          CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                                    }
+                                                }
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="lb">ĐH Khối</label>
+                                                <CboDh_Khoi @bind-Value="objModel.ms_dhk" Width="100%" PopupWidth="100%"></CboDh_Khoi>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="lb">Hình thức lắp đặt</label>
+                                                <CboHTLapDat @bind-Value="objModel.ms_ht_ld" Width="100%" PopupWidth="100%"></CboHTLapDat>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <br />
+                                <div style="font-weight:bold">Thông tin tình trạng</div>
+                                <div class="panel panel-default" style="border: 2px solid #EEEEEE">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="lb">Loại điểm dùng</label>
+                                                <CbLoaiMoiNoi @bind-Value="objModel.ms_loai_mn" Width="100%" PopupWidth="100%"></CbLoaiMoiNoi>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="lb">Tình Trạng điểm dùng</label>
+                                                <CboTTrang_DD @bind-Value="objModel.ms_tt_dd" Width="100%" PopupWidth="100%"></CboTTrang_DD>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="lb">Tình Trạng đồng hồ</label>
+                                                <CboTTrang_DH_DD @bind-Value="objModel.ms_ttrang" Width="100%" PopupWidth="100%"></CboTTrang_DH_DD>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </ContentTemplate>
+                    </TabItem>
+                    <TabItem>
+                        <HeaderTemplate>Mục đích sử dụng</HeaderTemplate>
+                        <ContentTemplate>
+                            <div style="font-weight:bold">Thông tin điểm dùng</div>
+                            <div class="panel panel-default" style="border: 2px solid #EEEEEE">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="lb">Mã Điểm Dùng</label>
+                                            <SfNumericTextBox TValue="int" @bind-Value="objModel.ms_mnoi" Enabled="false"
+                                                              ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                              CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="lb">Người Đại Diện</label>
+                                            <SfTextBox TValue="string" @bind-Value="objModel.nguoi_thue" Width="100%" PopupWidth="100%"></SfTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="lb">Loại điểm dùng</label>
+                                            <CbLoaiMoiNoi @bind-Value="objModel.ms_loai_mn" Width="100%" PopupWidth="100%"></CbLoaiMoiNoi>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div style="font-weight:bold">Điều khoản tính hoá đơn</div>
+                            <div class="panel panel-default" style="border: 2px solid #EEEEEE">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="lb">Số người</label>
+                                            <SfNumericTextBox TValue="int?" @bind-Value="objModel.so_nguoi_o" Enabled="false"
+                                                              ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                              CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="lb">Số người</label>
+                                            <SfNumericTextBox TValue="int?" @bind-Value="objModel.so_nguoi_o" Enabled="false"
+                                                              ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                              CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="lb">Cách tính ĐM</label>
+                                            <SfNumericTextBox TValue="int?" @bind-Value="objModel.ms_cach_tinh" Enabled="false"
+                                                              ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                              CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="lb">Số hộ</label>
+                                            <SfNumericTextBox TValue="int?" @bind-Value="objModel.so_ho" Enabled="false"
+                                                              ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                              CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="lb">Tiêu thụ tối thiểu</label>
+                                            <SfNumericTextBox TValue="int?"  Enabled="false"
+                                                              ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                              CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="lb">Chọn công ty</label>
+                                            <SfTextBox TValue="string" Width="100%" PopupWidth="100%"></SfTextBox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="form-group">
+                                                <label></label>
+                                                <SfCheckBox Label="Tính luỹ kế" style="color:red" @bind-Checked="objModel.tinh_luy_ke" ShowClearButton="true">
+                                                </SfCheckBox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label></label>
+                                            <SfCheckBox Label="Tính DVTN" style="color:red" @bind-Checked="objModel.tinh_ptn" ShowClearButton="true">
+                                            </SfCheckBox>
+                                        </div>
+                                    </div>                                   
+                                </div>
+                            </div>
+                            <div style="font-weight:bold">Thông tin sử dụng</div>
+                            <div class="panel panel-default" style="border: 2px solid #EEEEEE">
+
+                            </div>
+                        </ContentTemplate>
+                    </TabItem>
+
+                </TabItems>
+
+            </SfTab>
+
+        </Content>
+        <FooterTemplate>
+            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onSave">Lưu</SfButton>
+            <SfButton CssClass="e-flat e-danger" IconCss="icon-cross" OnClick="onClose">Đóng</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogEvents Closed="@(()=> { OnLuu.Invoke(isDaCapNhatDuLieu); })"></DialogEvents>
+</SfDialog>

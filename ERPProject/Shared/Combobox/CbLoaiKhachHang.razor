@@ -1,0 +1,44 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc.PhanLoaiDoiTuong;
+@using DAO.Models.DanhMuc.PhanLoaiDoiTuong;
+@using Syncfusion.Blazor.DropDowns;
+
+<SfDropDownList Placeholder="Chọn..." @ref="cb" @bind-Value="@Value" TValue="int" Width="@Width" PopupWidth="@PopupWidth"
+                TItem="@loai_k_hang"
+                AllowFiltering="true" FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="ten_loai_kh" Value="ms_loai_kh"></DropDownListFieldSettings>
+    <DropDownListEvents TValue="int" TItem="@loai_k_hang" ValueChange="ValueChange"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int, loai_k_hang> cb;
+    private List<loai_k_hang> Data = new List<loai_k_hang>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int Value { get; set; }
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, loai_k_hang> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+        Data = loai_k_hangService.GetToComBo().Data;
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+}

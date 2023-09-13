@@ -1,0 +1,83 @@
+﻿@page "/ds_nhom"
+@using DAO.Models.PhanQuyen
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Grids
+@inherits ds_nhomquyen_pageBase
+
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+
+<BodyCard>
+    <SfToolbar OverflowMode="OverflowMode.Scrollable">
+        <ToolbarItems>
+           
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm Nhóm Quyền</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-floppy-disk" >Lưu Lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Input">
+                <Template>
+                    <SfTextBox Placeholder="Tìm kiếm" ValueChange="onTimKiem" ShowClearButton="true">
+                    </SfTextBox>
+                </Template>
+            </ToolbarItem>
+
+        </ToolbarItems>
+    </SfToolbar>
+    <SfGrid id="gdv" 
+        DataSource="@list_ds_nhomquyen" 
+        AllowReordering="true" 
+        Width="100%" 
+        GridLines="GridLine.Both" 
+        AllowResizing="true" 
+        AllowFiltering="true">
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="70">
+                <Template>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as ds_nhomquyen).nhomquyen_id))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as ds_nhomquyen).nhomquyen_id))"></SfButton>
+                </Template>
+            </GridColumn>
+            <GridColumn Field="nhomquyen_id" 
+                        IsPrimaryKey="true"
+                        HeaderText="Mã Nhóm" 
+                        TextAlign="TextAlign.Left" 
+                        Width="40">
+
+            </GridColumn>  
+            <GridColumn Field="nhomquyen_name"
+                        HeaderText="Tên Nhóm Quyền" 
+                        TextAlign="TextAlign.Left" 
+                        Width="120">
+
+            </GridColumn>  
+            <GridColumn Field="chuthich"
+                        HeaderText="Chú Thích" 
+                        TextAlign="TextAlign.Left" 
+                        Width="120">
+
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</BodyCard>
+@*Tao dialog cap nhat*@
+<Ds_NhomQuyen_CapNhat @ref="fCapNhat" OnLuu="XacNhanLuu"></Ds_NhomQuyen_CapNhat>
+<FormXacNhan @ref="frmXacNhan"> </FormXacNhan>
+

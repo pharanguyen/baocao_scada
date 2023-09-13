@@ -1,0 +1,108 @@
+﻿@using DAO.Models.PhanQuyen
+@using ERPProject.Shared.Combobox
+@inherits Ds_ThanhVien_PhanQuyenChiTietBase
+
+<style type="text/css">
+    #gdvNS > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+
+<SfDialog @bind-Visible="isShow" IsModal="true" AllowDragging="false" Width="800" ShowCloseIcon="true" ZIndex="101">
+    <DialogTemplates>
+        <Header>
+            <h3> @TieuDe</h3>
+        </Header>
+         <Content>
+            <SfGrid ID=gdvNS DataSource="@listdsquyen" AllowResizing="true" EnableStickyHeader="true" ShowColumnChooser="true" Width="100%">
+                 <GridColumns>
+                        <GridColumn  Field="dsquyen_id" HeaderText="ID" Visible = "false"  HeaderTextAlign="@TextAlign.Center" TextAlign="@TextAlign.Center">
+                        </GridColumn>
+                        <GridColumn AutoFit Field=dsquyen_name HeaderText="Danh Sách Quyền" Visible="true" HeaderTextAlign="@TextAlign.Left">
+                            <Template>
+                                @{
+                                    var m = (context as prc_ds_quyen_by_nhomquyenlist);
+                                    int k = glb.g_CapNode(m.dsquyen_id.ToString(), "22222");
+                                    if (k == 1)
+                                    {
+                                        <span>@m.dsquyen_name</span>
+                                    }
+                                    else if (k == 2)
+                                    {
+                                        <span>&nbsp; &nbsp; &nbsp; @m.dsquyen_name</span>
+
+                                    }
+                                    else if (k == 3)
+                                    {
+                                        <span>&nbsp; &nbsp; &nbsp; </span>
+                                        <span>&nbsp; &nbsp; &nbsp;@m.dsquyen_name </span>
+                                    }
+                                    else if (k == 4)
+                                    {
+                                        <span>&nbsp; &nbsp; &nbsp; </span>
+                                        <span>&nbsp; &nbsp; &nbsp; </span>
+                                        <span>&nbsp; &nbsp; &nbsp;@m.dsquyen_name </span>
+                                    }
+
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Xem"
+                                    TextAlign="@TextAlign.Center"
+                                    >
+                                    <Template>
+                                        @{
+                                            var temp = (context as prc_ds_quyen_by_nhomquyenlist);
+                                            <SfCheckBox @bind-Checked="temp.Xem" @onchange="@(()=> onChange((context as prc_ds_quyen_by_nhomquyenlist)))"></SfCheckBox>
+                                        }
+                                    </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Thêm"
+                                    TextAlign="@TextAlign.Center">
+                                    <Template>
+                                        @{
+                                            var temp = (context as prc_ds_quyen_by_nhomquyenlist);
+                                            <SfCheckBox @bind-Checked="temp.them"></SfCheckBox>
+                                        }
+                                    </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Sửa"
+                                    TextAlign="@TextAlign.Center"
+                                    >
+                            <Template>
+                                @{
+                                    var temp = (context as prc_ds_quyen_by_nhomquyenlist);
+                                    <SfCheckBox @bind-Checked="temp.sua"></SfCheckBox>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Xóa"
+                                    TextAlign="@TextAlign.Center"
+                                    >
+                            <Template>
+                                @{
+                                    var temp = (context as prc_ds_quyen_by_nhomquyenlist);
+                                    <SfCheckBox @bind-Checked="temp.xoa"></SfCheckBox>
+                                }
+                            </Template>
+                        </GridColumn>
+                    
+
+                 </GridColumns>
+                
+             </SfGrid>
+
+         </Content>
+         <FooterTemplate>
+            <CboDanhMuc @ref="cboDanhMuc" Width="100%"></CboDanhMuc>
+            <SfCheckBox @bind-Checked="@chkXem" @onchange="ValueChanged">Xem</SfCheckBox>
+            <SfCheckBox @bind-Checked="chkThem" Disabled="@isDisableCheckbox">Thêm</SfCheckBox>
+            <SfCheckBox @bind-Checked="chkSua" Disabled="@isDisableCheckbox">Sửa</SfCheckBox>
+            <SfCheckBox @bind-Checked="chkXoa" Disabled="@isDisableCheckbox">Xóa</SfCheckBox>
+            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onThucHien">Thực Hiện</SfButton>
+            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onSave">Lưu</SfButton>
+            <SfButton CssClass="e-flat e-danger" IconCss="icon-cross" OnClick="onClose">Đóng</SfButton>
+         </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+

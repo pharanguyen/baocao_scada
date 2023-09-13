@@ -1,0 +1,80 @@
+﻿@page "/ds_thanhvien"
+@using DAO.Models.PhanQuyen
+@using Syncfusion.Blazor.Grids
+
+@inherits Ds_ThanhVienPageBase
+
+<style type="text/css">
+    #gdvNS > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+<BodyCard>
+
+    <SfToolbar OverflowMode="OverflowMode.Scrollable">
+        <ToolbarItems>
+           
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton Disabled="@disableBtnThemtv" CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm thành viên</SfButton>
+                </Template>
+            </ToolbarItem>
+
+            <ToolbarItem Type="ItemType.Input">
+                <Template>
+                    <SfTextBox Placeholder="Tìm kiếm" ValueChange="onTimKiem" ShowClearButton="true">
+                    </SfTextBox>
+                </Template>
+            </ToolbarItem>
+
+        </ToolbarItems>
+    </SfToolbar>
+    <SfGrid ID ="gdvNS" DataSource="@GridData" @ref="gdv" Width="100%" GridLines="GridLine.Both">
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="80">
+                <Template>
+                    <SfButton Disabled="@disableBtnSuatv" IsPrimary="true" CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_ThanhVien_DanhSach).thanhvien_id))"></SfButton>
+                    <SfButton Disabled="@disableBtnXoatv" CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_ThanhVien_DanhSach).thanhvien_id))"></SfButton>
+                    <SfButton  Disabled="@disableBtnCapQuyentv" CssClass="e-small" IconCss="icon-plus2" @onclick="@(()=> onCapQuyen((context as prc_ThanhVien_DanhSach).thanhvien_id,(int)(context as prc_ThanhVien_DanhSach).nhomquyen_id))"></SfButton>
+                    
+                </Template>
+            </GridColumn>
+            <GridColumn Field="thanhvien_name" HeaderText="Họ tên" HeaderTextAlign="@TextAlign.Center" Width="160">
+                <Template>
+                    @{
+                        var ns = (context as prc_ThanhVien_DanhSach);
+                        <span style="color:navy; font-weight:bold">@ns.thanhvien_name</span>
+                        <br />
+                        <span>@ns.thanhvien_id</span>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn Field="donvi" HeaderText="Đơn Vị" HeaderTextAlign="@TextAlign.Center" Width="150">
+            </GridColumn>  
+            <GridColumn Field="nhomquyen_name" HeaderText="Đơn Vị" HeaderTextAlign="@TextAlign.Center" Width="150">
+            </GridColumn>
+            <GridColumn Field="ten_chinhanh" HeaderText="Chi Nhánh" HeaderTextAlign="@TextAlign.Center" Width="150">
+            </GridColumn>
+            <GridColumn Field="ten_tql" HeaderText="Tổ Quản Lý" HeaderTextAlign="@TextAlign.Center" Width="150">
+            </GridColumn>
+            <GridColumn Field="tendangnhap" HeaderText="Tên Đăng Nhập" HeaderTextAlign="@TextAlign.Center" Width="150">
+            </GridColumn>
+            <GridColumn Field="chuthich" HeaderText="Chú Thích" HeaderTextAlign="@TextAlign.Center" Width="150">
+            </GridColumn>
+        </GridColumns>
+        <GridEvents TValue="prc_ThanhVien_DanhSach"></GridEvents>
+    
+    </SfGrid>
+</BodyCard>
+<Ds_ThanhVienPage_CapNhat @ref="fCapNhat"></Ds_ThanhVienPage_CapNhat>
+<Ds_ThanhVien_PhanQuyenChiTiet @ref="fPhanQuyen"></Ds_ThanhVien_PhanQuyenChiTiet>
+<FormXacNhan @ref="frmXacNhan"> </FormXacNhan>
+     

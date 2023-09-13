@@ -1,0 +1,17 @@
+﻿.btn-primary {
+    background-color: #00676B;
+}
+
+    .btn-primary:hover {
+        background-color: #015558;
+    }
+
+.form-group {
+    margin-bottom: 0.35rem;
+}
+
+.table-xs td, .table-xs th {
+    padding: .25rem .25rem;
+}
+
+

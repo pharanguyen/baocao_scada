@@ -1,0 +1,101 @@
+﻿@page "/tuyen_doc"
+@using DAO.Models.DanhMuc
+@inherits Tuyen_DocBase
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
+                </Template>
+            </ToolbarItem>
+
+        </ToolbarItems>
+    </SfToolbar>
+
+    <SfGrid id="gdv"
+            DataSource="@listPrcTuyenDoc"
+            AllowReordering="true"
+            Width="100%"
+            @ref="gdv"
+            AllowExcelExport="true"    
+            GridLines="GridLine.Both"
+            AllowResizing="true"
+            AllowFiltering="true"
+            AllowPaging="true">
+        <GridPageSettings PageSize="100"></GridPageSettings>
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
+        @*cho phép lựa chọn nhiều dòng*@
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+                <Template>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_tuyen_doc).ms_tuyen))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_tuyen_doc).ms_tuyen))"></SfButton>
+                </Template>
+            </GridColumn>
+            <GridColumn Field="ms_tuyen"
+                        IsPrimaryKey="true"
+                        HeaderText="Mã Tuyến"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="30">
+
+            </GridColumn>
+            <GridColumn Field="ten_tql"
+                        HeaderText="Tên TQL"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="80"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="mo_ta_tuyen"
+                        HeaderText="Mô tả"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="100">
+
+            </GridColumn>
+            <GridColumn Field="ten_bd"
+                        HeaderText="Tên Biên Đọc"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="70">
+
+            </GridColumn>
+            <GridColumn Field="mo_ta_cky"
+                        HeaderText="Chu Kỳ"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="30">
+
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</BodyCard>
+<Tuyen_Doc_CapNhat @ref="fCapNhat" OnLuu="XacNhanLuu"></Tuyen_Doc_CapNhat>
+<FormXacNhan @ref="frmXacNhan"> </FormXacNhan>
+ 

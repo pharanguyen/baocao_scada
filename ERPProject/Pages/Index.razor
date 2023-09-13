@@ -1,0 +1,32 @@
+﻿@page "/"
+@using System.Security.Cryptography.Xml
+@using System.Xml
+@using ERPProject.Pages.HeThong
+@inject IJSRuntime JSRuntime;
+<Dashboard1></Dashboard1>
+@code {
+    [Inject]
+    Services.AppDataScoped AppData { get; set; }
+   // private string chungThuSo = "Chứng thư số đã chọn: ";
+    // [Inject]
+    // Services.ZaloZnsService znsService { get; set; }
+    //[Inject]
+    //protected Services.ToastService toastService { get; set; }
+
+    //protected void getChungThuSo()
+    //{
+    //   MsUtils.X509Extensions.getX509Certificate();
+    //}
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("setTitle", "Trang chủ");
+            AppData.AddTieuDe("Trang chủ", "");
+            
+        }
+
+    }
+}

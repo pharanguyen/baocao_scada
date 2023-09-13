@@ -1,0 +1,100 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc.DongHo;
+@using DAO.Models.DanhMuc.DongHo;
+@using Syncfusion.Blazor.DropDowns;
+<style>
+    .column-width {
+        width: 75px;
+    }
+</style>
+<SfDropDownList Placeholder="Chọn..." @ref="cb"
+                @bind-Value="@Value" TValue="int?"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                TItem="@dh_khoi"
+                AllowFiltering="true"
+                FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                CssClass="e-multi-column"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="ten_dhk" Value="ms_dhk"></DropDownListFieldSettings>
+    <DropDownListTemplates TItem="@dh_khoi">
+        <HeaderTemplate>
+            <table>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên ĐHK</th>
+                    <th>Nhóm</th>
+                </tr>
+            </table>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="e-text-center column-width">
+                            @((context as dh_khoi).ms_dhk)
+                        </td>
+                        <td>@((context as dh_khoi).ten_dhk)</td>
+                        <td>@((context as dh_khoi).ms_nhom)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </ItemTemplate>
+        <ValueTemplate>
+            <span>@((context as dh_khoi).ms_dhk) - @((context as dh_khoi).ten_dhk) </span>
+        </ValueTemplate>
+    </DropDownListTemplates>
+    <DropDownListEvents TValue="int?" TItem="@DAO.Models.DanhMuc.DongHo.dh_khoi" ValueChange="ValueChange" Filtering="onFilter"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int?, dh_khoi> cb;
+    private List<dh_khoi> Data = new List<dh_khoi>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int? Value { get; set; }
+    [Parameter]
+    public EventCallback<int?> ValueChanged { get; set; }
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int?, DAO.Models.DanhMuc.DongHo.dh_khoi> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+        Data = dh_khoiService.GetToComBo().Data;
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+    [Parameter]
+    public EventCallback<Syncfusion.Blazor.DropDowns.FilteringEventArgs> Filtering { get; set; }
+
+    public async void onFilter(Syncfusion.Blazor.DropDowns.FilteringEventArgs args)
+    {
+        args.PreventDefaultAction = true;
+        if (args.Text == null || args.Text.Trim() == "")
+        {
+            Data = dh_khoiService.GetToComBo().Data;
+        }
+        else
+        {
+            Data = dh_khoiService.GetByKeyword(args.Text).Data;
+        }
+        await cb.FilterAsync(Data);
+        StateHasChanged();
+    }
+
+
+
+}

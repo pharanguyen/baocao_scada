@@ -1,0 +1,113 @@
+﻿@using DAO.Models
+@using ERPProject.Shared.Combobox
+@inherits Ds_ThanhVienPage_CapNhatBase
+<style type="text/css">
+    .e-upload {
+        border: none;
+    }
+
+        .e-upload e-control-wrapper e-lib e-keyboard {
+            border: none;
+        }
+
+        .e-upload .e-file-select-wrap, .e-bigger.e-small .e-upload .e-file-select-wrap {
+            padding: 5px;
+            height: 0px;
+        }
+
+    .e-file-drop, .e-upload-files {
+        display: none;
+    }
+
+    .btXoaAnh {
+        margin-top: 5px;
+    }
+
+    .chkConLamViec {
+        padding-top: 26px;
+    }
+</style>
+
+<SfDialog @bind-Visible="isShow" IsModal="true" AllowDragging="false" Width="800" ShowCloseIcon="true" ZIndex="101">
+    <DialogTemplates>
+        <Header>
+            <h3> @TieuDe</h3>
+        </Header>
+        <Content>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Họ tên</label>
+                            <SfTextBox @bind-Value="objModel.thanhvien_name" ShowClearButton="true">
+                            </SfTextBox>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Đơn Vị</label>
+                            <SfTextBox @bind-Value="objModel.donvi" ShowClearButton="true">
+                            </SfTextBox>
+                        </div>
+                    </div>
+                   <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Chi Nhánh</label>
+                            <CbChiNhanh @bind-Value="objModel.ms_chinhanh" Width="100%" PopupWidth="100%"></CbChiNhanh>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Tổ Quản lý</label>
+                             <CbToQuanLy @bind-Value="objModel.ms_tql" Width="100%" PopupWidth="100%"></CbToQuanLy>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Nhóm quyền</label>
+                            <CbNhomQuyen @bind-Value="objModel.nhomquyen_id" Width="100%" PopupWidth="100%"></CbNhomQuyen>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Tên truy cập</label>
+                            <SfTextBox @bind-Value="objModel.tendangnhap" ShowClearButton="true">
+                            </SfTextBox>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Đơn vị</label>
+                            <SfTextBox @bind-Value="objModel.donvi" ShowClearButton="true" Readonly="true" Type="InputType.Password">
+                            </SfTextBox>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Chú thích</label>
+                            <SfTextBox @bind-Value="objModel.chuthich" ShowClearButton="true" >
+                            </SfTextBox>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Phụ trách chính CNSL</label>
+                            <SfCheckBox @bind-Checked="objModel.phutrachchinh" ShowClearButton="true">
+                            </SfCheckBox>
+                        </div>
+                    </div>
+                  
+                </div>
+            </div>
+
+        </Content>
+        <FooterTemplate>
+            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onSave">Lưu</SfButton>
+            <SfButton CssClass="e-flat e-danger" IconCss="icon-cross" OnClick="onClose">Đóng</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

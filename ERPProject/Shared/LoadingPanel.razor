@@ -1,0 +1,34 @@
+﻿@if (HienThi)
+{
+    @*<div id="showloading"><span class="spinner-border" role="status"></span></div>*@
+    <div id="showloading">
+        <img src="/assets/imgs/loading.gif" width="100px">
+    </div>
+}
+@code {
+    [Parameter]
+    public bool HienThi { get; set; } = false;
+    private string NoiDung = "";
+    public void show(string _noiDung = "")
+    {
+        if (HienThi) return;
+        if (HienThi == false)
+        {
+            HienThi = true;
+            NoiDung = _noiDung;
+            StateHasChanged();
+        }
+    }
+
+    public async void hide(int delay = 0)
+    {
+        if (!HienThi) return;
+        if (delay>0)
+        {
+            await Task.Delay(delay);
+        }
+        HienThi = false;
+        StateHasChanged();
+    }
+
+}

@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERPProject", "ERPProject\ERPProject.csproj", "{B28141F2-5359-43B0-A58F-8A966D0DFA72}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{7D7F8A8C-5FBE-4636-A6F4-0DECEBE1AAE8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAO", "DAO\DAO.csproj", "{9F437C8E-E52B-44C2-ACEA-FA9E116ACAC7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsUtils", "MsUtils\MsUtils.csproj", "{17C5BCF5-6C4F-4ABC-B0A7-74DA08EC446C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B28141F2-5359-43B0-A58F-8A966D0DFA72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B28141F2-5359-43B0-A58F-8A966D0DFA72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B28141F2-5359-43B0-A58F-8A966D0DFA72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B28141F2-5359-43B0-A58F-8A966D0DFA72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F437C8E-E52B-44C2-ACEA-FA9E116ACAC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F437C8E-E52B-44C2-ACEA-FA9E116ACAC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F437C8E-E52B-44C2-ACEA-FA9E116ACAC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F437C8E-E52B-44C2-ACEA-FA9E116ACAC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17C5BCF5-6C4F-4ABC-B0A7-74DA08EC446C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17C5BCF5-6C4F-4ABC-B0A7-74DA08EC446C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17C5BCF5-6C4F-4ABC-B0A7-74DA08EC446C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17C5BCF5-6C4F-4ABC-B0A7-74DA08EC446C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9F437C8E-E52B-44C2-ACEA-FA9E116ACAC7} = {7D7F8A8C-5FBE-4636-A6F4-0DECEBE1AAE8}
+		{17C5BCF5-6C4F-4ABC-B0A7-74DA08EC446C} = {7D7F8A8C-5FBE-4636-A6F4-0DECEBE1AAE8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EEAAA39D-6264-4D1C-ABF6-1FFE38ED6230}
+	EndGlobalSection
+EndGlobal

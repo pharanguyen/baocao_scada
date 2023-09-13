@@ -1,0 +1,44 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.PhanQuyen;
+@using Syncfusion.Blazor.DropDowns;
+@using DAO.Services.PhanQuyen;
+
+<SfDropDownList Placeholder="Chọn..." @ref="cb" @bind-Value="@Value" TValue="int?" Width="@Width" PopupWidth="@PopupWidth"
+                TItem="@DAO.Models.PhanQuyen.ds_nhomquyen"
+                AllowFiltering="true" FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="nhomquyen_name" Value="nhomquyen_id"></DropDownListFieldSettings>
+    <DropDownListEvents TValue="int?" TItem="@DAO.Models.PhanQuyen.ds_nhomquyen" ValueChange="ValueChange"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int?, DAO.Models.PhanQuyen.ds_nhomquyen> cb;
+    private List<DAO.Models.PhanQuyen.ds_nhomquyen> Data = new List<DAO.Models.PhanQuyen.ds_nhomquyen>();
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int? Value { get; set; }
+    [Parameter]
+    public EventCallback<int?> ValueChanged { get; set; }
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int?, DAO.Models.PhanQuyen.ds_nhomquyen> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+    protected override void OnInitialized()
+    {
+        Data = ds_nhomquyenService.GetAll().Data;
+    }
+    public void setFocus()
+    {
+        cb.FocusIn();
+    }
+}

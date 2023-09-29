@@ -1,0 +1,109 @@
+﻿@page "/Dm_ThongSo"
+@using DAO.Models.DanhMuc
+@inherits Dm_ThongSoBase
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+
+    <SfGrid id="gdv"
+            DataSource="@listBienDoc"
+            AllowReordering="true"
+            Width="100%"
+            @ref="gdv"
+            GridLines="GridLine.Both"
+            AllowResizing="true"
+            AllowExcelExport="true"
+            AllowFiltering="true">
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+                <Template>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as DAO.Models.DanhMuc.Dm_ThongSo).Id))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as DAO.Models.DanhMuc.Dm_ThongSo).Id))"></SfButton>
+                </Template>
+            </GridColumn>
+            <GridColumn Field="Id"
+                        IsPrimaryKey="true"
+                        HeaderText="Id"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120">
+
+            </GridColumn>
+            <GridColumn Field="Ten"
+                        HeaderText="Tên thông số"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="Ma"
+                        HeaderText="Mã"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="Don_Vi"
+                        HeaderText="Đơn vị"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+
+            <GridColumn Field="Cong_Tong" HeaderText="Cộng tổng" TextAlign="TextAlign.Center" Width="120">
+                <Template>
+                    @{
+                        var Cong_Tong = (context as DAO.Models.DanhMuc.Dm_ThongSo).Cong_Tong as bool?;
+                        var isChecked = Cong_Tong.HasValue && Cong_Tong.Value;
+                    }
+                    <input type="checkbox" @bind="isChecked" />
+                </Template>
+            </GridColumn>
+
+
+            <GridColumn Field="Stt"
+                        HeaderText="Thứ tự"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</BodyCard>
+<Dm_ThongSo_CapNhat @ref="fCapNhat" OnLuu="XacNhanLuu"></Dm_ThongSo_CapNhat>
+<FormXacNhan @ref="frmXacNhan"> </FormXacNhan>
+
+

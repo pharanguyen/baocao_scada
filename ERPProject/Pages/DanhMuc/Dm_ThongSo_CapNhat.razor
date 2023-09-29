@@ -1,0 +1,72 @@
+﻿@using DAO.Models.DanhMuc
+@inherits Dm_ThongSo_CapNhatBase
+
+<style type="text/css">
+    .e-upload {
+        border: none;
+    }
+
+        .e-upload e-control-wrapper e-lib e-keyboard {
+            border: none;
+        }
+
+        .e-upload .e-file-select-wrap, .e-bigger.e-small .e-upload .e-file-select-wrap {
+            padding: 5px;
+            height: 0px;
+        }
+
+    .e-file-drop, .e-upload-files {
+        display: none;
+    }
+</style>
+
+<SfDialog @bind-Visible="isShow" IsModal="true" ShowCloseIcon="true" Width="800" ZIndex="101">
+    <DialogTemplates>
+        <Header>
+            <h3><i class="@((isThemMoi)?"icon-plus2":"icon-pencil")">@TieuDe</i></h3>
+        </Header>
+        <Content>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Tên Thông số</label>
+                        <SfTextBox @bind-Value="objModel.Ten" ShowClearButton="true"></SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Mã</label>
+                        <SfTextBox @bind-Value="objModel.Ma" ShowClearButton="true"></SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Thứ tự</label>
+                        <SfNumericTextBox @bind-Value="objModel.Stt" ShowClearButton="true"></SfNumericTextBox>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Đơn vị</label>
+                        <SfTextBox @bind-Value="objModel.Don_Vi" ShowClearButton="true"></SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Cộng Tổng</label>
+                        <SfCheckBox @bind-Checked="objModel.Cong_Tong" ShowClearButton="true"></SfCheckBox>
+                    </div>
+                </div>
+
+            </div>
+        </Content>
+        <FooterTemplate>
+            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onSave">Lưu</SfButton>
+            <SfButton CssClass="e-flat e-danger" IconCss="icon-cross" OnClick="onClose">Đóng</SfButton>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogEvents Closed="@(()=> { OnLuu.Invoke(isDaCapNhatDuLieu); })"></DialogEvents>
+</SfDialog>
+
+
+

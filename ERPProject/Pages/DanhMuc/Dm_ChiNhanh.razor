@@ -1,0 +1,95 @@
+﻿@page "/Dm_ChiNhanh"
+@using DAO.Models.DanhMuc
+@inherits DmChiNhanhBase
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+
+    <SfGrid id="gdv"
+            DataSource="@listBienDoc"
+            AllowReordering="true"
+            Width="100%"
+            @ref="gdv"
+            GridLines="GridLine.Both"
+            AllowResizing="true"
+            AllowExcelExport="true"
+            AllowFiltering="true">
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+                <Template>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as DAO.Models.DanhMuc.Dm_ChiNhanh).Id))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as DAO.Models.DanhMuc.Dm_ChiNhanh).Id))"></SfButton>
+                </Template>
+            </GridColumn>
+            <GridColumn Field="Id"
+                        IsPrimaryKey="true"
+                        HeaderText="Id"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120">
+
+            </GridColumn>
+            <GridColumn Field="Ten"
+                        HeaderText="Tên"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="Ma"
+                        HeaderText="Mã"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="Dia_Chi"
+                        HeaderText="Địa chỉ"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="Stt"
+                        HeaderText="Stt"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</BodyCard>
+<Dm_ChiNhanh_CapNhat @ref="fCapNhat" OnLuu="XacNhanLuu"></Dm_ChiNhanh_CapNhat>
+<FormXacNhan @ref="frmXacNhan"> </FormXacNhan>

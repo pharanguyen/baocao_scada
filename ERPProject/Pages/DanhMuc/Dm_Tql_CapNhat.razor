@@ -30,27 +30,21 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Id</label>
-                        <SfNumericTextBox @bind-Value="objModel.Id" ShowClearButton="true"></SfNumericTextBox>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
                         <label>Tên TQL</label>
-                        <SfTextBox @bind-Value="objModel.TenTql" ShowClearButton="true"></SfTextBox>
+                        <SfTextBox @bind-Value="objModel.Ten" ShowClearButton="true"></SfTextBox>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Thuộc chi nhánh</label>
-                        <SfTextBox @bind-Value="objModel.TenChiNhanh" ShowClearButton="true"></SfTextBox>
+                        <SfNumericTextBox @bind-Value="objModel.Id_ChiNhanh" TValue="int" ShowClearButton="true"></SfNumericTextBox>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Mã tổ quản lí</label>
-                        <SfNumericTextBox @bind-Value="objModel.Ma" Width="100%" PopupWidth="100%"></SfNumericTextBox>
+                        <SfTextBox @bind-Value="objModel.Ma" Width="100%"></SfTextBox>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -62,7 +56,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Thứ tự</label>
-                        <SfNumericTextBox @bind-Value="objModel.Stt" ShowClearButton="true"></SfNumericTextBox>
+                        <SfNumericTextBox @bind-Value="objModel.Stt" TValue="int" ShowClearButton="true"></SfNumericTextBox>
                     </div>
                 </div>
 

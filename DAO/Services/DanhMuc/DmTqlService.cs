@@ -30,18 +30,18 @@ namespace DAO.Services.DanhMuc
             }
             catch (Exception ex) { return new ResultModel<List<Dm_Tql>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
-        public static ResultModel<prc_Tql> GetById(int Id)
+        public static ResultModel<Dm_Tql> GetById(int Id)
         {
             try
             {
                 var _db = new SqlHelper();
-                var _obj = _db.GetSingleEntityById<prc_Tql>(Id);
+                var _obj = _db.GetSingleEntityById<Dm_Tql>(Id);
                 if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
-                return new ResultModel<prc_Tql>() { Data = _obj };
+                return new ResultModel<Dm_Tql>() { Data = _obj };
             }
-            catch (Exception ex) { return new ResultModel<prc_Tql>() { isThanhCong = false, ThongBao = ex.Message }; }
+            catch (Exception ex) { return new ResultModel<Dm_Tql>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
-        public static ResultModel<int?> Add(prc_Tql entity)
+        public static ResultModel<int?> Add(Dm_Tql entity)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace DAO.Services.DanhMuc
             catch (Exception ex)
             { return new ResultModel<int?>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
-        public static ResultModel<int?> Update(prc_Tql entity)
+        public static ResultModel<int?> Update(Dm_Tql entity)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace DAO.Services.DanhMuc
                 var _db = new SqlHelper();
                 DynamicParameters p = new DynamicParameters();
                 p.Add("@keyWord", keyWord);
-                var _obj = _db.QueryProc<Dm_Tql>("prc_Tql_bykeyWord", p);
+                var _obj = _db.QueryProc<Dm_Tql>("Dm_Tql_bykeyWord", p);
                 if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
                 return new ResultModel<List<Dm_Tql>>() { Data = _obj.ToList() };
             }

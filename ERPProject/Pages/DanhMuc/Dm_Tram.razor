@@ -1,0 +1,121 @@
+﻿@page "/Dm_Tram"
+@using DAO.Models.DanhMuc
+@inherits Dm_TramBase
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+</style>
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm</SfButton>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+
+    <SfGrid id="gdv"
+            DataSource="@listTram"
+            AllowReordering="true"
+            Width="100%"
+           
+            AllowExcelExport="true"
+            GridLines="GridLine.Both"
+            AllowResizing="true"
+            AllowFiltering="true"
+            AllowPaging="true">
+        <GridPageSettings PageSize="100"></GridPageSettings>
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
+        @*cho phép lựa chọn nhiều dòng*@
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+                <Template>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_Tram).Id))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_Tram).Id))"></SfButton>
+                </Template>
+            </GridColumn>
+            <GridColumn Field="Id"
+                        IsPrimaryKey="true"
+                        HeaderText="STT"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30">
+
+            </GridColumn>
+            <GridColumn Field="TenTram"
+                        HeaderText="Tên trạm"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })">
+
+            </GridColumn>
+            <GridColumn Field="TenTql"
+                        HeaderText="Thuộc tổ quản lí"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30">
+
+            </GridColumn>
+            <GridColumn Field="Ma"
+                        HeaderText="Mã tram"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="30">
+
+            </GridColumn>
+            <GridColumn Field="Dia_Chi"
+                        HeaderText="Địa chỉ"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="30">
+
+            </GridColumn>
+            <GridColumn Field="Stt"
+                        HeaderText="Thứ tự"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="30">
+
+            </GridColumn>
+            <GridColumn Field="Toa_Do"
+                        HeaderText="Tọa độ"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        FilterSettings="@(new FilterSettings() { Operator = Operator.Contains })"
+                        Width="30">
+
+            </GridColumn>
+            <GridColumn Field="NhaMay_DuongOng" HeaderText="Tại nhà máy" TextAlign="TextAlign.Center" Width="20">
+                <Template>
+                    @{
+                        var NhaMay_DuongOng = (context as DAO.Models.DanhMuc.prc_Tram).NhaMay_DuongOng as bool?;
+                        var isChecked = NhaMay_DuongOng.HasValue && NhaMay_DuongOng.Value;
+                    }
+                    <input type="checkbox" @bind="isChecked" />
+                </Template>
+            </GridColumn>
+
+
+
+        </GridColumns>
+    </SfGrid>
+</BodyCard>
+<Dm_Tram_CapNhat @ref="fCapNhat" OnLuu="XacNhanLuu"></Dm_Tram_CapNhat>
+<FormXacNhan @ref="frmXacNhan"> </FormXacNhan>
+

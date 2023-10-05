@@ -14,7 +14,7 @@ namespace ERPProject.Pages.DanhMuc.KhachHang
         public bool isDaCapNhatDuLieu = false;
         public int selectedTabIndex = 0;
         [Parameter]
-        
+
         public Action<bool> OnLuu { get; set; }
         public int objID { get; set; }
         //khai báo hiển thị thông báo
@@ -144,14 +144,15 @@ namespace ERPProject.Pages.DanhMuc.KhachHang
                         }
                         else
                         {
-                            if(rsModelKH.Data != null) { 
+                            if (rsModelKH.Data != null)
+                            {
                                 mn.ms_kh = (int)rsModelKH.Data;
                                 await Task.Run(() => { rsModel = moi_noiService.Add(mn); });
                                 if (!rsModel.isThanhCong) throw new Exception(rsModel.ThongBao);
                                 toastService.ShowSuccess("Đã thêm điểm dùng [" + mn.nguoi_thue + "]!");
                                 isShow = false;
                             }
-                           
+
                         }
                     }
 

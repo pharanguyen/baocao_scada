@@ -5,6 +5,7 @@ using DAO.Services.DanhMuc.KhachHang;
 using DAO.Services.PhanQuyen;
 using ERPProject.Services;
 using ERPProject.Shared;
+using ERPProject.Shared.Combobox;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 
@@ -20,6 +21,7 @@ namespace ERPProject.Pages.DanhMuc.KhachHang
         [Inject]
         AppDataScoped AppData { get; set; }
         protected FormXacNhan frmXacNhan;
+        protected CboTuyenDoc cboTuyenDoc;
         [Inject]
         protected ToastService toastService { get; set; }
         [Inject]
@@ -96,19 +98,25 @@ namespace ERPProject.Pages.DanhMuc.KhachHang
         protected async void onTaiLai()
         {
 
-            AppData.loadingPanel.show();
-            var rsModel = new ResultModel<List<prc_khachhang_moinoi>>();
-            await Task.Run(() => { rsModel = moi_noiService.GetAll_prc_khach_hang_moinoi(); });
-            if (rsModel.isThanhCong)
+            if (cboTuyenDoc != null)
             {
-                listPrcKhachHangMoiNoi = rsModel.Data;
-                AppData.loadingPanel.hide();
-            }
-            else
-            {
-                AppData.loadingPanel.hide();
-                toastService.ShowDanger(rsModel.ThongBao);
-                return;
+                if (cboTuyenDoc.Value != null)
+                {
+                    AppData.loadingPanel.show();
+                    var rsModel = new ResultModel<List<prc_khachhang_moinoi>>();
+                    await Task.Run(() => { rsModel = moi_noiService.GetAll_prc_khach_hang_moinoi_by_ms_tuyen(cboTuyenDoc.Value); });
+                    if (rsModel.isThanhCong)
+                    {
+                        listPrcKhachHangMoiNoi = rsModel.Data;
+                        AppData.loadingPanel.hide();
+                    }
+                    else
+                    {
+                        AppData.loadingPanel.hide();
+                        toastService.ShowDanger(rsModel.ThongBao);
+                        return;
+                    }
+                }
             }
             StateHasChanged();
         }

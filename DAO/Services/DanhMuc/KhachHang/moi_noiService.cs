@@ -76,6 +76,19 @@ namespace DAO.Services.DanhMuc.KhachHang
             }
             catch (Exception ex) { return new ResultModel<List<prc_khachhang_moinoi>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
+        public static ResultModel<List<prc_khachhang_moinoi>> GetAll_prc_khach_hang_moinoi_by_ms_tuyen(int ms_tuyen)
+        {
+            try
+            {
+                var _db = new SqlHelper();
+                DynamicParameters p = new DynamicParameters();
+                p.Add("ms_tuyen", ms_tuyen);
+                var _obj = _db.QueryProc<prc_khachhang_moinoi>("prc_khach_hang_moinoi_by_ms_tuyen", p).ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prc_khachhang_moinoi>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prc_khachhang_moinoi>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
 
 
     }

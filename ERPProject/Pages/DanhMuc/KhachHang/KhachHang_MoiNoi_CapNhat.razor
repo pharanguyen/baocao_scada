@@ -38,7 +38,7 @@
             <h3><i class="@((isThemMoi)?"icon-plus2":"icon-pencil")">@TieuDe</i></h3>
         </Header>
         <Content>
-            <SfTab LoadOn="ContentLoad.Init" @bind-SelectedItem="selectedTabIndex" >
+            <SfTab LoadOn="ContentLoad.Init" @bind-SelectedItem="selectedTabIndex">
                 <TabItems>
                     <TabAnimationSettings>
                         <TabAnimationPrevious Effect="Syncfusion.Blazor.AnimationEffect.None"></TabAnimationPrevious>
@@ -207,15 +207,15 @@
                                                     if (objModel.stt_lo_trinh == null || objModel.stt_lo_trinh == 0)
                                                     {
                                                         <SfNumericTextBox TValue="int" @bind-Value="objModel.stt_lo_trinh"
-                                                                          ShowSpinButton="false" Format="###.##" EnableRtl="false"
-                                                                          CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                                                  ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                                  CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
                                                     }
                                                     else
                                                     {
 
                                                         <SfNumericTextBox TValue="int" @bind-Value="objModel.max_stt"
-                                                                          ShowSpinButton="false" Format="###.##" EnableRtl="false"
-                                                                          CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
+                                                                  ShowSpinButton="false" Format="###.##" EnableRtl="false"
+                                                                  CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
                                                     }
                                                 }
 
@@ -338,7 +338,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="lb">Tiêu thụ tối thiểu</label>
-                                            <SfNumericTextBox TValue="int?"  Enabled="false"
+                                            <SfNumericTextBox TValue="int?" Enabled="false"
                                                               ShowSpinButton="false" Format="###.##" EnableRtl="false"
                                                               CssClass="custom-class.e-control-wrapper .e-textbox"></SfNumericTextBox>
                                         </div>
@@ -366,12 +366,11 @@
                                             <SfCheckBox Label="Tính DVTN" style="color:red" @bind-Checked="objModel.tinh_ptn" ShowClearButton="true">
                                             </SfCheckBox>
                                         </div>
-                                    </div>                                   
+                                    </div>
                                 </div>
                             </div>
                             <div style="font-weight:bold">Thông tin sử dụng</div>
                             <div class="panel panel-default" style="border: 2px solid #EEEEEE">
-
                             </div>
                         </ContentTemplate>
                     </TabItem>

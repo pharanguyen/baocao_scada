@@ -21,12 +21,12 @@ namespace DAO.Services.DanhMuc
             }
             catch (Exception ex) { return new ResultModel<List<ThongSo_Tram>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
-        public static ResultModel<ThongSo_Tram> GetById(int ms_mnoi)
+        public static ResultModel<ThongSo_Tram> GetById(int Id)
         {
             try
             {
                 var _db = new SqlHelper();
-                var _obj = _db.GetSingleEntityById<ThongSo_Tram>(ms_mnoi);
+                var _obj = _db.GetSingleEntityById<ThongSo_Tram>(Id);
                 if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
                 return new ResultModel<ThongSo_Tram>() { Data = _obj };
             }
@@ -36,11 +36,10 @@ namespace DAO.Services.DanhMuc
         {
             try
             {
-                //var _db = new SqlHelper();
-                //string sql = "Insert into tuyen_doc(Id_ChiNhanh, ms_tql, ms_cky, mo_ta_tuyen, ms_bd) " +
-                //                "values (" + entity.ms_kh + "," + entity.dia_chi_kh + ", " + entity.dien_thoai + ", '" + entity.ms_thue + "', " + entity.so_tai_khoan + ")";
-                //DataTable dt1 = _db.ExecuteSQLDataTable(sql);
-                //if (dt1 == null) throw new Exception(_db.LoiNgoaiLe);
+                var _db = new SqlHelper();
+                var objID = _db.InsertEntity(entity);
+                entity.Id = (int)objID;
+                if (objID == null) throw new Exception(_db.LoiNgoaiLe);
                 return new ResultModel<int?>() { Data = 1 };
             }
             catch (Exception ex)

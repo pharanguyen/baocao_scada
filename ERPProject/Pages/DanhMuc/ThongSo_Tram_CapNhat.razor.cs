@@ -1,12 +1,11 @@
-﻿using DAO.Models.CommonModels;
-using DAO.Models.DanhMuc;
-using DAO.Services.DanhMuc;
+﻿using Microsoft.AspNetCore.Components;
 using ERPProject.Services;
-using Microsoft.AspNetCore.Components;
+using DAO.Models.CommonModels;
+using DAO.Services.DanhMuc;
 
 namespace ERPProject.Pages.DanhMuc
 {
-    public class To_Quan_Ly_CapNhatBase : ComponentBase
+    public partial class ThongSo_Tram_CapNhatBase:ComponentBase
     {
         public bool isShow = false;
         public bool isThemMoi = false;
@@ -19,13 +18,13 @@ namespace ERPProject.Pages.DanhMuc
         [Inject]
         protected ToastService toastService { get; set; }
 
-        public to_quan_ly objModel = new to_quan_ly();
+        public DAO.Models.DanhMuc.ThongSo_Tram objModel = new DAO.Models.DanhMuc.ThongSo_Tram();
         public void Show(int _id)
         {
             objID = _id;
             if (!isThemMoi && objID != 0)
             {
-                var rsModel = to_quan_lyService.GetById(_id);
+                var rsModel = ThongSoTramService.GetById(_id);
                 if (rsModel.isThanhCong) objModel = rsModel.Data;
                 else
                 {
@@ -35,14 +34,15 @@ namespace ERPProject.Pages.DanhMuc
             }
             else
             {
-                objModel = new to_quan_ly();
+                objModel = new DAO.Models.DanhMuc.ThongSo_Tram();
             }
             isShow = true;
+            isDaCapNhatDuLieu = true;
             StateHasChanged();
         }
         protected async void onSave()
         {
-            if (objModel.ten_tql == null)
+            if (objModel.Id_Tram == null)
             {
                 toastService.ShowWarning("Chưa nhập tên chi nhánh !");
                 // tbHoTen.FocusIn();
@@ -53,21 +53,21 @@ namespace ERPProject.Pages.DanhMuc
                 if (objID == 0)
                 {
                     var rsModel = new ResultModel<int?>();
-                    await Task.Run(() => { rsModel = to_quan_lyService.Add(objModel); });
+                    await Task.Run(() => { rsModel = ThongSoTramService.Add(objModel); });
                     if (!rsModel.isThanhCong) throw new Exception(rsModel.ThongBao);
-                    toastService.ShowSuccess("Đã thêm Tổ Quản Lý!");
+                    toastService.ShowSuccess("Đã thêm chi nhánh thành công!");
+                    isDaCapNhatDuLieu = true;
                     isShow = false;
                 }
                 else
                 {
                     var rsModel = new ResultModel<int?>();
-                    await Task.Run(() => { rsModel = to_quan_lyService.Update(objModel); });
+                    await Task.Run(() => { rsModel = ThongSoTramService.Update(objModel); });
                     if (!rsModel.isThanhCong) throw new Exception(rsModel.ThongBao);
                     toastService.ShowSuccess("Đã cập nhật!");
                     isDaCapNhatDuLieu = true;
                     isShow = false;
                 }
-                
             }
             catch (Exception ex)
             {
@@ -80,7 +80,9 @@ namespace ERPProject.Pages.DanhMuc
         {
             isShow = false;
             StateHasChanged();
-            
         }
+
+
     }
+
 }

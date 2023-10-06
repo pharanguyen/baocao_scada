@@ -34,10 +34,10 @@
                         <SfTextBox @bind-Value="objModel.Ten" ShowClearButton="true"></SfTextBox>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label>Thuộc tổ quản lí</label>
-                        <SfNumericTextBox @bind-Value="objModel.Id_Tql" TValue="int" ShowClearButton="true"></SfNumericTextBox>
+                        <CbTql @bind-Value="objModel.Id_Tql" Width="100%" PopupWidth="100%"></CbTql>
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Thứ tự</label>
-                        <SfNumericTextBox @bind-Value="objModel.Stt" TValue="int" ShowClearButton="true"></SfNumericTextBox>
+                        <SfNumericTextBox @bind-Value="objModel.Stt" TValue="int" ShowSpinButton="false" ShowClearButton="true"></SfNumericTextBox>
                     </div>
                 </div>
                 <div class="col-md-4">

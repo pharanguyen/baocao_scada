@@ -11,14 +11,14 @@
                 @bind-Value="@Value" TValue="int"
                 Width="@Width"
                 PopupWidth="@PopupWidth"
-                TItem="@Dm_ChiNhanh"
+                TItem="@Dm_Tram"
                 AllowFiltering="true"
                 FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
                 CssClass="e-multi-column"
                 ShowClearButton="true" DataSource="Data">
 
     <DropDownListFieldSettings Text="Ten" Value="Id"></DropDownListFieldSettings>
-    <DropDownListTemplates TItem="@Dm_ChiNhanh">
+    <DropDownListTemplates TItem="@Dm_Tram">
         <HeaderTemplate>
             <table>
                 <tr>
@@ -32,28 +32,28 @@
                 <tbody>
                     <tr>
                         <td class="e-text-center column-width">
-                            @((context as Dm_ChiNhanh).Id)
+                            @((context as Dm_Tram).Id)
                         </td>
-                        <td>@((context as Dm_ChiNhanh).Ten)</td>
+                        <td>@((context as Dm_Tram).Ten)</td>
                     </tr>
                 </tbody>
             </table>
         </ItemTemplate>
         <ValueTemplate>
-            <span>@((context as Dm_ChiNhanh).Id) - @((context as Dm_ChiNhanh).Ten) </span>
+            <span>@((context as Dm_Tram).Id) - @((context as Dm_Tram).Ten) </span>
         </ValueTemplate>
     </DropDownListTemplates>
-    <DropDownListEvents TValue="int" TItem="@DAO.Models.DanhMuc.Dm_ChiNhanh" ValueChange="ValueChange" Filtering="onFilter"></DropDownListEvents>
+    <DropDownListEvents TValue="int" TItem="@DAO.Models.DanhMuc.Dm_Tram" ValueChange="ValueChange" Filtering="onFilter"></DropDownListEvents>
 </SfDropDownList>
 
 @code {
-    private SfDropDownList<int, Dm_ChiNhanh> cb;
-    private List<Dm_ChiNhanh> Data = new List<Dm_ChiNhanh>();
+    private SfDropDownList<int, Dm_Tram> cb;
+    private List<Dm_Tram> Data = new List<Dm_Tram>();
     [Parameter]
     public int Index { get; set; }
 
     [Parameter]
-    public string PopupWidth { get; set; } = "200px";
+    public string PopupWidth { get; set; } = "350px";
 
     [Parameter]
     public string Width { get; set; } = "100px";
@@ -62,14 +62,14 @@
     public int Value { get; set; }
     [Parameter]
     public EventCallback<int> ValueChanged { get; set; }
-    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DAO.Models.DanhMuc.Dm_ChiNhanh> args)
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DAO.Models.DanhMuc.Dm_Tram> args)
     {
         Value = args.Value;
         ValueChanged.InvokeAsync(Value);
     }
     protected override void OnInitialized()
     {
-        Data = DmChiNhanhService.GetToComBo().Data;
+        Data = DmTramService.GetToComBo().Data;
     }
     public void setFocus()
     {
@@ -83,9 +83,9 @@
         args.PreventDefaultAction = true;
         if (args.Text == null || args.Text.Trim() == "")
         {
-            Data = DmChiNhanhService.GetToComBo().Data;
+            Data = DmTramService.GetToComBo().Data;
         }
-       
+
         await cb.FilterAsync(Data);
         StateHasChanged();
     }

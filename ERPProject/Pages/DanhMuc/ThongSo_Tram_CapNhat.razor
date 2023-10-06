@@ -1,6 +1,5 @@
 ﻿@using DAO.Models.DanhMuc
-@using ERPProject.Shared.Combobox
-@inherits Dm_Tql_CapNhatBase
+@inherits ThongSo_Tram_CapNhatBase
 
 <style type="text/css">
     .e-upload {
@@ -21,7 +20,7 @@
     }
 </style>
 
-<SfDialog @bind-Visible="isShow" IsModal="true" ShowCloseIcon="true" Width="900" ZIndex="101">
+<SfDialog @bind-Visible="isShow" IsModal="true" ShowCloseIcon="true" Width="800" ZIndex="101">
     <DialogTemplates>
         <Header>
             <h3><i class="@((isThemMoi)?"icon-plus2":"icon-pencil")">@TieuDe</i></h3>
@@ -30,34 +29,32 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Tên TQL</label>
-                        <SfTextBox @bind-Value="objModel.Ten" ShowClearButton="true"></SfTextBox>
+                        <label>Mã số</label>
+                        <SfNumericTextBox @bind-Value="objModel.Id" ShowSpinButton="false" ShowClearButton="true"></SfNumericTextBox>
                     </div>
                 </div>
-              
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Thuộc chi nhánh</label>
-                        <CbChiNhanh @bind-Value="objModel.Id_ChiNhanh" Width="100%" PopupWidth="100%"></CbChiNhanh>
-                        </div>
-                    </div>
-
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label>Mã tổ quản lí</label>
-                        <SfTextBox @bind-Value="objModel.Ma" Width="100%"></SfTextBox>
+                        <label>Trạm</label>
+                        <ERPProject.Shared.Combobox.CbTram @bind-Value="objModel.Id_Tram" Width="100%" PopupWidth="100%"></ERPProject.Shared.Combobox.CbTram>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label>Địa chỉ</label>
-                        <SfTextBox @bind-Value="objModel.Dia_Chi" ShowClearButton="true"></SfTextBox>
+                        <label>Thông số</label>
+                        <ERPProject.Shared.Combobox.CbThongSo @bind-Value="objModel.Id_ThongSo" Width="100%" PopupWidth="100%"></ERPProject.Shared.Combobox.CbThongSo>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label>Thứ tự</label>
-                        <SfNumericTextBox @bind-Value="objModel.Stt" TValue="int" ShowSpinButton="false" ShowClearButton="true"></SfNumericTextBox>
+                        <label>Chi nhánh</label>
+                        <ERPProject.Shared.Combobox.CbChiNhanh @bind-Value="objModel.Id_ChiNhanh" Width="100%" PopupWidth="100%"></ERPProject.Shared.Combobox.CbChiNhanh>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tổ giám sát</label>
+                        <ERPProject.Shared.Combobox.CbTql @bind-Value="objModel.Id_Tql" Width="100%" PopupWidth="100%"></ERPProject.Shared.Combobox.CbTql>
                     </div>
                 </div>
 
@@ -70,6 +67,9 @@
     </DialogTemplates>
     <DialogEvents Closed="@(()=> { OnLuu.Invoke(isDaCapNhatDuLieu); })"></DialogEvents>
 </SfDialog>
+
+
+
 
 
 

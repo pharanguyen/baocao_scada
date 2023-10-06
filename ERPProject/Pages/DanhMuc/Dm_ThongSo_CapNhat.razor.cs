@@ -63,6 +63,7 @@ namespace ERPProject.Pages.DanhMuc
                 objModel = new DAO.Models.DanhMuc.Dm_ThongSo();
             }
             isShow = true;
+            isDaCapNhatDuLieu = true;
             StateHasChanged();
         }
         protected async void onSave()

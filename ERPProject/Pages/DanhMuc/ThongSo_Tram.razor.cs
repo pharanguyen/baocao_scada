@@ -148,6 +148,7 @@ namespace ERPProject.Pages.DanhMuc
 
 
             StateHasChanged();
+            Console.WriteLine(CbChiNhanh.Value);
         }
         protected void XacNhanLuu(bool isLuuThanhCong)
         {

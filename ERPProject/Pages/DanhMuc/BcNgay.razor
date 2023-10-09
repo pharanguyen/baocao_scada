@@ -78,30 +78,41 @@
                         Width="30">
             </GridColumn>
             @if (ListNhatKyNgay != null)
-            {
-                string previousTenTram = null; // Biến để lưu giữ giá trị trạm trước đó
+{
+    Dictionary<string, List<string>> thongSoDict = new Dictionary<string, List<string>>();
 
-                foreach (var item in ListNhatKyNgay)
+    foreach (var item in ListNhatKyNgay)
+    {
+        // Kiểm tra xem trạm có trong từ điển chưa
+        if (!thongSoDict.ContainsKey(item.TenTram))
+        {
+            thongSoDict[item.TenTram] = new List<string>();
+        }
+
+        // Thêm @item.TenThongSo vào danh sách tương ứng với @item.TenTram
+        thongSoDict[item.TenTram].Add(item.TenThongSo);
+    }
+
+    // Sau khi đã thu thập danh sách @item.TenThongSo cho mỗi @item.TenTram,
+    // bạn có thể xử lý dữ liệu ở đây
+    foreach (var tenTram in thongSoDict.Keys)
+    {
+        <GridColumn HeaderText="@tenTram"
+                    HeaderTextAlign="TextAlign.Center"
+                    TextAlign="TextAlign.Left"
+                    Width="30"
+                    AutoFit="true">
+            <GridColumns>
+                @foreach (var tenThongSo in thongSoDict[tenTram])
                 {
-                    // Kiểm tra xem có đổi trạm hay không
-                    if (item.TenTram != previousTenTram)
-                    {
-                        <GridColumn HeaderText="@item.TenTram"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="30"
-                        AutoFit="true">
-                            <GridColumns>
-                                <GridColumn HeaderText="@item.TenThongSo" Width="30" AutoFit="true"></GridColumn>
-                                <!--Thêm các cột thông số khác tại đây-->
-                            </GridColumns>
-                        </GridColumn>
-                    }
-
-                    // Cập nhật giá trị trạm trước đó
-                    previousTenTram = item.TenTram;
+                    <GridColumn HeaderText="@tenThongSo" Width="30" AutoFit="true"></GridColumn>
+                    <GridColumn Field="Gia_Tri" Width="30" AutoFit="true"></GridColumn>
+                    <!--Thêm các cột thông số khác tại đây-->
                 }
-            }
+            </GridColumns>
+        </GridColumn>
+    }
+}
 
             @*<GridColumn Field="TenTram"
                         HeaderText="Trạm"

@@ -55,37 +55,54 @@
             
             <GridColumn Field="Id"
                         IsPrimaryKey="true"
+                        AutoFit="true"
                         HeaderText="STT"
                         HeaderTextAlign="TextAlign.Center"
                         TextAlign="TextAlign.Left"
                         Width="30">
             </GridColumn>
             <GridColumn Field="Thoi_Gian"
+                        Format="HH:mm:ss"
+                        AutoFit="true"
                         HeaderText="Thời gian"
                         HeaderTextAlign="TextAlign.Center"
                         TextAlign="TextAlign.Left"
                         Width="30">
             </GridColumn>
             <GridColumn Field="Thoi_Gian"
+                Format="dd/MM/yyyy"
+                AutoFit="true"
                         HeaderText="Ngày_tháng"
                         HeaderTextAlign="TextAlign.Center"
                         TextAlign="TextAlign.Left"
                         Width="30">
             </GridColumn>
-            @foreach(var item in ListNhatKyNgay)
+            @if (ListNhatKyNgay != null)
             {
-                if(item != null)
+                string previousTenTram = null; // Biến để lưu giữ giá trị trạm trước đó
+
+                foreach (var item in ListNhatKyNgay)
                 {
-                    <GridColumn Field="@item.TenTram"
-                        HeaderText="Trạm"
+                    // Kiểm tra xem có đổi trạm hay không
+                    if (item.TenTram != previousTenTram)
+                    {
+                        <GridColumn HeaderText="@item.TenTram"
                         HeaderTextAlign="TextAlign.Center"
                         TextAlign="TextAlign.Left"
-                        Width="30">
+                        Width="30"
+                        AutoFit="true">
+                            <GridColumns>
+                                <GridColumn HeaderText="@item.TenThongSo" Width="30" AutoFit="true"></GridColumn>
+                                <!--Thêm các cột thông số khác tại đây-->
+                            </GridColumns>
+                        </GridColumn>
+                    }
 
-                    </GridColumn>
+                    // Cập nhật giá trị trạm trước đó
+                    previousTenTram = item.TenTram;
                 }
-                
             }
+
             @*<GridColumn Field="TenTram"
                         HeaderText="Trạm"
                         HeaderTextAlign="TextAlign.Center"

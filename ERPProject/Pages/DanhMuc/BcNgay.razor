@@ -16,11 +16,7 @@
             </ToolbarItem>
             <ToolbarItem Type="ItemType.Separator">
             </ToolbarItem>
-            <ToolbarItem Type="ItemType.Button">
-                <Template>
-                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm</SfButton>
-                </Template>
-            </ToolbarItem>
+           
             <ToolbarItem Type="ItemType.Button">
                 <Template>
                     <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
@@ -29,23 +25,19 @@
             <label><b>Lọc theo chi nhánh</b></label>
 
             <ToolbarItem Type="ItemType.Input">
-                <Template>
-                    <ERPProject.Shared.Combobox.CbChiNhanh @ref="@CbChiNhanh" Width="350px" ValueChanged="onTaiLai"></ERPProject.Shared.Combobox.CbChiNhanh>
-                </Template>
+               
             </ToolbarItem>
             <label><b>Lọc theo trạm</b></label>
 
             <ToolbarItem Type="ItemType.Input">
-                <Template>
-                    <ERPProject.Shared.Combobox.CbTram @ref="@CbTram" Width="350px" ValueChanged="onTaiLai"></ERPProject.Shared.Combobox.CbTram>
-                </Template>
+               
             </ToolbarItem>
 
         </ToolbarItems>
     </SfToolbar>
 
     <SfGrid id="gdv"
-            DataSource="@listNhatKyNgay"
+            DataSource="@ListNhatKyNgay"
             AllowReordering="true"
             Width="100%"
             AllowExcelExport="true"
@@ -54,35 +46,63 @@
             AllowFiltering="true"
             AllowPaging="true">
         <GridPageSettings PageSize="100"></GridPageSettings>
-        <!-- Chọn nhiều dòng -->
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
+        @* Cho phép lựa chọn nhiều dòng *@
         <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
         <GridColumns>
-            <GridColumn HeaderText="STT" Field="Id" HeaderTextAlign="TextAlign.Center" TextAlign="TextAlign.Left" Width="30">
+           
+            
+            <GridColumn Field="Id"
+                        IsPrimaryKey="true"
+                        HeaderText="STT"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30">
             </GridColumn>
-            <GridColumn HeaderText="Thời gian" Field="Thoi_Gian" HeaderTextAlign="TextAlign.Center" TextAlign="TextAlign.Left" Width="30">
+            <GridColumn Field="Thoi_Gian"
+                        HeaderText="Thời gian"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30">
             </GridColumn>
-            <GridColumn HeaderText="Ngày_tháng" Field="TenThongSo" HeaderTextAlign="TextAlign.Center" TextAlign="TextAlign.Left" Width="30">
+            <GridColumn Field="Thoi_Gian"
+                        HeaderText="Ngày_tháng"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30">
             </GridColumn>
-            <GridColumn HeaderText="Trạm" Field="TenTram" HeaderTextAlign="TextAlign.Center" TextAlign="TextAlign.Left" Width="30">
-            </GridColumn>
-            <!-- Tạo các cột cho các thông số động -->
-            @{
-                var distinctThongSo = listNhatKyNgay
-                .Where(x => x.TenThongSo != null) // Lọc các giá trị null
-                .GroupBy(x => x.TenThongSo)
-                .Select(g => g.First());
-
-                foreach (var thongSo in distinctThongSo)
+            @foreach(var item in ListNhatKyNgay)
+            {
+                if(item != null)
                 {
-                    <GridColumn Field="@thongSo.TenThongSo" HeaderText="@thongSo.TenThongSo" Width="30"></GridColumn>
+                    <GridColumn Field="@item.TenTram"
+                        HeaderText="Trạm"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30">
+
+                    </GridColumn>
                 }
+                
             }
-            <!-- Kết thúc vòng lặp -->
+            @*<GridColumn Field="TenTram"
+                        HeaderText="Trạm"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="30">
+                
+                <GridColumns>
+                    <GridColumn Field="ThongSo1" HeaderText="Thông số 1" Width="30"></GridColumn>
+                    <GridColumn Field="ThongSo2" HeaderText="Thông số 2" Width="30"></GridColumn>
+                    <GridColumn Field="ThongSo3" HeaderText="Thông số 3" Width="30"></GridColumn>
+                    <!--Thêm các cột thông số khác tại đây-->
+                </GridColumns>
+            </GridColumn>
+            *@
+            
         </GridColumns>
     </SfGrid>
-
-
-
 
 </BodyCard>
 

@@ -1,45 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using ERPProject;
-using ERPProject.Shared;
-using ERPProject.Services;
-using ERPProject.Libs;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.SplitButtons;
-using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.TreeGrid;
-using Syncfusion.Blazor.Popups;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.Notifications;
-using Syncfusion.Blazor.Calendars;
-using Syncfusion.Blazor.DropDowns;
-using DAO.Models.CommonModels;
+﻿using DAO.Models.CommonModels;
 using DAO.Models.DanhMuc;
+using DAO.Models.DanhMuc.KhachHang;
 using DAO.Models.PhanQuyen;
 using DAO.Services.DanhMuc;
 using DAO.Services.PhanQuyen;
-using DAO.Models.DanhMuc.KhachHang;
+using ERPProject.Services;
+using ERPProject.Shared;
 using ERPProject.Shared.Combobox;
+using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Grids;
 
 namespace ERPProject.Pages.DanhMuc
 {
     public class BcNgayBase : ComponentBase
     {
-        public List<prc_Nhat_Ky_Ngay> listNhatKyNgay { get; set; }
-        //public List<to_quan_ly> listTram{ get; set; }
+        public List<prc_Nhat_Ky_Ngay> ListNhatKyNgay { get; set; }
+        //public List<to_quan_ly> ListNhatKyNgay{ get; set; }
         protected Dm_Tram_CapNhat fCapNhat;
         ds_phanquyen _QSD = new ds_phanquyen();
         [Inject]
@@ -47,11 +23,9 @@ namespace ERPProject.Pages.DanhMuc
         protected FormXacNhan frmXacNhan;
         [Inject]
         protected ToastService toastService { get; set; }
-        protected SfGrid<prc_Nhat_Ky_Ngay> gdv;
-        protected CbChiNhanh CbChiNhanh;
-        protected CbTram CbTram;
         [Inject]
         protected Blazored.LocalStorage.ILocalStorageService localStorage { get; set; }
+        protected SfGrid<prc_Nhat_Ky_Ngay> gdv;
 
         protected override void OnInitialized()
         {
@@ -65,7 +39,7 @@ namespace ERPProject.Pages.DanhMuc
                     if (strInfo.Length == 5)
                     {
                         var rsModel = new ResultModel<ds_phanquyen>();
-                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "btnBC_Ngay"); });
+                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "mnuDM_ToQL"); });
                         _QSD = rsModel.Data;
 
 
@@ -87,7 +61,7 @@ namespace ERPProject.Pages.DanhMuc
             await Task.Run(() => { rsModel = NhatKyNgayService.GetAll_prc_Nhat_Ky_Ngay(); });
             if (rsModel.isThanhCong)
             {
-                listNhatKyNgay = rsModel.Data;
+                ListNhatKyNgay = rsModel.Data;
                 AppData.loadingPanel.hide();
             }
             else
@@ -137,7 +111,7 @@ namespace ERPProject.Pages.DanhMuc
         public async Task onXuatExcel()
         {
             ExcelExportProperties excelExportProperties = new ExcelExportProperties();
-            excelExportProperties.FileName = "Danh sach Báo cáo ngày.xlsx";
+            excelExportProperties.FileName = "Danh sach diem dung.xlsx";
             var selectedRecord = await gdv.GetSelectedRecordsAsync();
             if (selectedRecord.Count() > 0)
             {
@@ -145,11 +119,36 @@ namespace ERPProject.Pages.DanhMuc
             }
             else
             {
-                excelExportProperties.DataSource = listNhatKyNgay;
+                excelExportProperties.DataSource = ListNhatKyNgay;
             }
             await gdv.ExportToExcelAsync(excelExportProperties);
         }
 
+        protected void onXoa(int _ID)
+        {
+            //check quyen xoa
+            /*  if (_QSD.xoa == false || _QSD.xoa == null)
+              {
+                  toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                  return;
+              }*/
+            frmXacNhan.Show("Xóa dòng được chọn ?", "300px", new System.Action(async () =>
+            {
+                AppData.loadingPanel.show();
+                var rsModel = new ResultModel<int?>();
+                await Task.Run(() => { rsModel = NhatKyNgayService.DeleteById(_ID); });
+                AppData.loadingPanel.hide();
+                if (rsModel.isThanhCong) onTaiLai();
+                else toastService.ShowDanger(rsModel.ThongBao);
+            }));
+        }
+    }
+
+
+    //xuat ra các dòng được chọn
+   
 
     }
-}
+
+
+

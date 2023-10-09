@@ -125,31 +125,55 @@ namespace ERPProject.Pages.DanhMuc
         }
         protected async void onTaiLai()
         {
-
             if (CbChiNhanh != null)
             {
-
-                AppData.loadingPanel.show();
-                var rsModel = new ResultModel<List<prc_ThongSo_Tram>>();
-                await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_by_Id_Tram(CbChiNhanh.Value,CbTram.Value); });
-                if (rsModel.isThanhCong)
+                if (CbTram != null)
                 {
-                    listThongSoTram = rsModel.Data;
-                    AppData.loadingPanel.hide();
+                    AppData.loadingPanel.show();
+                    var rsModel = new ResultModel<List<prc_ThongSo_Tram>>();
+
+                    // Gọi stored procedure prc_ThongSo_Tram_by_Id_Tram_or_Id_ChiNhanh với cả Id_ChiNhanh và Id_Tram
+                    await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_by_Id_Tram_or_Id_ChiNhanh(CbChiNhanh.Value, CbTram.Value); });
+
+                    if (rsModel.isThanhCong)
+                    {
+                        listThongSoTram = rsModel.Data;
+                        AppData.loadingPanel.hide();
+                    }
+                    else
+                    {
+                        AppData.loadingPanel.hide();
+                        toastService.ShowDanger(rsModel.ThongBao);
+                        return;
+                    }
                 }
                 else
                 {
-                    AppData.loadingPanel.hide();
-                    toastService.ShowDanger(rsModel.ThongBao);
-                    return;
-                }
+                    // Xử lý trường hợp Id_Tram là null
+                    // Gọi stored procedure prc_ThongSo_Tram_by_Id_ChiNhanh
+                    AppData.loadingPanel.show();
+                    var rsModel = new ResultModel<List<prc_ThongSo_Tram>>();
+                    
+                    await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_by_Id_ChiNhanh(CbChiNhanh.Value); });
 
+                    if (rsModel.isThanhCong)
+                    {
+                        listThongSoTram = rsModel.Data;
+                        AppData.loadingPanel.hide();
+                    }
+                    else
+                    {
+                        AppData.loadingPanel.hide();
+                        toastService.ShowDanger(rsModel.ThongBao);
+                        return;
+                    }
+                }
             }
 
-
             StateHasChanged();
-            Console.WriteLine(CbChiNhanh.Value);
         }
+
+
         protected void XacNhanLuu(bool isLuuThanhCong)
         {
             if (isLuuThanhCong)

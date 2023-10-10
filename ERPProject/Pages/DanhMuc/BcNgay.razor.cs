@@ -62,6 +62,7 @@ namespace ERPProject.Pages.DanhMuc
             if (rsModel.isThanhCong)
             {
                 ListNhatKyNgay = rsModel.Data;
+                
                 AppData.loadingPanel.hide();
             }
             else

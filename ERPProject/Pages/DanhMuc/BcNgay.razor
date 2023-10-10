@@ -36,100 +36,61 @@
         </ToolbarItems>
     </SfToolbar>
 
-    <SfGrid id="gdv"
-            DataSource="@ListNhatKyNgay"
-            AllowReordering="true"
-            Width="100%"
-            AllowExcelExport="true"
-            GridLines="GridLine.Both"
-            AllowResizing="true"
-            AllowFiltering="true"
-            AllowPaging="true">
+    <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
         <GridPageSettings PageSize="100"></GridPageSettings>
         <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
         <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
-        @* Cho phép lựa chọn nhiều dòng *@
-        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
         <GridColumns>
-
-
-            <GridColumn Field="Id"
-                        IsPrimaryKey="true"
-                        AutoFit="true"
-                        HeaderText="STT"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="30">
-            </GridColumn>
-            <GridColumn Field="Thoi_Gian"
-                        Format="HH:mm:ss"
-                        AutoFit="true"
-                        HeaderText="Thời gian"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="30">
-            </GridColumn>
-            <GridColumn Field="Thoi_Gian"
-                        Format="dd/MM/yyyy"
-                        AutoFit="true"
-                        HeaderText="Ngày_tháng"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="30">
-            </GridColumn>
+            <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" Width="50"></GridColumn>
+            <GridColumn Field="Thoi_Gian" Format="HH:mm:ss" HeaderText="Thời gian" Width="150"></GridColumn>
+            <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy" HeaderText="Ngày tháng" Width="150"></GridColumn>
             @if (ListNhatKyNgay != null)
             {
-                Dictionary<string, List<(string TenThongSo, string Gia_Tri)>> thongSoDict = new Dictionary<string, List<(string, string)>>();
-
-                foreach (var item in ListNhatKyNgay)
+                var uniqueTenTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct().ToList();
+                foreach (var tenTram in uniqueTenTrams)
                 {
-                    // Kiểm tra xem trạm có trong từ điển chưa
-                    if (!thongSoDict.ContainsKey(item.TenTram))
-                    {
-                        thongSoDict[item.TenTram] = new List<(string, string)>();
-                    }
+                    var uniqueTenThongSos = ListNhatKyNgay
+                    .Where(item => item.TenTram == tenTram)
+                    .Select(item => item.TenThongSo)
+                    .Distinct()
+                    .ToList();
 
-                    // Thêm (item.TenThongSo, item.Gia_Tri) vào danh sách tương ứng với item.TenTram
-                    thongSoDict[item.TenTram].Add((item.TenThongSo, item.Gia_Tri));
-                }
+                    <GridColumn>
+                       
+                            <GridColumn Field="@($"TenTram_{tenTram}")" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
+                                <GridColumns>
+                                    @foreach (var tenThongSo in uniqueTenThongSos)
+                                    {
+                                    <GridColumn Field="@($"ThongSo_{tenThongSo}_{tenTram}")" HeaderText="@tenThongSo" Width="150">
+                                        <Template>
+                                            @{
+                                                var giaTriList = ListNhatKyNgay
+                                                .Where(item => item.TenTram == tenTram && item.TenThongSo == tenThongSo)
+                                                .Select(item => item.Gia_Tri)
+                                                .ToList();
+                                            }
+                                            @foreach (var giaTri in giaTriList)
+                                            {
+                                                @giaTri.Distinct()
+                                                <br />
+                                                 <!-- In tất cả các giá trị Gia_Tri và ngăn cách bằng dấu xuống dòng -->
+                                            }
+                                        </Template>
+                                    </GridColumn>
 
-                // Sau khi đã thu thập danh sách (item.TenThongSo, item.Gia_Tri) cho mỗi item.TenTram,
-                // bạn có thể xử lý dữ liệu ở đây
-                foreach (var tenTram in thongSoDict.Keys)
-                {
-                    <GridColumn HeaderText="@tenTram"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="30"
-                        AutoFit="true">
-                        <GridColumns>
-                            @foreach (var (tenThongSo, giaTri) in thongSoDict[tenTram])
-                            {
-                                <GridColumn HeaderText="@tenThongSo" Width="30" AutoFit="true"></GridColumn>
-                                <GridColumn HeaderText="@giaTri" Width="30" AutoFit="true"></GridColumn>
-                                <!--Thêm các cột thông số khác tại đây-->
-                            }
-                        </GridColumns>
+                                    }
+                                </GridColumns>
+                            </GridColumn>
+                        
                     </GridColumn>
                 }
             }
-
-            @*<GridColumn Field="TenTram"
-            HeaderText="Trạm"
-            HeaderTextAlign="TextAlign.Center"
-            TextAlign="TextAlign.Left"
-            Width="30">
-
-            <GridColumns>
-            <GridColumn Field="ThongSo1" HeaderText="Thông số 1" Width="30"></GridColumn>
-            <GridColumn Field="ThongSo2" HeaderText="Thông số 2" Width="30"></GridColumn>
-            <GridColumn Field="ThongSo3" HeaderText="Thông số 3" Width="30"></GridColumn>
-            <!--Thêm các cột thông số khác tại đây-->
-            </GridColumns>
-            </GridColumn>
-            *@
-
         </GridColumns>
     </SfGrid>
+
+
+
+
+       
 
 </BodyCard>

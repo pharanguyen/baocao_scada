@@ -16,7 +16,7 @@
             </ToolbarItem>
             <ToolbarItem Type="ItemType.Separator">
             </ToolbarItem>
-           
+
             <ToolbarItem Type="ItemType.Button">
                 <Template>
                     <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
@@ -25,12 +25,12 @@
             <label><b>Lọc theo chi nhánh</b></label>
 
             <ToolbarItem Type="ItemType.Input">
-               
+
             </ToolbarItem>
             <label><b>Lọc theo trạm</b></label>
 
             <ToolbarItem Type="ItemType.Input">
-               
+
             </ToolbarItem>
 
         </ToolbarItems>
@@ -51,8 +51,8 @@
         @* Cho phép lựa chọn nhiều dòng *@
         <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
         <GridColumns>
-           
-            
+
+
             <GridColumn Field="Id"
                         IsPrimaryKey="true"
                         AutoFit="true"
@@ -70,74 +70,66 @@
                         Width="30">
             </GridColumn>
             <GridColumn Field="Thoi_Gian"
-                Format="dd/MM/yyyy"
-                AutoFit="true"
+                        Format="dd/MM/yyyy"
+                        AutoFit="true"
                         HeaderText="Ngày_tháng"
                         HeaderTextAlign="TextAlign.Center"
                         TextAlign="TextAlign.Left"
                         Width="30">
             </GridColumn>
             @if (ListNhatKyNgay != null)
-{
-    Dictionary<string, List<string>> thongSoDict = new Dictionary<string, List<string>>();
+            {
+                Dictionary<string, List<(string TenThongSo, string Gia_Tri)>> thongSoDict = new Dictionary<string, List<(string, string)>>();
 
-    foreach (var item in ListNhatKyNgay)
-    {
-        // Kiểm tra xem trạm có trong từ điển chưa
-        if (!thongSoDict.ContainsKey(item.TenTram))
-        {
-            thongSoDict[item.TenTram] = new List<string>();
-        }
-
-        // Thêm @item.TenThongSo vào danh sách tương ứng với @item.TenTram
-        thongSoDict[item.TenTram].Add(item.TenThongSo);
-    }
-
-    // Sau khi đã thu thập danh sách @item.TenThongSo cho mỗi @item.TenTram,
-    // bạn có thể xử lý dữ liệu ở đây
-    foreach (var tenTram in thongSoDict.Keys)
-    {
-        <GridColumn HeaderText="@tenTram"
-                    HeaderTextAlign="TextAlign.Center"
-                    TextAlign="TextAlign.Left"
-                    Width="30"
-                    AutoFit="true">
-            <GridColumns>
-                @foreach (var tenThongSo in thongSoDict[tenTram])
+                foreach (var item in ListNhatKyNgay)
                 {
-                    <GridColumn HeaderText="@tenThongSo" Width="30" AutoFit="true"></GridColumn>
-                    <GridColumn Field="Gia_Tri" Width="30" AutoFit="true"></GridColumn>
-                    <!--Thêm các cột thông số khác tại đây-->
-                }
-            </GridColumns>
-        </GridColumn>
-    }
-}
+                    // Kiểm tra xem trạm có trong từ điển chưa
+                    if (!thongSoDict.ContainsKey(item.TenTram))
+                    {
+                        thongSoDict[item.TenTram] = new List<(string, string)>();
+                    }
 
-            @*<GridColumn Field="TenTram"
-                        HeaderText="Trạm"
+                    // Thêm (item.TenThongSo, item.Gia_Tri) vào danh sách tương ứng với item.TenTram
+                    thongSoDict[item.TenTram].Add((item.TenThongSo, item.Gia_Tri));
+                }
+
+                // Sau khi đã thu thập danh sách (item.TenThongSo, item.Gia_Tri) cho mỗi item.TenTram,
+                // bạn có thể xử lý dữ liệu ở đây
+                foreach (var tenTram in thongSoDict.Keys)
+                {
+                    <GridColumn HeaderText="@tenTram"
                         HeaderTextAlign="TextAlign.Center"
                         TextAlign="TextAlign.Left"
-                        Width="30">
-                
-                <GridColumns>
-                    <GridColumn Field="ThongSo1" HeaderText="Thông số 1" Width="30"></GridColumn>
-                    <GridColumn Field="ThongSo2" HeaderText="Thông số 2" Width="30"></GridColumn>
-                    <GridColumn Field="ThongSo3" HeaderText="Thông số 3" Width="30"></GridColumn>
-                    <!--Thêm các cột thông số khác tại đây-->
-                </GridColumns>
+                        Width="30"
+                        AutoFit="true">
+                        <GridColumns>
+                            @foreach (var (tenThongSo, giaTri) in thongSoDict[tenTram])
+                            {
+                                <GridColumn HeaderText="@tenThongSo" Width="30" AutoFit="true"></GridColumn>
+                                <GridColumn HeaderText="@giaTri" Width="30" AutoFit="true"></GridColumn>
+                                <!--Thêm các cột thông số khác tại đây-->
+                            }
+                        </GridColumns>
+                    </GridColumn>
+                }
+            }
+
+            @*<GridColumn Field="TenTram"
+            HeaderText="Trạm"
+            HeaderTextAlign="TextAlign.Center"
+            TextAlign="TextAlign.Left"
+            Width="30">
+
+            <GridColumns>
+            <GridColumn Field="ThongSo1" HeaderText="Thông số 1" Width="30"></GridColumn>
+            <GridColumn Field="ThongSo2" HeaderText="Thông số 2" Width="30"></GridColumn>
+            <GridColumn Field="ThongSo3" HeaderText="Thông số 3" Width="30"></GridColumn>
+            <!--Thêm các cột thông số khác tại đây-->
+            </GridColumns>
             </GridColumn>
             *@
-            
+
         </GridColumns>
     </SfGrid>
 
 </BodyCard>
-
-
-
-
-
-
-
-

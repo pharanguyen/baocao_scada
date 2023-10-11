@@ -37,7 +37,7 @@
     </SfToolbar>
 
     <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
-        <GridPageSettings PageSize="100"></GridPageSettings>
+        <GridPageSettings PageSize="10"></GridPageSettings>
         <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
         <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
         <GridColumns>
@@ -45,44 +45,35 @@
             <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" HeaderText="Thời gian" Width="150"></GridColumn>
             @if (ListNhatKyNgay != null)
             {
+                var listTenTram = new List<string>();
+         
                 var uniqueTenTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct().ToList();
                 foreach (var tenTram in uniqueTenTrams)
                 {
+
                     var uniqueTenThongSos = ListNhatKyNgay
                     .Where(item => item.TenTram == tenTram)
                     .Select(item => item.TenThongSo)
                     .Distinct()
                     .ToList();
+                    listTenTram.Add(tenTram);
+                 
 
-                    <GridColumn Field="@($"TenTram_{tenTram}")" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
+                    <GridColumn Field="TenTram" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
                         <GridColumns>
                             @foreach (var tenThongSo in uniqueTenThongSos)
                             {
-                                <GridColumn Field="@($"ThongSo_{tenThongSo}_{tenTram}")" HeaderText="@tenThongSo" Width="150">
-                                    <Template>
-                                        @{
-                                            var giaTriList = ListNhatKyNgay
-                                            .Where(item => item.TenTram == tenTram && item.TenThongSo == tenThongSo)
-                                            .Select(item => new { Thoi_Gian = item.Thoi_Gian, Gia_Tri = item.Gia_Tri })
 
-                                            .ToList();
-                                        }
-
-                                        @foreach (var giaTri in giaTriList)
-                                        {
-                                            <div>
-                                                @*<p>Thời gian: @giaTri.Thoi_Gian.ToString("dd/MM/yyyy HH:mm:ss")</p>*@
-                                              <p> @giaTri.Gia_Tri</p>
-                                            </div>
-                                        }
-                                    </Template>
+                                <GridColumn Field="Gia_Tri" HeaderText="@tenThongSo" Width="150">
                                 </GridColumn>
                             }
+
                         </GridColumns>
                     </GridColumn>
                 }
             }
-        </GridColumns>
+            </GridColumns>
+       
     </SfGrid>
 
 

@@ -42,8 +42,7 @@
         <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
         <GridColumns>
             <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" Width="50"></GridColumn>
-            <GridColumn Field="Thoi_Gian" Format="HH:mm:ss" HeaderText="Thời gian" Width="150"></GridColumn>
-            <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy" HeaderText="Ngày tháng" Width="150"></GridColumn>
+            <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" HeaderText="Thời gian" Width="150"></GridColumn>
             @if (ListNhatKyNgay != null)
             {
                 var uniqueTenTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct().ToList();
@@ -55,39 +54,36 @@
                     .Distinct()
                     .ToList();
 
-                    <GridColumn>
-                       
-                            <GridColumn Field="@($"TenTram_{tenTram}")" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
-                                <GridColumns>
-                                    @foreach (var tenThongSo in uniqueTenThongSos)
-                                    {
-                                    <GridColumn Field="@($"ThongSo_{tenThongSo}_{tenTram}")" HeaderText="@tenThongSo" Width="150">
-                                        <Template>
-                                            @{
-                                                var giaTriList = ListNhatKyNgay
-                                                .Where(item => item.TenTram == tenTram && item.TenThongSo == tenThongSo)
-                                                .Select(item => item.Gia_Tri)
-                                                .ToList();
-                                            }
-                                            @foreach (var giaTri in giaTriList)
-                                            {
-                                                @giaTri.Distinct()
-                                                <br />
-                                                 <!-- In tất cả các giá trị Gia_Tri và ngăn cách bằng dấu xuống dòng -->
-                                            }
-                                        </Template>
-                                    </GridColumn>
+                    <GridColumn Field="@($"TenTram_{tenTram}")" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
+                        <GridColumns>
+                            @foreach (var tenThongSo in uniqueTenThongSos)
+                            {
+                                <GridColumn Field="@($"ThongSo_{tenThongSo}_{tenTram}")" HeaderText="@tenThongSo" Width="150">
+                                    <Template>
+                                        @{
+                                            var giaTriList = ListNhatKyNgay
+                                            .Where(item => item.TenTram == tenTram && item.TenThongSo == tenThongSo)
+                                            .Select(item => new { Thoi_Gian = item.Thoi_Gian, Gia_Tri = item.Gia_Tri })
 
-                                    }
-                                </GridColumns>
-                            </GridColumn>
-                        
+                                            .ToList();
+                                        }
+
+                                        @foreach (var giaTri in giaTriList)
+                                        {
+                                            <div>
+                                                @*<p>Thời gian: @giaTri.Thoi_Gian.ToString("dd/MM/yyyy HH:mm:ss")</p>*@
+                                              <p> @giaTri.Gia_Tri</p>
+                                            </div>
+                                        }
+                                    </Template>
+                                </GridColumn>
+                            }
+                        </GridColumns>
                     </GridColumn>
                 }
             }
         </GridColumns>
     </SfGrid>
-
 
 
 

@@ -17,6 +17,7 @@ namespace DAO.Models.DanhMuc
         
         public string Gia_Tri { get; set; }
         public DateTime Thoi_Gian { get; set; }
+        public List<Nhat_Ky_Ngay> GiaTriThoiGian { get; set; }
 
     }
 }

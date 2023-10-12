@@ -14,6 +14,8 @@ namespace ERPProject.Pages.DanhMuc
 {
     public class BcNgayBase : ComponentBase
     {
+
+
         public List<prc_Nhat_Ky_Ngay> ListNhatKyNgay { get; set; }
         //public List<to_quan_ly> ListNhatKyNgay{ get; set; }
         protected Dm_Tram_CapNhat fCapNhat;
@@ -124,6 +126,7 @@ namespace ERPProject.Pages.DanhMuc
             }
             await gdv.ExportToExcelAsync(excelExportProperties);
         }
+
 
         protected void onXoa(int _ID)
         {

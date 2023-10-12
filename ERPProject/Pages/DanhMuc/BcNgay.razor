@@ -35,49 +35,51 @@
 
         </ToolbarItems>
     </SfToolbar>
-
-    <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
-        <GridPageSettings PageSize="10"></GridPageSettings>
-        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
-        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
-        <GridColumns>
-            <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" Width="50"></GridColumn>
-            <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" HeaderText="Thời gian" Width="150"></GridColumn>
-            @if (ListNhatKyNgay != null)
+  <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+    <GridColumns>
+        <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" Width="50"></GridColumn>
+        <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" HeaderText="Thời gian" Width="150"></GridColumn>
+        @if (ListNhatKyNgay != null)
+        {
+            var uniqueTenTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct().ToList();
+            var uniqueThoiGian = ListNhatKyNgay.Select(item => item.Thoi_Gian).ToList();
+            foreach (var tenTram in uniqueTenTrams)
             {
-                var listTenTram = new List<string>();
-         
-                var uniqueTenTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct().ToList();
-                foreach (var tenTram in uniqueTenTrams)
-                {
+                <GridColumn Field="@($"TenTram_{tenTram}")" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
+                    <GridColumns>
+                        @if (ListNhatKyNgay != null)
+                        {
+                            var uniqueTenThongSos = ListNhatKyNgay
+                            .Where(item => item.TenTram == tenTram)
+                            .Select(item => item.TenThongSo)
+                            .Distinct()
+                            .ToList();
 
-                    var uniqueTenThongSos = ListNhatKyNgay
-                    .Where(item => item.TenTram == tenTram)
-                    .Select(item => item.TenThongSo)
-                    .Distinct()
-                    .ToList();
-                    listTenTram.Add(tenTram);
-                 
-
-                    <GridColumn Field="TenTram" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
-                        <GridColumns>
                             @foreach (var tenThongSo in uniqueTenThongSos)
                             {
+                                <GridColumn Field="@($"GiaTri_{tenThongSo}_{tenTram}")" HeaderText="@tenThongSo" Width="150">
+                                    <Template>
+                                          
+                                                @foreach(var thoigian in uniqueThoiGian)
+                                                {
+                                                    var giaTri = ListNhatKyNgay
+                                                    .FirstOrDefault(item => item.TenTram == tenTram && item.TenThongSo == tenThongSo && item.Thoi_Gian == thoigian);
+                                                @giaTri
+                                                }
+                                            
 
-                                <GridColumn Field="Gia_Tri" HeaderText="@tenThongSo" Width="150">
+                                    </Template>
                                 </GridColumn>
                             }
-
-                        </GridColumns>
-                    </GridColumn>
-                }
+                        }
+                    </GridColumns>
+                </GridColumn>
             }
-            </GridColumns>
-       
-    </SfGrid>
+        }
+    </GridColumns>
+</SfGrid>
 
 
 
-       
 
 </BodyCard>

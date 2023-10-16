@@ -5,6 +5,21 @@
     #gdv > div.e-gridcontent > div {
         max-height: calc(100vh - 185px) !important;
     }
+     .scrollable-table {
+            width: 100%;
+            height: 100%; /* Adjust the height as needed */
+            overflow: auto; /* Enable both horizontal and vertical scrolling */
+        }
+    .heading-col{
+        background-color: #00676B;
+        color:#fff;
+        text-align: center;
+        border: 1px solid #333;
+    }
+    .row-style{
+        border:1px solid #333;
+        text-align: center;
+    }
 </style>
 <BodyCard>
     <SfToolbar>
@@ -35,51 +50,66 @@
 
         </ToolbarItems>
     </SfToolbar>
-  <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
-    <GridColumns>
-        <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" Width="50"></GridColumn>
-        <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" HeaderText="Thời gian" Width="150"></GridColumn>
+    <div class="scrollable-table">
         @if (ListNhatKyNgay != null)
         {
-            var uniqueTenTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct().ToList();
-            var uniqueThoiGian = ListNhatKyNgay.Select(item => item.Thoi_Gian).ToList();
-            foreach (var tenTram in uniqueTenTrams)
-            {
-                <GridColumn Field="@($"TenTram_{tenTram}")" HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="150">
-                    <GridColumns>
-                        @if (ListNhatKyNgay != null)
+            <table>
+                <thead>
+                    <tr>
+                        <th class="heading-col" rowspan="2">STT</th>
+                        <th class="heading-col" rowspan="2">Thời Gian</th>
+
+                        @foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
                         {
-                            var uniqueTenThongSos = ListNhatKyNgay
+                            var tenThongSoList = ListNhatKyNgay
                             .Where(item => item.TenTram == tenTram)
                             .Select(item => item.TenThongSo)
                             .Distinct()
                             .ToList();
-
-                            @foreach (var tenThongSo in uniqueTenThongSos)
+                            <th class="heading-col" colspan="@tenThongSoList.Count">@tenTram</th>
+                        }
+                    </tr>
+                    <tr>
+                        @foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
+                        {
+                            var tenThongSoList = ListNhatKyNgay
+                            .Where(item => item.TenTram == tenTram)
+                            .Select(item => item.TenThongSo)
+                            .Distinct()
+                            .ToList();
+                            foreach (var tenThongSo in tenThongSoList)
                             {
-                                <GridColumn Field="@($"GiaTri_{tenThongSo}_{tenTram}")" HeaderText="@tenThongSo" Width="150">
-                                    <Template>
-                                          
-                                                @foreach(var thoigian in uniqueThoiGian)
-                                                {
-                                                    var giaTri = ListNhatKyNgay
-                                                    .FirstOrDefault(item => item.TenTram == tenTram && item.TenThongSo == tenThongSo && item.Thoi_Gian == thoigian);
-                                                @giaTri
-                                                }
-                                            
-
-                                    </Template>
-                                </GridColumn>
+                                <th class="heading-col">@tenThongSo</th>
                             }
                         }
-                    </GridColumns>
-                </GridColumn>
-            }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var thoiGian in ListNhatKyNgay.Select(item => item.Thoi_Gian).Distinct())
+                    {
+                        <tr>
+                            <td class="row-style"></td>
+                            <td class="row-style">@thoiGian.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                            @foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
+                            {
+                                var tenThongSoList = ListNhatKyNgay
+                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian)
+                                .Select(item => item.TenThongSo)
+                                .Distinct()
+                                .ToList();
+                                @foreach (var tenThongSo in tenThongSoList)
+                                {
+                                    var giaTri = ListNhatKyNgay
+                                    .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian && item.TenThongSo == tenThongSo)
+                                    .Select(item => item.Gia_Tri)
+                                    .FirstOrDefault();
+                                    <td class="row-style">@((giaTri != null) ? giaTri : "")</td>
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
-    </GridColumns>
-</SfGrid>
-
-
-
-
+    </div>
 </BodyCard>

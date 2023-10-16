@@ -17,16 +17,6 @@ namespace DAO.Models.DanhMuc
         public string TenTram { get; set; }
         public string Gia_Tri { get; set; }
         public DateTime Thoi_Gian { get; set; }
-    }
-    public class TenTramData
-    {
-        public string TenTram { get; set; }
-        public List<TenThongSoData> ThongSoData { get; set; } = new List<TenThongSoData>();
-    }
 
-    public class TenThongSoData
-    {
-        public string TenThongSo { get; set; }
-        public List<string> GiaTriList { get; set; }
     }
 }

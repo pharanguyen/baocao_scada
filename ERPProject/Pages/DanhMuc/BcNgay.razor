@@ -60,209 +60,79 @@
             @if (ListNhatKyNgay != null)
             {
                 var distinctTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct();
-                
                 foreach (var tenTram in distinctTrams)
                 {
                     <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
-                        <Template>
+                        <GridColumns>
                             @{
-                                var data = (context as prc_Nhat_Ky_Ngay);
-                                var relevantData = ListNhatKyNgay
-                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
+                                var tenThongSoList = ListNhatKyNgay
+                                .Where(item => item.TenTram == tenTram)
+                                .Select(item => item.TenThongSo)
+                                .Distinct()
                                 .ToList();
-
-                                // Tạo một dictionary để lưu trữ danh sách giá trị theo TenThongSo
-                                var giaTriDict = new Dictionary<string, List<string>>();
-
-                                // Lập trình để lưu trữ giá trị vào dictionary
-                                foreach (var item in relevantData)
+                                foreach (var tenThongSo in tenThongSoList)
                                 {
-                                    if (!giaTriDict.ContainsKey(item.TenThongSo))
-                                    {
-                                        giaTriDict[item.TenThongSo] = new List<string>();
-                                    }
+                                    <GridColumn HeaderText="@tenThongSo" TextAlign="TextAlign.Center" Width="150">
+                                        <Template>
+                                            @{
+                                                var data = (context as prc_Nhat_Ky_Ngay);
+                                                var relevantData = ListNhatKyNgay
+                                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
+                                                .ToList();
+                                            }
 
-                                    giaTriDict[item.TenThongSo].Add(item.Gia_Tri);
+
+                                            @if (string.Equals(tenThongSo, "TỔNG LƯU LƯỢNG 1", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                @if (relevantData.Count > 0)
+                                                {
+                                                    <div>
+                                                        @relevantData[1].Gia_Tri
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div>No relevant data found</div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @if (relevantData.Count > 0)
+                                                {
+                                                    <div>
+                                                        @relevantData[0].Gia_Tri
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div>No relevant data found</div>
+                                                }
+                                            }
+
+                                        </Template>
+                                    </GridColumn>
                                 }
                             }
+                        </GridColumns>
+                        @*                       <Template>
+                @{
+                var data = (context as prc_Nhat_Ky_Ngay);
+                var relevantData = ListNhatKyNgay
+                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
+                .ToList();
+                }
 
-                            @foreach (var tenThongSo in giaTriDict.Keys)
-                            {
-                                <div>
-                                    
-                                    @foreach (var giaTri in giaTriDict[tenThongSo])
-                                    {
-                                        <span>@giaTri</span>
-                                    }
-                                </div>
-                            }
-                        </Template>
+                @foreach (var item in relevantData)
+                {
+                <div>
+                <strong>@item.TenThongSo:</strong> @item.Gia_Tri
+                </div>
+                }
+                </Template>*@
                     </GridColumn>
-
-
                 }
             }
         </GridColumns>
     </SfGrid>
-   @* @{
-        var data = new List<BaoCaoNgayViewModel>();
-
-        @if (ListNhatKyNgay != null)
-        {
-            var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).ToList();
-            @foreach (var item in listNK)
-            {
-                var itemThongSo = item.GroupBy(x => x.Id_Tram).ToList();
-                var thongsotong = new BaoCaoNgayViewModel();
-                var listdata = new List<ThongSoTram>();
-                thongsotong.ThoiGian = item.Key.ToString("dd/MM/yyyy HH:mm:ss");
-                @foreach (var detailTram in itemThongSo)
-                {
-                   
-                    var thongso = new ThongSoTram();
-                    thongso.TenTram = detailTram.FirstOrDefault().TenTram;
-                    @foreach (var items in detailTram)
-                    {
-                           
-                        if (items.TenThongSo == "LƯU LƯỢNG TỨC THỜI 1")
-                        {
-                            thongso.LuuLuongTucThoi = items.Gia_Tri;
-                        }
-                        else
-                        {
-
-                            thongso.TongLuuLuong = items.Gia_Tri;
-                        }
-                    }
-                    listdata.Add(thongso);
-                }
-                thongsotong.dataTram = listdata;
-                data.Add(thongsotong);
-
-            }
-            var x = data;
-            var x2 = "1";
-        }
-    }        
-    <SfGrid id="gdv"
-            DataSource="@data"
-            AllowReordering="true"
-            Width="100%"
-            GridLines="GridLine.Both"
-            AllowResizing="true"
-            AllowExcelExport="true"
-            AllowFiltering="true">
-        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
-        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
-        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
-        
-        <GridColumns>
-            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
-                <Template>
-                    <SfButton CssClass="e-small" IconCss="icon-pencil"></SfButton>
-                    <SfButton CssClass="e-small" IconCss="icon-trash" ></SfButton>
-                </Template>
-            </GridColumn>
-            <GridColumn Field="ThoiGian"
-                        IsPrimaryKey="true"
-                        HeaderText="Thời gian"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="120">
-            </GridColumn>
-            <GridColumn Field="TenTram"
-                        IsPrimaryKey="true"
-                        HeaderText="Tên Trạm"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="120">
-            </GridColumn>*@
-            
-            @* @foreach (var prop in typeof(ThongSoTram).GetProperties())
-            {
-                var i = 0;
-                @foreach(var lists in prop.Name)
-                {
-                    <GridColumn Field="TenTram"
-                                IsPrimaryKey="true"
-                                HeaderText="Thời gian"
-                                HeaderTextAlign="TextAlign.Center"
-                                TextAlign="TextAlign.Left"
-                                Width="120">
-                    </GridColumn>
-                }
-                <GridColumn Field="@prop.Name" IsPrimaryKey="@(prop.Name == "TenTram")" AllowEditing="@prop.CanWrite"></GridColumn> 
-            } *@
-            @* <GridColumn Field="ThoiGian"
-                        IsPrimaryKey="true"
-                        HeaderText="Tên trạm"
-                        HeaderTextAlign="TextAlign.Center"
-                        TextAlign="TextAlign.Left"
-                        Width="120">
-            </GridColumn> *@
-@*
-        </GridColumns>
-    </SfGrid>*@
-    @*<div class="scrollable-table">
-        @if (ListNhatKyNgay != null)
-        {
-            <table>
-                <thead>
-                    <tr>
-                        <th class="heading-col" rowspan="2">STT</th>
-                        <th class="heading-col" rowspan="2">Thời Gian</th>
-
-                        @foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
-                        {
-                            var tenThongSoList = ListNhatKyNgay
-                            .Where(item => item.TenTram == tenTram)
-                            .Select(item => item.TenThongSo)
-                            .Distinct()
-                            .ToList();
-                            <th class="heading-col" colspan="@tenThongSoList.Count">@tenTram</th>
-                        }
-                    </tr>
-                    <tr>
-                        @foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
-                        {
-                            var tenThongSoList = ListNhatKyNgay
-                            .Where(item => item.TenTram == tenTram)
-                            .Select(item => item.TenThongSo)
-                            .Distinct()
-                            .ToList();
-                            foreach (var tenThongSo in tenThongSoList)
-                            {
-                                <th class="heading-col">@tenThongSo</th>
-                            }
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var thoiGian in ListNhatKyNgay.Select(item => item.Thoi_Gian).Distinct())
-                    {
-                        <tr>
-                            <td class="row-style"></td>
-                            <td class="row-style">@thoiGian.ToString("dd/MM/yyyy HH:mm:ss")</td>
-                            @foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
-                            {
-                                var tenThongSoList = ListNhatKyNgay
-                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian)
-                                .Select(item => item.TenThongSo)
-                                .Distinct()
-                                .ToList();
-                                @foreach (var tenThongSo in tenThongSoList)
-                                {
-                                    var giaTri = ListNhatKyNgay
-                                    .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian && item.TenThongSo == tenThongSo)
-                                    .Select(item => item.Gia_Tri)
-                                    .FirstOrDefault();
-                                    <td class="row-style">@((giaTri != null) ? giaTri : "")</td>
-                                }
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>*@
+   
 </BodyCard>

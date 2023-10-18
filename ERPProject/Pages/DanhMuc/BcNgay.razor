@@ -60,7 +60,7 @@
             @if (ListNhatKyNgay != null)
             {
                 var distinctTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct();
-                foreach (var tenTram in distinctTrams)
+                @foreach (var tenTram in distinctTrams)
                 {
                     <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
                         <GridColumns>
@@ -70,6 +70,7 @@
                                 .Select(item => item.TenThongSo)
                                 .Distinct()
                                 .ToList();
+
                                 foreach (var tenThongSo in tenThongSoList)
                                 {
                                     <GridColumn HeaderText="@tenThongSo" TextAlign="TextAlign.Center" Width="150">
@@ -81,13 +82,15 @@
                                                 .ToList();
                                             }
 
-
-                                            @if (string.Equals(tenThongSo, "TỔNG LƯU LƯỢNG 1", StringComparison.OrdinalIgnoreCase))
+                                            @if (relevantData.Count > 0)
                                             {
-                                                @if (relevantData.Count > 0)
+                                                var giaTriDictionary = relevantData
+                                                .ToDictionary(item => item.TenThongSo, item => item.Gia_Tri);
+
+                                                if (giaTriDictionary.ContainsKey(tenThongSo))
                                                 {
                                                     <div>
-                                                        @relevantData[1].Gia_Tri
+                                                        @giaTriDictionary[tenThongSo]
                                                     </div>
                                                 }
                                                 else
@@ -97,23 +100,16 @@
                                             }
                                             else
                                             {
-                                                @if (relevantData.Count > 0)
-                                                {
-                                                    <div>
-                                                        @relevantData[0].Gia_Tri
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div>No relevant data found</div>
-                                                }
+                                                <div>No relevant data found</div>
                                             }
-
                                         </Template>
                                     </GridColumn>
                                 }
                             }
                         </GridColumns>
+                    </GridColumn>
+                }
+
                         @*                       <Template>
                 @{
                 var data = (context as prc_Nhat_Ky_Ngay);
@@ -129,8 +125,7 @@
                 </div>
                 }
                 </Template>*@
-                    </GridColumn>
-                }
+                   
             }
         </GridColumns>
     </SfGrid>

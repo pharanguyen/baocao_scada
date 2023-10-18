@@ -60,6 +60,7 @@
             @if (ListNhatKyNgay != null)
             {
                 var distinctTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct();
+                
                 foreach (var tenTram in distinctTrams)
                 {
                     <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
@@ -69,16 +70,36 @@
                                 var relevantData = ListNhatKyNgay
                                 .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
                                 .ToList();
+
+                                // Tạo một dictionary để lưu trữ danh sách giá trị theo TenThongSo
+                                var giaTriDict = new Dictionary<string, List<string>>();
+
+                                // Lập trình để lưu trữ giá trị vào dictionary
+                                foreach (var item in relevantData)
+                                {
+                                    if (!giaTriDict.ContainsKey(item.TenThongSo))
+                                    {
+                                        giaTriDict[item.TenThongSo] = new List<string>();
+                                    }
+
+                                    giaTriDict[item.TenThongSo].Add(item.Gia_Tri);
+                                }
                             }
 
-                            @foreach (var item in relevantData)
+                            @foreach (var tenThongSo in giaTriDict.Keys)
                             {
                                 <div>
-                                    @item.Gia_Tri
+                                    
+                                    @foreach (var giaTri in giaTriDict[tenThongSo])
+                                    {
+                                        <span>@giaTri</span>
+                                    }
                                 </div>
                             }
                         </Template>
                     </GridColumn>
+
+
                 }
             }
         </GridColumns>

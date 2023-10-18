@@ -1,5 +1,6 @@
 ﻿@page "/Dm_BcNgay"
 @using DAO.Models.DanhMuc
+@using ERPProject.ViewModel
 @inherits BcNgayBase
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
@@ -21,6 +22,7 @@
         text-align: center;
     }
 </style>
+
 <BodyCard>
     <SfToolbar>
         <ToolbarItems>
@@ -50,6 +52,105 @@
 
         </ToolbarItems>
     </SfToolbar>
+    @{
+        var data = new List<BaoCaoNgayViewModel>();
+
+        @if (ListNhatKyNgay != null)
+        {
+            var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).ToList();
+            @foreach (var item in listNK)
+            {
+                var itemThongSo = item.GroupBy(x => x.Id_Tram).ToList();
+                var thongsotong = new BaoCaoNgayViewModel();
+                var listdata = new List<ThongSoTram>();
+                thongsotong.ThoiGian = item.Key.ToString("dd/MM/yyyy HH:mm:ss");
+                @foreach (var detailTram in itemThongSo)
+                {
+                   
+                    var thongso = new ThongSoTram();
+                    thongso.TenTram = detailTram.FirstOrDefault().TenTram;
+                    @foreach (var items in detailTram)
+                    {
+                           
+                        if (items.TenThongSo == "LƯU LƯỢNG TỨC THỜI 1")
+                        {
+                            thongso.LuuLuongTucThoi = items.Gia_Tri;
+                        }
+                        else
+                        {
+
+                            thongso.TongLuuLuong = items.Gia_Tri;
+                        }
+                    }
+                    listdata.Add(thongso);
+                }
+                thongsotong.dataTram = listdata;
+                data.Add(thongsotong);
+
+            }
+            var x = data;
+            var x2 = "1";
+        }
+    }        
+    <SfGrid id="gdv"
+            DataSource="@data"
+            AllowReordering="true"
+            Width="100%"
+            GridLines="GridLine.Both"
+            AllowResizing="true"
+            AllowExcelExport="true"
+            AllowFiltering="true">
+        <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
+        <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+        
+        <GridColumns>
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+                <Template>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" ></SfButton>
+                </Template>
+            </GridColumn>
+            <GridColumn Field="ThoiGian"
+                        IsPrimaryKey="true"
+                        HeaderText="Thời gian"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120">
+            </GridColumn>
+            <GridColumn Field="TenTram"
+                        IsPrimaryKey="true"
+                        HeaderText="Tên Trạm"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120">
+            </GridColumn>
+            
+            @* @foreach (var prop in typeof(ThongSoTram).GetProperties())
+            {
+                var i = 0;
+                @foreach(var lists in prop.Name)
+                {
+                    <GridColumn Field="TenTram"
+                                IsPrimaryKey="true"
+                                HeaderText="Thời gian"
+                                HeaderTextAlign="TextAlign.Center"
+                                TextAlign="TextAlign.Left"
+                                Width="120">
+                    </GridColumn>
+                }
+                <GridColumn Field="@prop.Name" IsPrimaryKey="@(prop.Name == "TenTram")" AllowEditing="@prop.CanWrite"></GridColumn> 
+            } *@
+            @* <GridColumn Field="ThoiGian"
+                        IsPrimaryKey="true"
+                        HeaderText="Tên trạm"
+                        HeaderTextAlign="TextAlign.Center"
+                        TextAlign="TextAlign.Left"
+                        Width="120">
+            </GridColumn> *@
+
+        </GridColumns>
+    </SfGrid>
     <div class="scrollable-table">
         @if (ListNhatKyNgay != null)
         {

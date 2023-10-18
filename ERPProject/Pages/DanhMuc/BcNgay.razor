@@ -52,7 +52,38 @@
 
         </ToolbarItems>
     </SfToolbar>
-    @{
+    <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+        <GridColumns>
+            <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" TextAlign="TextAlign.Center" Width="50"></GridColumn>
+            <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
+
+            @if (ListNhatKyNgay != null)
+            {
+                var distinctTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct();
+                foreach (var tenTram in distinctTrams)
+                {
+                    <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
+                        <Template>
+                            @{
+                                var data = (context as prc_Nhat_Ky_Ngay);
+                                var relevantData = ListNhatKyNgay
+                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
+                                .ToList();
+                            }
+
+                            @foreach (var item in relevantData)
+                            {
+                                <div>
+                                    @item.Gia_Tri
+                                </div>
+                            }
+                        </Template>
+                    </GridColumn>
+                }
+            }
+        </GridColumns>
+    </SfGrid>
+   @* @{
         var data = new List<BaoCaoNgayViewModel>();
 
         @if (ListNhatKyNgay != null)
@@ -124,7 +155,7 @@
                         HeaderTextAlign="TextAlign.Center"
                         TextAlign="TextAlign.Left"
                         Width="120">
-            </GridColumn>
+            </GridColumn>*@
             
             @* @foreach (var prop in typeof(ThongSoTram).GetProperties())
             {
@@ -148,10 +179,10 @@
                         TextAlign="TextAlign.Left"
                         Width="120">
             </GridColumn> *@
-
+@*
         </GridColumns>
-    </SfGrid>
-    <div class="scrollable-table">
+    </SfGrid>*@
+    @*<div class="scrollable-table">
         @if (ListNhatKyNgay != null)
         {
             <table>
@@ -212,5 +243,5 @@
                 </tbody>
             </table>
         }
-    </div>
+    </div>*@
 </BodyCard>

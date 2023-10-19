@@ -1,24 +1,27 @@
-﻿@page "/Dm_BcNgay"
+﻿@page "/Dm_BcNam"
 @using DAO.Models.DanhMuc
 @using ERPProject.ViewModel
-@inherits BcNgayBase
+@inherits BcNamBase
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
         max-height: calc(100vh - 185px) !important;
     }
-     .scrollable-table {
-            width: 100%;
-            height: 100%; /* Adjust the height as needed */
-            overflow: auto; /* Enable both horizontal and vertical scrolling */
-        }
-    .heading-col{
+
+    .scrollable-table {
+        width: 100%;
+        height: 100%; /* Adjust the height as needed */
+        overflow: auto; /* Enable both horizontal and vertical scrolling */
+    }
+
+    .heading-col {
         background-color: #00676B;
-        color:#fff;
+        color: #fff;
         text-align: center;
         border: 1px solid #333;
     }
-    .row-style{
-        border:1px solid #333;
+
+    .row-style {
+        border: 1px solid #333;
         text-align: center;
     }
 </style>
@@ -52,20 +55,20 @@
 
         </ToolbarItems>
     </SfToolbar>
-    <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+    <SfGrid DataSource="@ListNhatKyNam" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
         <GridColumns>
             <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" TextAlign="TextAlign.Center" Width="50"></GridColumn>
             <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
 
-            @if (ListNhatKyNgay != null)
+            @if (ListNhatKyNam != null)
             {
-                var distinctTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct();
+                var distinctTrams = ListNhatKyNam.Select(item => item.TenTram).Distinct();
                 @foreach (var tenTram in distinctTrams)
                 {
-                    <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
-                        <GridColumns>
+                            <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
+                                <GridColumns>
                             @{
-                                var tenThongSoList = ListNhatKyNgay
+                                var tenThongSoList = ListNhatKyNam
                                 .Where(item => item.TenTram == tenTram)
                                 .Select(item => item.TenThongSo)
                                 .Distinct()
@@ -73,11 +76,11 @@
 
                                 foreach (var tenThongSo in tenThongSoList)
                                 {
-                                    <GridColumn HeaderText="@tenThongSo" TextAlign="TextAlign.Center" Width="150">
-                                        <Template>
+                                                    <GridColumn HeaderText="@tenThongSo" TextAlign="TextAlign.Center" Width="150">
+                                                        <Template>
                                             @{
-                                                var data = (context as prc_Nhat_Ky_Ngay);
-                                                var relevantData = ListNhatKyNgay
+                                                var data = (context as prc_Nhat_Ky_Nam);
+                                                var relevantData = ListNhatKyNam
                                                 .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
                                                 .ToList();
                                             }
@@ -89,28 +92,28 @@
 
                                                 if (giaTriDictionary.ContainsKey(tenThongSo))
                                                 {
-                                                    <div>
+                                                                            <div>
                                                         @giaTriDictionary[tenThongSo]
-                                                    </div>
+                                                                            </div>
                                                 }
                                                 else
                                                 {
-                                                    <div>No relevant data found</div>
+                                                                            <div>No relevant data found</div>
                                                 }
                                             }
                                             else
                                             {
-                                                <div>No relevant data found</div>
+                                                                    <div>No relevant data found</div>
                                             }
-                                        </Template>
-                                    </GridColumn>
+                                                        </Template>
+                                                    </GridColumn>
                                 }
                             }
-                        </GridColumns>
-                    </GridColumn>
+                                </GridColumns>
+                            </GridColumn>
                 }
-               }
+            }
         </GridColumns>
     </SfGrid>
-   
+
 </BodyCard>

@@ -2,7 +2,6 @@
 @using DAO.Models.DanhMuc
 @using ERPProject.ViewModel
 @inherits BcNgayBase
-
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
         max-height: calc(100vh - 185px) !important;
@@ -23,9 +22,7 @@
         text-align: center;
     }
 </style>
-@{
-    int i = 0;
-}
+
 <BodyCard>
     <SfToolbar>
         <ToolbarItems>
@@ -56,8 +53,7 @@
         </ToolbarItems>
     </SfToolbar>
     @{
-        var data = new List<BaoCaoNgayViewModel>();
-
+        var data = new List<BaoCaoNgayViewModel>();  
         @if (ListNhatKyNgay != null)
         {
             var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).ToList();
@@ -71,29 +67,45 @@
     }
     <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
         <GridColumns>
-            
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
             @if (ListNhatKyNgay != null)
             {
-                <GridColumn TextAlign="TextAlign.Center" HeaderText="STT" Width="150">
-                    <Template>@(i+1)</Template>
-                </GridColumn>
-                <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
                 var listTram = ListNhatKyNgay.GroupBy(x=>x.TenTram).Distinct();
                 @foreach (var list in listTram)
                 {
-                    var items = list.Where(x=>x.Thoi_Gian == data[i].ThoiGian).Distinct().ToList();
+                    var asx = list.OrderByDescending(x=>x.Thoi_Gian).FirstOrDefault();
+                    var time = new DateTime();
+                    if(asx != null)
+                    {
+                        time = asx.Thoi_Gian;
+                    }
+
+                    var items = list.Where(x => x.Thoi_Gian == time).ToList();
                     <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
                         <GridColumns>
+
                             @foreach (var item in items)
                             {
                                 <GridColumn HeaderText="@item.TenThongSo" TextAlign="TextAlign.Center" Width="150">
-                                    <Template>@item.Gia_Tri</Template>
+                                    <Template>
+                                        @{
+                                            var cx = context as BaoCaoNgayViewModel;
+                                            var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                            if(gt != null)
+                                            {
+                                                <div>@gt.Gia_Tri</div>
+                                            }
+                                            else
+                                            {
+                                                <div>--</div>
+                                            }
+                                        }
+                                    </Template>
                                 </GridColumn>
                             }                            
-                        </GridColumns>
+                        </GridColumns>                       
                     </GridColumn>
                 }
-                i++;
             }
         </GridColumns>
     </SfGrid>

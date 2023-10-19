@@ -4,4 +4,9 @@
     {
         public DateTime ThoiGian { get; set; }
     }
+    public class ThoiGianViewModel
+    {
+        public int TT { get; set; }
+        public DateTime ThoiGian { get; set; }
+    }
 }

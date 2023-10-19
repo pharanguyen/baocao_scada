@@ -2,6 +2,7 @@
 @using DAO.Models.DanhMuc
 @using ERPProject.ViewModel
 @inherits BcNgayBase
+
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
         max-height: calc(100vh - 185px) !important;
@@ -22,7 +23,9 @@
         text-align: center;
     }
 </style>
-
+@{
+    int i = 0;
+}
 <BodyCard>
     <SfToolbar>
         <ToolbarItems>
@@ -52,7 +55,49 @@
 
         </ToolbarItems>
     </SfToolbar>
-    <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+    @{
+        var data = new List<BaoCaoNgayViewModel>();
+
+        @if (ListNhatKyNgay != null)
+        {
+            var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).ToList();
+            @foreach (var item in listNK)
+            {
+                var thongsotong = new BaoCaoNgayViewModel();
+                thongsotong.ThoiGian = item.Key;
+                data.Add(thongsotong);
+            }
+        }
+    }
+    <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+        <GridColumns>
+            
+            @if (ListNhatKyNgay != null)
+            {
+                <GridColumn TextAlign="TextAlign.Center" HeaderText="STT" Width="150">
+                    <Template>@(i+1)</Template>
+                </GridColumn>
+                <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
+                var listTram = ListNhatKyNgay.GroupBy(x=>x.TenTram).Distinct();
+                @foreach (var list in listTram)
+                {
+                    var items = list.Where(x=>x.Thoi_Gian == data[i].ThoiGian).Distinct().ToList();
+                    <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
+                        <GridColumns>
+                            @foreach (var item in items)
+                            {
+                                <GridColumn HeaderText="@item.TenThongSo" TextAlign="TextAlign.Center" Width="150">
+                                    <Template>@item.Gia_Tri</Template>
+                                </GridColumn>
+                            }                            
+                        </GridColumns>
+                    </GridColumn>
+                }
+                i++;
+            }
+        </GridColumns>
+    </SfGrid>
+    @* <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
         <GridColumns>
             <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" TextAlign="TextAlign.Center" Width="50"></GridColumn>
             <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
@@ -111,6 +156,6 @@
                 }
                }
         </GridColumns>
-    </SfGrid>
+    </SfGrid> *@
    
 </BodyCard>

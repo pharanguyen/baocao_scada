@@ -2,6 +2,7 @@
 {
     public class BaoCaoNgayViewModel
     {
+        public int TT { get; set; }
         public DateTime ThoiGian { get; set; }
     }
     public class ThoiGianViewModel

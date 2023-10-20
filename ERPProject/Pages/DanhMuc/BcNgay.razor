@@ -52,21 +52,10 @@
 
         </ToolbarItems>
     </SfToolbar>
-    @{
-        var data = new List<BaoCaoNgayViewModel>();  
-        @if (ListNhatKyNgay != null)
-        {
-            var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).ToList();
-            @foreach (var item in listNK)
-            {
-                var thongsotong = new BaoCaoNgayViewModel();
-                thongsotong.ThoiGian = item.Key;
-                data.Add(thongsotong);
-            }
-        }
-    }
-    <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+    
+    <SfGrid DataSource="@data" AllowFiltering="true" AllowResizing="true">        
         <GridColumns>
+            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
             <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
             @if (ListNhatKyNgay != null)
             {
@@ -79,11 +68,9 @@
                     {
                         time = asx.Thoi_Gian;
                     }
-
                     var items = list.Where(x => x.Thoi_Gian == time).ToList();
                     <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
                         <GridColumns>
-
                             @foreach (var item in items)
                             {
                                 <GridColumn HeaderText="@item.TenThongSo" TextAlign="TextAlign.Center" Width="150">
@@ -108,66 +95,10 @@
                 }
             }
         </GridColumns>
-    </SfGrid>
-    @* <SfGrid DataSource="@ListNhatKyNgay" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
-        <GridColumns>
-            <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" TextAlign="TextAlign.Center" Width="50"></GridColumn>
-            <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
-
-            @if (ListNhatKyNgay != null)
-            {
-                var distinctTrams = ListNhatKyNgay.Select(item => item.TenTram).Distinct();
-                @foreach (var tenTram in distinctTrams)
-                {
-                    <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
-                        <GridColumns>
-                            @{
-                                var tenThongSoList = ListNhatKyNgay
-                                .Where(item => item.TenTram == tenTram)
-                                .Select(item => item.TenThongSo)
-                                .Distinct()
-                                .ToList();
-
-                                foreach (var tenThongSo in tenThongSoList)
-                                {
-                                    <GridColumn HeaderText="@tenThongSo" TextAlign="TextAlign.Center" Width="150">
-                                        <Template>
-                                            @{
-                                                var data = (context as prc_Nhat_Ky_Ngay);
-                                                var relevantData = ListNhatKyNgay
-                                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
-                                                .ToList();
-                                            }
-
-                                            @if (relevantData.Count > 0)
-                                            {
-                                                var giaTriDictionary = relevantData
-                                                .ToDictionary(item => item.TenThongSo, item => item.Gia_Tri);
-
-                                                if (giaTriDictionary.ContainsKey(tenThongSo))
-                                                {
-                                                    <div>
-                                                        @giaTriDictionary[tenThongSo]
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div>No relevant data found</div>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <div>No relevant data found</div>
-                                            }
-                                        </Template>
-                                    </GridColumn>
-                                }
-                            }
-                        </GridColumns>
-                    </GridColumn>
-                }
-               }
-        </GridColumns>
-    </SfGrid> *@
-   
+    </SfGrid>  
+    <SfPager PageSize=10 NumericItemsCount=10 TotalItemsCount=1000 ItemClick=PaginationData>
+    </SfPager>
 </BodyCard>
+@code{
+    
+}

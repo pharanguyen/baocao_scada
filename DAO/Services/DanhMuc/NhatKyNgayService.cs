@@ -4,6 +4,7 @@ using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -76,6 +77,18 @@ namespace DAO.Services.DanhMuc
         }
 
         public static ResultModel<List<prc_Nhat_Ky_Ngay>> GetAll_prc_Nhat_Ky_Ngay()
+        {
+            try
+            {
+                var _db = new SqlHelper();
+                var _obj = _db.QueryProc<prc_Nhat_Ky_Ngay>("prc_Nhat_Ky_Ngay").ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prc_Nhat_Ky_Ngay>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prc_Nhat_Ky_Ngay>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
+
+        public static ResultModel<List<prc_Nhat_Ky_Ngay>> Get_prc_Nhat_Ky_Ngay(int page, int take)
         {
             try
             {

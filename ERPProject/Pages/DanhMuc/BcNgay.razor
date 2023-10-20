@@ -53,7 +53,7 @@
         </ToolbarItems>
     </SfToolbar>
     
-    <SfGrid DataSource="@data" AllowFiltering="true" AllowResizing="true">        
+    <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">        
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
             <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
@@ -96,8 +96,6 @@
             }
         </GridColumns>
     </SfGrid>  
-    <SfPager PageSize=10 NumericItemsCount=10 TotalItemsCount=1000 ItemClick=PaginationData>
-    </SfPager>
 </BodyCard>
 @code{
     

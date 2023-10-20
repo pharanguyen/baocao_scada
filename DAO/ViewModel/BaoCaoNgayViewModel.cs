@@ -1,7 +1,7 @@
 ﻿using DAO.Models.CommonModels;
 using DAO.Models.DanhMuc;
 
-namespace ERPProject.ViewModel
+namespace DAO.ViewModel
 {
     public class BaoCaoNgayViewModel
     {

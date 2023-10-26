@@ -55,59 +55,43 @@
 
         </ToolbarItems>
     </SfToolbar>
-    <SfGrid DataSource="@ListNhatKyThang" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
-        <GridColumns>
-            <GridColumn Field="Id" IsPrimaryKey="true" HeaderText="STT" TextAlign="TextAlign.Center" Width="50"></GridColumn>
-            <GridColumn Field="Thoi_Gian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
 
+    <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+        <GridColumns>
+            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
             @if (ListNhatKyThang != null)
             {
-                var distinctTrams = ListNhatKyThang.Select(item => item.TenTram).Distinct();
-                @foreach (var tenTram in distinctTrams)
+                var listTram = ListNhatKyThang.GroupBy(x => x.TenTram).Distinct();
+                @foreach (var list in listTram)
                 {
-                    <GridColumn HeaderText="@tenTram" TextAlign="TextAlign.Center" Width="300">
+                    var asx = list.OrderByDescending(x => x.Thoi_Gian).FirstOrDefault();
+                    var time = new DateTime();
+                    if (asx != null)
+                    {
+                        time = asx.Thoi_Gian;
+                    }
+                    var items = list.Where(x => x.Thoi_Gian == time).ToList();
+                    <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
                         <GridColumns>
-                            @{
-                                var tenThongSoList = ListNhatKyThang
-                                .Where(item => item.TenTram == tenTram)
-                                .Select(item => item.TenThongSo)
-                                .Distinct()
-                                .ToList();
-
-                                foreach (var tenThongSo in tenThongSoList)
-                                {
-                                    <GridColumn HeaderText="@tenThongSo" TextAlign="TextAlign.Center" Width="150">
-                                        <Template>
-                                            @{
-                                                var data = (context as prc_Nhat_Ky_Thang);
-                                                var relevantData = ListNhatKyThang
-                                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == data.Thoi_Gian)
-                                                .ToList();
-                                            }
-
-                                            @if (relevantData.Count > 0)
+                            @foreach (var item in items)
+                            {
+                                <GridColumn HeaderText="@item.TenThongSo" TextAlign="TextAlign.Center" Width="150">
+                                    <Template>
+                                        @{
+                                            var cx = context as BaoCaoThangViewModel;
+                                            var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                            if (gt != null)
                                             {
-                                                var giaTriDictionary = relevantData
-                                                .ToDictionary(item => item.TenThongSo, item => item.Gia_Tri);
-
-                                                if (giaTriDictionary.ContainsKey(tenThongSo))
-                                                {
-                                                    <div>
-                                                        @giaTriDictionary[tenThongSo]
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div>No relevant data found</div>
-                                                }
+                                                <div>@gt.Gia_Tri</div>
                                             }
                                             else
                                             {
-                                                <div>No relevant data found</div>
+                                                <div>--</div>
                                             }
-                                        </Template>
-                                    </GridColumn>
-                                }
+                                        }
+                                    </Template>
+                                </GridColumn>
                             }
                         </GridColumns>
                     </GridColumn>
@@ -115,5 +99,4 @@
             }
         </GridColumns>
     </SfGrid>
-
 </BodyCard>

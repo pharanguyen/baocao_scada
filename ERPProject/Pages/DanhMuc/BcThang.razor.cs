@@ -4,17 +4,25 @@ using DAO.Models.DanhMuc.KhachHang;
 using DAO.Models.PhanQuyen;
 using DAO.Services.DanhMuc;
 using DAO.Services.PhanQuyen;
+using DAO.ViewModel;
 using ERPProject.Services;
 using ERPProject.Shared;
 using ERPProject.Shared.Combobox;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
+using Syncfusion.Blazor.Navigations;
 
 namespace ERPProject.Pages.DanhMuc
 {
     public partial class BcThangBase : ComponentBase
     {
         public List<prc_Nhat_Ky_Thang> ListNhatKyThang { get; set; }
+        public List<BaoCaoThangViewModel> data { get; set; }
+
+        public int take = 20;
+        public int totalPages = 0;
+        public int curPage = 1;
+
         //public List<to_quan_ly> ListNhatKyThang{ get; set; }
         protected Dm_Tram_CapNhat fCapNhat;
         ds_phanquyen _QSD = new ds_phanquyen();
@@ -58,11 +66,24 @@ namespace ERPProject.Pages.DanhMuc
 
             AppData.loadingPanel.show();
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Thang>>();
-            await Task.Run(() => { rsModel = NhatKyThangService.GetAll_prc_Nhat_Ky_Thang(); });
+            await Task.Run(() => { rsModel = NhatKyThangService.Get_prc_Nhat_Ky_Thang(curPage, take); });
             if (rsModel.isThanhCong)
             {
                 ListNhatKyThang = rsModel.Data;
-
+                if (ListNhatKyThang != null)
+                {
+                    var listNK = ListNhatKyThang.GroupBy(x => x.Thoi_Gian).ToList();
+                    data = new List<BaoCaoThangViewModel>();
+                    var i = 0;
+                    foreach (var item in listNK)
+                    {
+                        i++;
+                        var thongsotong = new BaoCaoThangViewModel();
+                        thongsotong.TT = i;
+                        thongsotong.ThoiGian = item.Key;
+                        data.Add(thongsotong);
+                    }
+                }
                 AppData.loadingPanel.hide();
             }
             else
@@ -72,6 +93,12 @@ namespace ERPProject.Pages.DanhMuc
                 return;
             }
             StateHasChanged();
+        }
+
+        public void PaginationData(PagerItemClickEventArgs args)
+        {
+            curPage = args.CurrentPage;
+            onTaiLai();
         }
 
         protected void onThemMoi()
@@ -145,4 +172,5 @@ namespace ERPProject.Pages.DanhMuc
             }));
         }
     }
+
 }

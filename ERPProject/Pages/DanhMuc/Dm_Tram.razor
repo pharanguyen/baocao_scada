@@ -40,7 +40,7 @@
         @*cho phép lựa chọn nhiều dòng*@
         <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
         <GridColumns>
-            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="50">
                 <Template>
                     <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_Tram).Id))"></SfButton>
                     <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_Tram).Id))"></SfButton>

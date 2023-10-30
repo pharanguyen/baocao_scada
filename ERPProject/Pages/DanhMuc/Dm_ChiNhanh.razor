@@ -42,7 +42,7 @@
         <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
         <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
         <GridColumns>
-            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="50">
                 <Template>
                     <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as DAO.Models.DanhMuc.Dm_ChiNhanh).Id))"></SfButton>
                     <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as DAO.Models.DanhMuc.Dm_ChiNhanh).Id))"></SfButton>

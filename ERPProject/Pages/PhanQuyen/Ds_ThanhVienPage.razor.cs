@@ -1,5 +1,4 @@
-﻿
-using DAO.Models.CommonModels;
+﻿using DAO.Models.CommonModels;
 using DAO.Models.PhanQuyen;
 using DAO.Services.PhanQuyen;
 using ERPProject.Libs;
@@ -141,12 +140,5 @@ namespace ERPProject.Pages.PhanQuyen
             fPhanQuyen.Show(_ID, nhomquyen_id);
         }
 
-        protected void XacNhanLuu(bool isLuuThanhCong)
-        {
-            if (isLuuThanhCong)
-            {
-                onTaiLai();
-            }
-        }
     }
 }

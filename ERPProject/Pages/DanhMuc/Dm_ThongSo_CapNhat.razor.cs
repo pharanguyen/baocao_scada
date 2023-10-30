@@ -56,6 +56,7 @@ namespace ERPProject.Pages.DanhMuc
                     await Task.Run(() => { rsModel = DmThongSoService.Add(objModel); });
                     if (!rsModel.isThanhCong) throw new Exception(rsModel.ThongBao);
                     toastService.ShowSuccess("Đã thêm chi nhánh thành công!");
+                    isDaCapNhatDuLieu = true;
                     isShow = false;
                 }
                 else

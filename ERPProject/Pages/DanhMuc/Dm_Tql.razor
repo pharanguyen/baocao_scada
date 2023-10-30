@@ -34,7 +34,7 @@
         <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
         <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
         <GridColumns>
-            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="30">
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="50">
                 <Template>
                     <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_Tql).Id))"></SfButton>
                     <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_Tql).Id))"></SfButton>

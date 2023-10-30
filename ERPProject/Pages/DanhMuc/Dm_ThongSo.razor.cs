@@ -82,11 +82,11 @@ namespace ERPProject.Pages.DanhMuc
         }
         protected void onCapNhat(int _ID)
         {
-            //if (_QSD.sua == false)
-            //{
-            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-            //    return;
-            //}
+            if (_QSD.sua == false)
+            {
+                toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                return;
+            }
             fCapNhat.TieuDe = "Cập nhật thông tin";
             fCapNhat.isThemMoi = false;
             fCapNhat.Show(_ID);
@@ -107,11 +107,11 @@ namespace ERPProject.Pages.DanhMuc
         protected void onXoa(int _ID)
         {
             //check quyen xoa
-            //if (_QSD.xoa == false || _QSD.xoa == null)
-            //{
-            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-            //    return;
-            //}
+            if (_QSD.xoa == false || _QSD.xoa == null)
+            {
+                toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                return;
+            }
             frmXacNhan.Show("Xóa dòng được chọn ?", "300px", new System.Action(async () =>
             {
                 AppData.loadingPanel.show();

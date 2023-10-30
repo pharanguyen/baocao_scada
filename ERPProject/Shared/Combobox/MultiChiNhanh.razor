@@ -1,0 +1,37 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using Syncfusion.Blazor.DropDowns;
+
+<SfMultiSelect TValue="int[]" TItem="Dm_ChiNhanh" Placeholder="Chọn..." @ref="multiSelect"
+               @bind-Value="@Value" Width="@Width" PopupWidth="@PopupWidth"
+               DataSource="Data" AllowFiltering="true"
+               ShowClearButton="true">
+    <MultiSelectFieldSettings Text="Ten" Value="Id"></MultiSelectFieldSettings>
+</SfMultiSelect>
+
+@code {
+    private SfMultiSelect<int[], Dm_ChiNhanh> multiSelect;
+    private List<Dm_ChiNhanh> Data = new List<Dm_ChiNhanh>();
+    [Parameter]
+    public int[] Value { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public EventCallback<int[]> ValueChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Data = DmChiNhanhService.GetToComBo().Data;
+    }
+
+    public void setFocus()
+    {
+        multiSelect.FocusIn();
+    }
+}

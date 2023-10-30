@@ -51,7 +51,7 @@ namespace ERPProject.Pages.PhanQuyen
                     if (strInfo.Length == 5)
                     {
                         var rsModel = new ResultModel<ds_phanquyen>();
-                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "mnuDM_Capnhatdsthanhvien"); });
+                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "btnDsThanhvien"); });
                         _QSD = rsModel.Data;
                        // if (_QSD.them == false) disableBtnThemtv = true;
                        // if (_QSD.sua == false) disableBtnSuatv = true;
@@ -89,26 +89,23 @@ namespace ERPProject.Pages.PhanQuyen
         }
         protected void onCapNhat(int _ID)
         {
-            //if (_QSD.sua == false)
-            //{
-            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-            //    return;
-            //}
+            if (_QSD.sua == false)
+            {
+                toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                return;
+            }
             fCapNhat.TieuDe = "Cập nhật thông tin nhân viên";
             fCapNhat.isThemMoi = false;
             fCapNhat.Show(_ID);
         }
-        public void onTimKiem(ChangedEventArgs args)
-        {
-            //this.gdv.Search(args.Value);
-        }
+
         protected void onThemMoi()
         {
-            //if (_QSD.them ==false)
-            //{
-            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-            //    return;
-            //}
+            if (_QSD.them == false)
+            {
+                toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                return;
+            }
             fCapNhat.isThemMoi = true;
             fCapNhat.TieuDe = "Thêm nhân viên";
             fCapNhat.Show(0);
@@ -116,12 +113,12 @@ namespace ERPProject.Pages.PhanQuyen
         protected void onXoa(int _ID)
         {
             //check quyen xoa
-                //if (_QSD.xoa == false)
-                //{
-                //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-                //    return;
-                //}
-            //
+            if (_QSD.xoa == false)
+            {
+                toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                return;
+            }
+
             frmXacNhan.Show("Xóa dòng được chọn ?", "300px", new System.Action(async () =>
             {
                 AppData.loadingPanel.show();
@@ -134,16 +131,22 @@ namespace ERPProject.Pages.PhanQuyen
         }
         protected void onCapQuyen(int _ID, int nhomquyen_id)
         {
-            //if (_QSD.sua == false)
-            //{
-            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-            //    return;
-            //}
+            if (_QSD.sua == false)
+            {
+                toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                return;
+            }
 
             fPhanQuyen.TieuDe = "Phân Quyền Chi Tiết";
             fPhanQuyen.Show(_ID, nhomquyen_id);
         }
 
-
+        protected void XacNhanLuu(bool isLuuThanhCong)
+        {
+            if (isLuuThanhCong)
+            {
+                onTaiLai();
+            }
+        }
     }
 }

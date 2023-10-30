@@ -95,13 +95,17 @@
          </Content>
          <FooterTemplate>
             <CboDanhMuc @ref="cboDanhMuc" Width="100%"></CboDanhMuc>
-            <SfCheckBox @bind-Checked="@chkXem" @onchange="ValueChanged">Xem</SfCheckBox>
-            <SfCheckBox @bind-Checked="chkThem" Disabled="@isDisableCheckbox">Thêm</SfCheckBox>
-            <SfCheckBox @bind-Checked="chkSua" Disabled="@isDisableCheckbox">Sửa</SfCheckBox>
-            <SfCheckBox @bind-Checked="chkXoa" Disabled="@isDisableCheckbox">Xóa</SfCheckBox>
-            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onThucHien">Thực Hiện</SfButton>
-            <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onSave">Lưu</SfButton>
-            <SfButton CssClass="e-flat e-danger" IconCss="icon-cross" OnClick="onClose">Đóng</SfButton>
+            <div class="mt-2">
+                <SfCheckBox @bind-Checked="@chkXem" @onchange="ValueChanged">Xem</SfCheckBox>
+                <SfCheckBox @bind-Checked="chkThem" Disabled="@isDisableCheckbox">Thêm</SfCheckBox>
+                <SfCheckBox @bind-Checked="chkSua" Disabled="@isDisableCheckbox">Sửa</SfCheckBox>
+                <SfCheckBox @bind-Checked="chkXoa" Disabled="@isDisableCheckbox">Xóa</SfCheckBox>
+                <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onThucHien">Thực Hiện</SfButton>
+                <SfButton IsPrimary="true" IconCss="icon-floppy-disk" OnClick="onSave">Lưu</SfButton>
+                <SfButton CssClass="e-flat e-danger" IconCss="icon-cross" OnClick="onClose">Đóng</SfButton>
+            </div>
+
+
          </FooterTemplate>
     </DialogTemplates>
 </SfDialog>

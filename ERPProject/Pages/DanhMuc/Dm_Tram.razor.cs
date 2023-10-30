@@ -36,7 +36,7 @@ namespace ERPProject.Pages.DanhMuc
                     if (strInfo.Length == 5)
                     {
                         var rsModel = new ResultModel<ds_phanquyen>();
-                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "mnuDM_ToQL"); });
+                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "btnDmTram"); });
                         _QSD = rsModel.Data;
 
 

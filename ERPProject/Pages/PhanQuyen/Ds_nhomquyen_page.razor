@@ -26,17 +26,6 @@
                     <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-plus2" @onclick="onThemMoi">Thêm Nhóm Quyền</SfButton>
                 </Template>
             </ToolbarItem>
-            <ToolbarItem Type="ItemType.Button">
-                <Template>
-                    <SfButton CssClass="e-flat" IsPrimary="true" IconCss="icon-floppy-disk" >Lưu Lại</SfButton>
-                </Template>
-            </ToolbarItem>
-            <ToolbarItem Type="ItemType.Input">
-                <Template>
-                    <SfTextBox Placeholder="Tìm kiếm" ValueChange="onTimKiem" ShowClearButton="true">
-                    </SfTextBox>
-                </Template>
-            </ToolbarItem>
 
         </ToolbarItems>
     </SfToolbar>
@@ -48,6 +37,7 @@
         AllowResizing="true" 
         AllowFiltering="true">
         <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
         <GridColumns>
             <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="70">
                 <Template>
@@ -58,19 +48,19 @@
             <GridColumn Field="nhomquyen_id" 
                         IsPrimaryKey="true"
                         HeaderText="Mã Nhóm" 
-                        TextAlign="TextAlign.Left" 
+                        TextAlign="TextAlign.Center" 
                         Width="40">
 
             </GridColumn>  
             <GridColumn Field="nhomquyen_name"
                         HeaderText="Tên Nhóm Quyền" 
-                        TextAlign="TextAlign.Left" 
+                        TextAlign="TextAlign.Center" 
                         Width="120">
 
             </GridColumn>  
             <GridColumn Field="chuthich"
                         HeaderText="Chú Thích" 
-                        TextAlign="TextAlign.Left" 
+                        TextAlign="TextAlign.Center" 
                         Width="120">
 
             </GridColumn>

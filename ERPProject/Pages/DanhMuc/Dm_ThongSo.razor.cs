@@ -35,7 +35,7 @@ namespace ERPProject.Pages.DanhMuc
                     if (strInfo.Length == 5)
                     {
                         var rsModel = new ResultModel<ds_phanquyen>();
-                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "btnThongSoTram"); });
+                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "btnDmThongSo"); });
                         _QSD = rsModel.Data;
 
 
@@ -70,11 +70,11 @@ namespace ERPProject.Pages.DanhMuc
 
         protected void onThemMoi()
         {
-            //if (_QSD.them == false)
-            //{
-            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-            //    return;
-            //}
+            if (_QSD.them == false)
+            {
+                toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+                return;
+            }
             fCapNhat.isThemMoi = true;
             fCapNhat.TieuDe = "Thêm";
             fCapNhat.Show(0);

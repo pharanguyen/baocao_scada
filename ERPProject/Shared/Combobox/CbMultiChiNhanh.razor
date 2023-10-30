@@ -1,0 +1,22 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+
+<SfMultiSelect TValue="int[]" TItem="Dm_ChiNhanh" Placeholder="Chọn chi nhánh" DataSource="@Data"
+               Width="@Width"
+               PopupWidth="@PopupWidth">
+    <MultiSelectFieldSettings Text="Ten" Value="Id"></MultiSelectFieldSettings>
+</SfMultiSelect>
+
+@code {
+   private List<Dm_ChiNhanh> Data = new List<Dm_ChiNhanh>();
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+   protected override void OnInitialized()
+    {
+        Data = DmChiNhanhService.GetToComBo().Data;
+    }
+}

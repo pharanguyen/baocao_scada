@@ -1,0 +1,22 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+
+<SfMultiSelect TValue="int[]" TItem="Dm_Tram" Placeholder="Chọn trạm" DataSource="@Data"
+               Width="@Width"
+               PopupWidth="@PopupWidth">
+    <MultiSelectFieldSettings Text="Ten" Value="Id"></MultiSelectFieldSettings>
+</SfMultiSelect>
+
+@code {
+    private List<Dm_Tram> Data = new List<Dm_Tram>();
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+    protected override void OnInitialized()
+    {
+        Data = DmTramService.GetToComBo().Data;
+    }
+}

@@ -67,6 +67,7 @@ namespace ERPProject.Pages.PhanQuyen
                     await Task.Run(() => { rsModel = ds_nhomquyenService.Add(objModel); });
                     if (!rsModel.isThanhCong) throw new Exception(rsModel.ThongBao);
                     toastService.ShowSuccess("Đã thêm nhóm quyền!");
+                    isDaCapNhatDuLieu = true;
                     isShow = false;
                 }
                 else

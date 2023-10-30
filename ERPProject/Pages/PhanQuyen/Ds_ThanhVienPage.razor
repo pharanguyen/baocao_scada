@@ -27,19 +27,14 @@
                 </Template>
             </ToolbarItem>
 
-            <ToolbarItem Type="ItemType.Input">
-                <Template>
-                    <SfTextBox Placeholder="Tìm kiếm" ValueChange="onTimKiem" ShowClearButton="true">
-                    </SfTextBox>
-                </Template>
-            </ToolbarItem>
 
         </ToolbarItems>
     </SfToolbar>
-    <SfGrid ID ="gdvNS" DataSource="@GridData" @ref="gdv" Width="100%" GridLines="GridLine.Both">
+    <SfGrid ID ="gdvNS" DataSource="@GridData" @ref="gdv" Width="100%" GridLines="GridLine.Both" AllowFiltering="true">
         <GridSelectionSettings EnableToggle="false"></GridSelectionSettings>
+        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="500" Operators="Operator.Contains"></GridFilterSettings>
         <GridColumns>
-            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="80">
+            <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="90">
                 <Template>
                     <SfButton Disabled="@disableBtnSuatv" IsPrimary="true" CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_ThanhVien_DanhSach).thanhvien_id))"></SfButton>
                     <SfButton Disabled="@disableBtnXoatv" CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_ThanhVien_DanhSach).thanhvien_id))"></SfButton>
@@ -59,7 +54,7 @@
             </GridColumn>
             <GridColumn Field="donvi" HeaderText="Đơn Vị" HeaderTextAlign="@TextAlign.Center" Width="150">
             </GridColumn>  
-            <GridColumn Field="nhomquyen_name" HeaderText="Đơn Vị" HeaderTextAlign="@TextAlign.Center" Width="150">
+            <GridColumn Field="nhomquyen_name" HeaderText="Nhóm Quyền" HeaderTextAlign="@TextAlign.Center" Width="150">
             </GridColumn>
             <GridColumn Field="ten_chinhanh" HeaderText="Chi Nhánh" HeaderTextAlign="@TextAlign.Center" Width="150">
             </GridColumn>

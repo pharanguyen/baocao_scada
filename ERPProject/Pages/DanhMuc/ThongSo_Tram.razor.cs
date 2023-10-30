@@ -1,37 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using ERPProject;
+﻿using Microsoft.AspNetCore.Components;
 using ERPProject.Shared;
 using ERPProject.Services;
-using ERPProject.Libs;
-using Syncfusion.Blazor;
-using Syncfusion.Blazor.Buttons;
-using Syncfusion.Blazor.SplitButtons;
 using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.TreeGrid;
-using Syncfusion.Blazor.Popups;
-using Syncfusion.Blazor.Navigations;
-using Syncfusion.Blazor.Inputs;
-using Syncfusion.Blazor.Notifications;
-using Syncfusion.Blazor.Calendars;
-using Syncfusion.Blazor.DropDowns;
 using DAO.Models.CommonModels;
-using DAO.Models.DanhMuc.KhachHang;
 using DAO.Models.PhanQuyen;
-using DAO.Services.DanhMuc.KhachHang;
 using DAO.Services.PhanQuyen;
-using ERPProject.Pages.DanhMuc.KhachHang;
 using ERPProject.Shared.Combobox;
 using DAO.Models.DanhMuc;
 using DAO.Services.DanhMuc;
@@ -68,7 +41,7 @@ namespace ERPProject.Pages.DanhMuc
                     if (strInfo.Length == 5)
                     {
                         var rsModel = new ResultModel<ds_phanquyen>();
-                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "mnuKH_CapnhatKH"); });
+                        await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "btnThongSoTram"); });
                         _QSD = rsModel.Data;
 
 
@@ -82,11 +55,11 @@ namespace ERPProject.Pages.DanhMuc
         }
         protected void onThemMoi()
         {
-            /* if (_QSD.them == false)
-             {
-                 toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-                 return;
-             }*/
+            //if (_QSD.them == false)
+            //{
+            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+            //    return;
+            //}
             fCapNhat.isThemMoi = true;
             fCapNhat.TieuDe = "Thêm thông số";
             fCapNhat.Show(0);
@@ -94,11 +67,11 @@ namespace ERPProject.Pages.DanhMuc
         }
         protected void onCapNhat(int _ID)
         {
-            /* if (_QSD.sua == false)
-             {
-                 toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-                 return;
-             }*/
+            //if (_QSD.sua == false)
+            //{
+            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+            //    return;
+            //}
             fCapNhat.TieuDe = "Cập nhật thông tin trạm";
             fCapNhat.isThemMoi = false;
             fCapNhat.Show(_ID);
@@ -108,11 +81,11 @@ namespace ERPProject.Pages.DanhMuc
         protected void onXoa(int _ID)
         {
             //check quyen xoa
-            /*  if (_QSD.xoa == false || _QSD.xoa == null)
-              {
-                  toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-                  return;
-              }*/
+            //if (_QSD.xoa == false || _QSD.xoa == null)
+            //{
+            //    toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
+            //    return;
+            //}
             frmXacNhan.Show("Xóa dòng được chọn ?", "300px", new System.Action(async () =>
             {
                 AppData.loadingPanel.show();

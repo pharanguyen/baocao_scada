@@ -1,6 +1,7 @@
 ﻿@page "/Dm_BcNgay"
 @using DAO.Models.DanhMuc
 @using DAO.ViewModel;
+@using ERPProject.Shared.Combobox;
 @inherits BcNgayBase
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
@@ -39,16 +40,9 @@
                     <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
                 </Template>
             </ToolbarItem>
-            <label><b>Lọc theo chi nhánh</b></label>
+            <CbMultiChiNhanh Width="500px" PopupWidth="100%"></CbMultiChiNhanh>
+            <CbMultiTram Width="500px" PopupWidth="100%"></CbMultiTram>
 
-            <ToolbarItem Type="ItemType.Input">
-
-            </ToolbarItem>
-            <label><b>Lọc theo trạm</b></label>
-
-            <ToolbarItem Type="ItemType.Input">
-
-            </ToolbarItem>
 
         </ToolbarItems>
     </SfToolbar>

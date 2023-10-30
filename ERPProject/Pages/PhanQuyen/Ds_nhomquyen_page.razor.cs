@@ -48,10 +48,7 @@ namespace ERPProject.Pages.PhanQuyen
             }
             StateHasChanged();
         }
-        public void onTimKiem(ChangedEventArgs args)
-        {
-            //this.gdv.Search(args.Value);
-        }
+
         protected void onThemMoi()
         {
             //check quyen them moi

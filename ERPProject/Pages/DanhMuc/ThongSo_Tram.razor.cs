@@ -22,7 +22,6 @@ namespace ERPProject.Pages.DanhMuc
         AppDataScoped AppData { get; set; }
         protected FormXacNhan frmXacNhan;
         protected CbChiNhanh CbChiNhanh;
-        protected CbMultiChiNhanh CbMultiChiNhanh;
         protected CbTram CbTram;
         [Inject]
         protected ToastService toastService { get; set; }

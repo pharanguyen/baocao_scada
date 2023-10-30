@@ -1,4 +1,5 @@
 ﻿@using DAO.Models.DanhMuc
+@using ERPProject.Shared.Combobox
 @inherits ThongSo_Tram_CapNhatBase
 
 <style type="text/css">
@@ -31,19 +32,19 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Trạm</label>
-                        <ERPProject.Shared.Combobox.CbTram @bind-Value="objModel.Id_Tram" Width="100%" PopupWidth="100%"></ERPProject.Shared.Combobox.CbTram>
+                        <CbMultiTram PopupWidth="500px" Width="100%"></CbMultiTram>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Thông số</label>
-                        <ERPProject.Shared.Combobox.CbThongSo @bind-Value="objModel.Id_ThongSo" Width="100%" PopupWidth="100%"></ERPProject.Shared.Combobox.CbThongSo>
+                        <CbMultiThongSo PopupWidth="500px" Width="100%"></CbMultiThongSo>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Chi nhánh</label>
-                        <ERPProject.Shared.Combobox.CbChiNhanh @bind-Value="objModel.Id_ChiNhanh" Width="100%" PopupWidth="100%"></ERPProject.Shared.Combobox.CbChiNhanh>
+                        
                     </div>
                 </div>
                 <div class="col-md-6">

@@ -1,6 +1,5 @@
 ﻿using DAO.Models.CommonModels;
 using DAO.Models.DanhMuc;
-using DAO.Models.DanhMuc.KhachHang;
 using Dapper;
 using System;
 using System.Collections.Generic;

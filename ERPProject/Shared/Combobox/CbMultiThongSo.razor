@@ -1,0 +1,36 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+
+<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="Dm_ThongSo" Placeholder="Chọn thông số" @bind-Value="Value" DataSource="@Data"
+               Width="@Width"
+               PopupWidth="@PopupWidth">
+    <MultiSelectEvents TItem="Dm_ThongSo" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>
+    <MultiSelectFieldSettings Text="Ten" Value="Id"></MultiSelectFieldSettings>
+</SfMultiSelect>
+
+@code {
+    SfMultiSelect<int[], Dm_ThongSo> MultiSelectObj;
+    private List<Dm_ThongSo> Data = new List<Dm_ThongSo>();
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+    [Parameter]
+    public int[] Value { get; set; } = new int[] { };
+    protected override void OnInitialized()
+    {
+        Data = DmThongSoService.GetToComBo().Data;
+
+    }
+    private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
+    {
+        Value = args.Value;
+        foreach (var item in Value)
+        {
+            Console.WriteLine(item);
+        }
+    }
+}

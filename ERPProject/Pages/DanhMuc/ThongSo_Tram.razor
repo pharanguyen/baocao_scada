@@ -1,5 +1,6 @@
 ﻿@page "/Dm_Thongsotram"
 @using DAO.Models.DanhMuc
+@using ERPProject.Shared.Combobox
 @inherits ThongSo_TramBase
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
@@ -30,14 +31,14 @@
 
             <ToolbarItem Type="ItemType.Input">
                 <Template>
-                    <ERPProject.Shared.Combobox.CbChiNhanh @ref="@CbChiNhanh" Width="350px" ValueChanged="onTaiLai"></ERPProject.Shared.Combobox.CbChiNhanh>
+                    <CbChiNhanh @ref="@CbChiNhanh" PopupWidth="100%" Width="350px" ValueChanged="onTaiLai"></CbChiNhanh>
                 </Template>
             </ToolbarItem>
             <label><b>Lọc theo trạm</b></label>
 
             <ToolbarItem Type="ItemType.Input">
                 <Template>
-                    <ERPProject.Shared.Combobox.CbTram @ref="@CbTram" Width="350px" ValueChanged="onTaiLai"></ERPProject.Shared.Combobox.CbTram>
+                    <CbTram @ref="@CbTram" PopupWidth="100%" Width="350px" ValueChanged="onTaiLai"></CbTram>
                 </Template>
             </ToolbarItem>
 

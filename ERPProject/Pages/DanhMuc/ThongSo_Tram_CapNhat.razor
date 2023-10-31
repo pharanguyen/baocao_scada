@@ -32,19 +32,19 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Trạm</label>
-                        <CbMultiTram PopupWidth="500px" Width="100%"></CbMultiTram>
+                        <CbTram PopupWidth="500px" Width="100%" @bind-Value="objModel.Id_Tram"></CbTram>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Thông số</label>
-                        <CbMultiThongSo PopupWidth="500px" Width="100%"></CbMultiThongSo>
+                        <CbThongSo PopupWidth="500px" Width="100%" @bind-Value="objModel.Id_ThongSo"></CbThongSo>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Chi nhánh</label>
-                        
+                        <CbChiNhanh PopupWidth="500px" Width="100%" @bind-Value="objModel.Id_ChiNhanh"></CbChiNhanh>
                     </div>
                 </div>
                 <div class="col-md-6">

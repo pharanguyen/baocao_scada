@@ -58,7 +58,7 @@ namespace ERPProject.Pages.DanhMuc
             if (_QSD.them == false)
             {
                 toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-               return;
+                return;
             }
             fCapNhat.isThemMoi = true;
             fCapNhat.TieuDe = "Thêm thông số";
@@ -84,7 +84,7 @@ namespace ERPProject.Pages.DanhMuc
             if (_QSD.xoa == false || _QSD.xoa == null)
             {
                 toastService.ShowWarning("Bạn không có quyền sử dụng tính năng này !");
-               return;
+                return;
             }
             frmXacNhan.Show("Xóa dòng được chọn ?", "300px", new System.Action(async () =>
             {
@@ -99,26 +99,22 @@ namespace ERPProject.Pages.DanhMuc
         protected async void onTaiLai()
         {
 
-            if (CbChiNhanh != null && CbTram != null)
+            AppData.loadingPanel.show();
+            var rsModel = new ResultModel<List<prc_ThongSo_Tram_Dynamic>>();
+            await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_Dynamic_by_Id_Tram_or_Id_ChiNhanh(CbChiNhanh.Value, CbTram.Value); });
+            if (rsModel.isThanhCong)
             {
-                if (CbChiNhanh.Value != null && CbTram.Value != null)
-                {
-                    AppData.loadingPanel.show();
-                    var rsModel = new ResultModel<List<prc_ThongSo_Tram_Dynamic>>();
-                    await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_Dynamic_by_Id_Tram_or_Id_ChiNhanh(CbChiNhanh.Value, CbTram.Value); });
-                    if (rsModel.isThanhCong)
-                    {
-                        listThongSoTram = rsModel.Data;
-                        AppData.loadingPanel.hide();
-                    }
-                    else
-                    {
-                        AppData.loadingPanel.hide();
-                        toastService.ShowDanger(rsModel.ThongBao);
-                        return;
-                    }
-                }
+                listThongSoTram = rsModel.Data;
+                AppData.loadingPanel.hide();
             }
+            else
+            {
+                AppData.loadingPanel.hide();
+                toastService.ShowDanger(rsModel.ThongBao);
+                return;
+            }
+
+
             StateHasChanged();
         }
 

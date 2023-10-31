@@ -23,7 +23,7 @@
             <table>
                 <tr>
                     <th>Mã</th>
-                    <th>Tên chi nhánh</th>
+                    <th>Tên Tuyến</th>
                 </tr>
             </table>
         </HeaderTemplate>
@@ -43,7 +43,7 @@
             <span>@((context as Dm_ThongSo).Id) - @((context as Dm_ThongSo).Ten) </span>
         </ValueTemplate>
     </DropDownListTemplates>
-    <DropDownListEvents TValue="int" TItem="@DAO.Models.DanhMuc.Dm_ThongSo" ValueChange="ValueChange" Filtering="onFilter"></DropDownListEvents>
+    <DropDownListEvents TValue="int" TItem="@Dm_ThongSo" ValueChange="ValueChange"></DropDownListEvents>
 </SfDropDownList>
 
 @code {
@@ -53,7 +53,7 @@
     public int Index { get; set; }
 
     [Parameter]
-    public string PopupWidth { get; set; } = "200px";
+    public string PopupWidth { get; set; } = "400px";
 
     [Parameter]
     public string Width { get; set; } = "100px";
@@ -62,7 +62,7 @@
     public int Value { get; set; }
     [Parameter]
     public EventCallback<int> ValueChanged { get; set; }
-    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DAO.Models.DanhMuc.Dm_ThongSo> args)
+    private void ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, Dm_ThongSo> args)
     {
         Value = args.Value;
         ValueChanged.InvokeAsync(Value);
@@ -75,21 +75,4 @@
     {
         cb.FocusIn();
     }
-    [Parameter]
-    public EventCallback<Syncfusion.Blazor.DropDowns.FilteringEventArgs> Filtering { get; set; }
-
-    public async void onFilter(Syncfusion.Blazor.DropDowns.FilteringEventArgs args)
-    {
-        args.PreventDefaultAction = true;
-        if (args.Text == null || args.Text.Trim() == "")
-        {
-            Data = DmThongSoService.GetToComBo().Data;
-        }
-
-        await cb.FilterAsync(Data);
-        StateHasChanged();
-    }
-
-
-
 }

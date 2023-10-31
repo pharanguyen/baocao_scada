@@ -3,6 +3,7 @@
 @using DAO.Models.DanhMuc;
 
 <SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="Dm_ThongSo" Placeholder="Chọn thông số" @bind-Value="Value" DataSource="@Data"
+               AllowFiltering="true"
                Width="@Width"
                PopupWidth="@PopupWidth">
     <MultiSelectEvents TItem="Dm_ThongSo" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>

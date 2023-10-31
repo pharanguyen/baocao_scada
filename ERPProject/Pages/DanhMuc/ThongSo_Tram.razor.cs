@@ -46,7 +46,7 @@ namespace ERPProject.Pages.DanhMuc
 
 
                     }
-                    onTaiLai();
+                   // onTaiLai();
 
 
                 });

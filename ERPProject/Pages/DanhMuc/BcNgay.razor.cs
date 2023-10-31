@@ -6,6 +6,7 @@ using DAO.Services.PhanQuyen;
 using DAO.ViewModel;
 using ERPProject.Services;
 using ERPProject.Shared;
+using ERPProject.Shared.Combobox;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Navigations;
@@ -29,6 +30,10 @@ namespace ERPProject.Pages.DanhMuc
         [Inject]
         AppDataScoped AppData { get; set; }
         protected FormXacNhan frmXacNhan;
+        protected CbMultiChiNhanh CbChiNhanh;
+        protected CbMultiTram CbTram;
+        protected CbMultiThongSo CbThongSo;
+
         [Inject]
         protected ToastService toastService { get; set; }
         [Inject]
@@ -66,7 +71,7 @@ namespace ERPProject.Pages.DanhMuc
 
             AppData.loadingPanel.show();
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Ngay>>();
-            await Task.Run(() => { rsModel = NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(curPage, take); });
+            await Task.Run(() => { rsModel = NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(CbChiNhanh.Value,CbTram.Value,CbThongSo.Value); });
             if (rsModel.isThanhCong)
             {
                 ListNhatKyNgay = rsModel.Data;

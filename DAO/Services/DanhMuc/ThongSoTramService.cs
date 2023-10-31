@@ -64,16 +64,16 @@ namespace DAO.Services.DanhMuc
             }
             catch (Exception ex) { return new ResultModel<int?>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
-        public static ResultModel<List<prc_ThongSo_Tram>> GetAll_prc_ThongSo_Tram()
+        public static ResultModel<List<prc_ThongSo_Tram_Dynamic>> GetAll_prc_ThongSo_Tram_Dynamic()
         {
             try
             {
                 var _db = new SqlHelper();
-                var _obj = _db.QueryProc<prc_ThongSo_Tram>("prc_ThongSo_Tram").ToList();
+                var _obj = _db.QueryProc<prc_ThongSo_Tram_Dynamic>("prc_ThongSo_Tram_Dynamic").ToList();
                 if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
-                return new ResultModel<List<prc_ThongSo_Tram>>() { Data = _obj };
+                return new ResultModel<List<prc_ThongSo_Tram_Dynamic>>() { Data = _obj };
             }
-            catch (Exception ex) { return new ResultModel<List<prc_ThongSo_Tram>>() { isThanhCong = false, ThongBao = ex.Message }; }
+            catch (Exception ex) { return new ResultModel<List<prc_ThongSo_Tram_Dynamic>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
         public static ResultModel<ThongSo_Tram> GetById_ThongSo_Tram_byms_mnoi(int ms_mnoi)
         {
@@ -102,32 +102,32 @@ namespace DAO.Services.DanhMuc
             { return new ResultModel<int?>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
        
-        public static ResultModel<List<prc_ThongSo_Tram>> GetAll_prc_ThongSo_Tram_by_Id_Tram_or_Id_ChiNhanh(int Id_ChiNhanh , int Id_Tram)
+        public static ResultModel<List<prc_ThongSo_Tram_Dynamic>> GetAll_prc_ThongSo_Tram_Dynamic_by_Id_Tram_or_Id_ChiNhanh(int Id_ChiNhanh , int Id_Tram)
         {
             try
             {
                 var _db = new SqlHelper();
                 DynamicParameters p = new DynamicParameters();
-                p.Add("Id_ChiNhanh", Id_ChiNhanh);
-                p.Add("Id_Tram", Id_Tram);
-                var _obj = _db.QueryProc<prc_ThongSo_Tram>("prc_ThongSo_Tram_by_Id_Tram_or_Id_ChiNhanh", p).ToList();
+                p.Add("IdChiNhanh", Id_ChiNhanh);
+                p.Add("IdTram", Id_Tram);
+                var _obj = _db.QueryProc<prc_ThongSo_Tram_Dynamic>("prc_ThongSo_Tram_Dynamic", p).ToList();
                 if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
-                return new ResultModel<List<prc_ThongSo_Tram>>() { Data = _obj };
+                return new ResultModel<List<prc_ThongSo_Tram_Dynamic>>() { Data = _obj };
             }
-            catch (Exception ex) { return new ResultModel<List<prc_ThongSo_Tram>>() { isThanhCong = false, ThongBao = ex.Message }; }
+            catch (Exception ex) { return new ResultModel<List<prc_ThongSo_Tram_Dynamic>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
-        public static ResultModel<List<prc_ThongSo_Tram>> GetAll_prc_ThongSo_Tram_by_Id_ChiNhanh(int Id_ChiNhanh)
+        public static ResultModel<List<prc_ThongSo_Tram_Dynamic>> GetAll_prc_ThongSo_Tram_Dynamic_by_Id_ChiNhanh(int Id_ChiNhanh)
         {
             try
             {
                 var _db = new SqlHelper();
                 DynamicParameters p = new DynamicParameters();
                 p.Add("Id_ChiNhanh", Id_ChiNhanh);
-                var _obj = _db.QueryProc<prc_ThongSo_Tram>("prc_ThongSo_Tram_by_Id_Tram", p).ToList();
+                var _obj = _db.QueryProc<prc_ThongSo_Tram_Dynamic>("prc_ThongSo_Tram_Dynamic_by_Id_Tram", p).ToList();
                 if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
-                return new ResultModel<List<prc_ThongSo_Tram>>() { Data = _obj };
+                return new ResultModel<List<prc_ThongSo_Tram_Dynamic>>() { Data = _obj };
             }
-            catch (Exception ex) { return new ResultModel<List<prc_ThongSo_Tram>>() { isThanhCong = false, ThongBao = ex.Message }; }
+            catch (Exception ex) { return new ResultModel<List<prc_ThongSo_Tram_Dynamic>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
 
     }

@@ -13,7 +13,7 @@ namespace ERPProject.Pages.DanhMuc
 {
     public class ThongSo_TramBase : ComponentBase
     {
-        public List<prc_ThongSo_Tram> listThongSoTram { get; set; }
+        public List<prc_ThongSo_Tram_Dynamic> listThongSoTram { get; set; }
 
         protected ThongSo_Tram_CapNhat fCapNhat;
 
@@ -27,7 +27,7 @@ namespace ERPProject.Pages.DanhMuc
         protected ToastService toastService { get; set; }
         [Inject]
         protected Blazored.LocalStorage.ILocalStorageService localStorage { get; set; }
-        protected SfGrid<prc_ThongSo_Tram> gdv;
+        protected SfGrid<prc_ThongSo_Tram_Dynamic> gdv;
 
         protected override void OnInitialized()
         {
@@ -98,37 +98,14 @@ namespace ERPProject.Pages.DanhMuc
         }
         protected async void onTaiLai()
         {
-            if (CbChiNhanh != null)
+
+            if (CbChiNhanh != null && CbTram != null)
             {
-                if (CbTram != null)
+                if (CbChiNhanh.Value != null && CbTram.Value != null)
                 {
                     AppData.loadingPanel.show();
-                    var rsModel = new ResultModel<List<prc_ThongSo_Tram>>();
-
-                    // Gọi stored procedure prc_ThongSo_Tram_by_Id_Tram_or_Id_ChiNhanh với cả Id_ChiNhanh và Id_Tram
-                    await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_by_Id_Tram_or_Id_ChiNhanh(CbChiNhanh.Value, CbTram.Value); });
-
-                    if (rsModel.isThanhCong)
-                    {
-                        listThongSoTram = rsModel.Data;
-                        AppData.loadingPanel.hide();
-                    }
-                    else
-                    {
-                        AppData.loadingPanel.hide();
-                        toastService.ShowDanger(rsModel.ThongBao);
-                        return;
-                    }
-                }
-                else
-                {
-                    // Xử lý trường hợp Id_Tram là null
-                    // Gọi stored procedure prc_ThongSo_Tram_by_Id_ChiNhanh
-                    AppData.loadingPanel.show();
-                    var rsModel = new ResultModel<List<prc_ThongSo_Tram>>();
-                    
-                    await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_by_Id_ChiNhanh(CbChiNhanh.Value); });
-
+                    var rsModel = new ResultModel<List<prc_ThongSo_Tram_Dynamic>>();
+                    await Task.Run(() => { rsModel = ThongSoTramService.GetAll_prc_ThongSo_Tram_Dynamic_by_Id_Tram_or_Id_ChiNhanh(CbChiNhanh.Value, CbTram.Value); });
                     if (rsModel.isThanhCong)
                     {
                         listThongSoTram = rsModel.Data;
@@ -142,7 +119,6 @@ namespace ERPProject.Pages.DanhMuc
                     }
                 }
             }
-
             StateHasChanged();
         }
 

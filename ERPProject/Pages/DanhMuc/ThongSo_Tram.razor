@@ -62,8 +62,8 @@
         <GridColumns>
             <GridColumn HeaderText="" TextAlign="@TextAlign.Center" Width="60">
                 <Template>
-                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_ThongSo_Tram).Id))"></SfButton>
-                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_ThongSo_Tram).Id))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-pencil" @onclick="@(()=> onCapNhat((context as prc_ThongSo_Tram_Dynamic).Id))"></SfButton>
+                    <SfButton CssClass="e-small" IconCss="icon-trash" @onclick="@(()=> onXoa((context as prc_ThongSo_Tram_Dynamic).Id))"></SfButton>
                 </Template>
             </GridColumn>
             <GridColumn Field="Id"

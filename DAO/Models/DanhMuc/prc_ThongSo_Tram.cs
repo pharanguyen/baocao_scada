@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DAO.Models.DanhMuc
 {
-    public class prc_ThongSo_Tram
+    public class prc_ThongSo_Tram_Dynamic
     {
         [Key]
 

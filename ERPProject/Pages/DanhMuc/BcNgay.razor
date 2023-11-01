@@ -99,7 +99,25 @@
                                     )
                                 {
                                     <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
+                                        <Template>
+                                            @{
+                                                var cx = context as BaoCaoNgayViewModel;
+                                                var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                                var previousGt = list.FirstOrDefault(x => x.Thoi_Gian < cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
 
+                                                if (gt != null && previousGt != null)
+                                                {
+                                                    decimal gtValue = decimal.Parse(gt.Gia_Tri);
+                                                    decimal previousGtValue = decimal.Parse(previousGt.Gia_Tri);
+                                                    decimal difference = gtValue - previousGtValue;
+                                                    <div>@difference </div>
+                                                }
+                                                else
+                                                {
+                                                    <div>--</div>
+                                                }
+                                            }
+                                        </Template>
                                     </GridColumn>
                                 }
                             }

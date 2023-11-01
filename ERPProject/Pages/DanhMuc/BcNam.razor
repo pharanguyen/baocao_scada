@@ -88,35 +88,49 @@
                                         @{
                                             var cx = context as BaoCaoNamViewModel;
                                             var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                            if (gt != null)
+                                            {
+                                                <div>@gt.Gia_Tri</div>
+                                            }
+                                            else
+                                            {
+                                                <div>--</div>
+                                            }
                                         }
-                                        @if (item.Id_ThongSo == 18)
-                                        {
-                                            <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
-                                                @{
-                                                    var tieuthu = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo && x.Id_ThongSo == 18);
-                                                }
-                                                @if (tieuthu != null)
+                                    </Template>
+                                </GridColumn>
+                                @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
+                               || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
+                               )
+                                {
+                                    <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
+                                        <Template>
+                                            @{
+                                                var cx = context as BaoCaoNamViewModel;
+                                                var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                                var fiveMinutesLaterGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(0) && x.Id_ThongSo == item.Id_ThongSo);
+                                                var fiveMinutesBeforeGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
+
+                                                if (currentGt != null && fiveMinutesLaterGt != null && fiveMinutesBeforeGt != null)
                                                 {
-                                                    <div>@tieuthu.Gia_Tri</div>
-                                                    <div>Tiêu thụ</div>
+                                                    decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
+                                                    decimal fiveMinutesLaterGtValue = decimal.Parse(fiveMinutesLaterGt.Gia_Tri);
+                                                    decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
+                                                    decimal difference = (fiveMinutesLaterGtValue * 10) - (fiveMinutesBeforeGtValue * 10);
+                                                    decimal absvalue = Math.Abs(difference);
+                                                    <div>@absvalue</div>
                                                 }
                                                 else
                                                 {
                                                     <div>--</div>
                                                 }
-                                            </GridColumn>
-                                        }
-                                        @if (gt != null && item.Id_ThongSo != 18)
-                                        {
-                                            <div>@gt.Gia_Tri</div>
-                                        }
-                                        else if (item.Id_ThongSo != 18)
-                                        {
-                                            <div>--</div>
-                                        }
-                                    </Template>
-                                </GridColumn>
+                                            }
+                                        </Template>
+                                    </GridColumn>
+
+                                }
                             }
+
                         </GridColumns>
                     </GridColumn>
                 }

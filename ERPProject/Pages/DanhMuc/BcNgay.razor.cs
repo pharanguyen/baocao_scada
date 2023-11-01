@@ -71,9 +71,9 @@ namespace ERPProject.Pages.DanhMuc
 
 
             AppData.loadingPanel.show();
-            int[] Id_ChiNhanh = CbChiNhanh != null? CbChiNhanh.Value : new int[0];
-            int[] Id_Tram = CbTram != null ? CbTram.Value : new int[0];
-            int[] Id_ThongSo = CbThongSo != null ? CbThongSo.Value : new int[0]; 
+            int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
+            int[] Id_Tram = CbTram.Value ?? new int[0];
+            int[] Id_ThongSo = CbThongSo.Value ?? new int[0]; 
 
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Ngay>>();
             await Task.Run(() => { rsModel = NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh) , string.Join(',', Id_Tram), string.Join(',', Id_ThongSo)); });

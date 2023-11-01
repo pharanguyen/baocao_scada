@@ -58,18 +58,18 @@
         </div>
     </SfToolbar>
     
-    <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">        
+    <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
             <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
             @if (ListNhatKyNgay != null)
             {
-                var listTram = ListNhatKyNgay.GroupBy(x=>x.TenTram).Distinct();
+                var listTram = ListNhatKyNgay.GroupBy(x => x.TenTram).Distinct();
                 @foreach (var list in listTram)
                 {
-                    var asx = list.OrderByDescending(x=>x.Thoi_Gian).FirstOrDefault();
+                    var asx = list.OrderByDescending(x => x.Thoi_Gian).FirstOrDefault();
                     var time = new DateTime();
-                    if(asx != null)
+                    if (asx != null)
                     {
                         time = asx.Thoi_Gian;
                     }
@@ -83,22 +83,40 @@
                                         @{
                                             var cx = context as BaoCaoNgayViewModel;
                                             var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
-                                            if(gt != null)
-                                            {
-                                                <div>@gt.Gia_Tri</div>
-                                            }
-                                            else
-                                            {
-                                                <div>--</div>
-                                            }
+                                        }
+                                        @if (item.Id_ThongSo == 18)
+                                        {
+                                            <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
+                                                @{
+                                                    var tieuthu = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo && x.Id_ThongSo == 18);
+                                                }
+                                                @if (tieuthu != null)
+                                                {
+                                                    <div>@tieuthu.Gia_Tri</div>
+                                                    <div>Tiêu thụ</div>
+                                                }
+                                                else
+                                                {
+                                                    <div>--</div>
+                                                }
+                                            </GridColumn>
+                                        }
+                                        @if (gt != null && item.Id_ThongSo != 18)
+                                        {
+                                            <div>@gt.Gia_Tri</div>
+                                        }
+                                        else if (item.Id_ThongSo != 18)
+                                        {
+                                            <div>--</div>
                                         }
                                     </Template>
                                 </GridColumn>
-                            }                            
-                        </GridColumns>                       
+                            }
+                        </GridColumns>
                     </GridColumn>
                 }
             }
         </GridColumns>
-    </SfGrid>  
+    </SfGrid>
+
 </BodyCard>

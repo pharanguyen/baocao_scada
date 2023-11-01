@@ -1,28 +1,32 @@
 ﻿@page "/Dm_BcThang"
 @using DAO.Models.DanhMuc
-@using DAO.ViewModel
+@using DAO.ViewModel;
+@using ERPProject.Shared.Combobox;
 @inherits BcThangBase
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
         max-height: calc(100vh - 185px) !important;
     }
-
-    .scrollable-table {
-        width: 100%;
-        height: 100%; /* Adjust the height as needed */
-        overflow: auto; /* Enable both horizontal and vertical scrolling */
-    }
-
-    .heading-col {
+     .scrollable-table {
+            width: 100%;
+            height: 100%; /* Adjust the height as needed */
+            overflow: auto; /* Enable both horizontal and vertical scrolling */
+        }
+    .heading-col{
         background-color: #00676B;
-        color: #fff;
+        color:#fff;
         text-align: center;
         border: 1px solid #333;
     }
-
-    .row-style {
-        border: 1px solid #333;
+    .row-style{
+        border:1px solid #333;
         text-align: center;
+    }
+    .ml{
+        margin-left: 15px;
+    }
+    .e-ddl{
+        margin-left: 28px;
     }
 </style>
 
@@ -31,7 +35,7 @@
         <ToolbarItems>
             <ToolbarItem Type="ItemType.Button">
                 <Template>
-                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
                 </Template>
             </ToolbarItem>
             <ToolbarItem Type="ItemType.Separator">
@@ -42,20 +46,18 @@
                     <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
                 </Template>
             </ToolbarItem>
-            <label><b>Lọc theo chi nhánh</b></label>
+            <CbMultiChiNhanh @ref= "CbChiNhanh" Width="300px"  PopupWidth="100%"> </CbMultiChiNhanh>
+            <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%"></CbMultiTram>
+            <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%"></CbMultiThongSo>
 
-            <ToolbarItem Type="ItemType.Input">
-
-            </ToolbarItem>
-            <label><b>Lọc theo trạm</b></label>
-
-            <ToolbarItem Type="ItemType.Input">
-
-            </ToolbarItem>
 
         </ToolbarItems>
+        <div class="ml mt-2 mb-1 d-flex align-items-center">
+            <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+            <CbTime PopupWidth="100%" Width="220px"></CbTime>
+        </div>
     </SfToolbar>
-
+    
     <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
@@ -81,14 +83,31 @@
                                         @{
                                             var cx = context as BaoCaoThangViewModel;
                                             var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
-                                            if (gt != null)
-                                            {
-                                                <div>@gt.Gia_Tri</div>
-                                            }
-                                            else
-                                            {
-                                                <div>--</div>
-                                            }
+                                        }
+                                        @if (item.Id_ThongSo == 18)
+                                        {
+                                            <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
+                                                @{
+                                                    var tieuthu = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo && x.Id_ThongSo == 18);
+                                                }
+                                                @if (tieuthu != null)
+                                                {
+                                                    <div>@tieuthu.Gia_Tri</div>
+                                                    <div>Tiêu thụ</div>
+                                                }
+                                                else
+                                                {
+                                                    <div>--</div>
+                                                }
+                                            </GridColumn>
+                                        }
+                                        @if (gt != null && item.Id_ThongSo != 18)
+                                        {
+                                            <div>@gt.Gia_Tri</div>
+                                        }
+                                        else if (item.Id_ThongSo != 18)
+                                        {
+                                            <div>--</div>
                                         }
                                     </Template>
                                 </GridColumn>
@@ -99,4 +118,5 @@
             }
         </GridColumns>
     </SfGrid>
+
 </BodyCard>

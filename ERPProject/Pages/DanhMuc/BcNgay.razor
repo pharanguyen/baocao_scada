@@ -83,35 +83,27 @@
                                         @{
                                             var cx = context as BaoCaoNgayViewModel;
                                             var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
-                                        }
-                                        @if (item.Id_ThongSo == 18)
-                                        {
-                                            <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
-                                                @{
-                                                    var tieuthu = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo && x.Id_ThongSo == 18);
-                                                }
-                                                @if (tieuthu != null)
-                                                {
-                                                    <div>@tieuthu.Gia_Tri</div>
-                                                    <div>Tiêu thụ</div>
-                                                }
-                                                else
-                                                {
-                                                    <div>--</div>
-                                                }
-                                            </GridColumn>
-                                        }
-                                        @if (gt != null && item.Id_ThongSo != 18)
-                                        {
-                                            <div>@gt.Gia_Tri</div>
-                                        }
-                                        else if (item.Id_ThongSo != 18)
-                                        {
-                                            <div>--</div>
+                                            if (gt != null)
+                                            {
+                                                <div>@gt.Gia_Tri</div>
+                                            }
+                                            else
+                                            {
+                                                <div>--</div>
+                                            }
                                         }
                                     </Template>
                                 </GridColumn>
+                                @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
+                                    || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
+                                    )
+                                {
+                                    <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
+
+                                    </GridColumn>
+                                }
                             }
+
                         </GridColumns>
                     </GridColumn>
                 }

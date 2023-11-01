@@ -102,15 +102,18 @@
                                         <Template>
                                             @{
                                                 var cx = context as BaoCaoNgayViewModel;
-                                                var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
-                                                var previousGt = list.FirstOrDefault(x => x.Thoi_Gian < cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                                var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                                var fiveMinutesLaterGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(0) && x.Id_ThongSo == item.Id_ThongSo);
+                                                var fiveMinutesBeforeGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
 
-                                                if (gt != null && previousGt != null)
+                                                if (currentGt != null && fiveMinutesLaterGt != null && fiveMinutesBeforeGt != null)
                                                 {
-                                                    decimal gtValue = decimal.Parse(gt.Gia_Tri);
-                                                    decimal previousGtValue = decimal.Parse(previousGt.Gia_Tri);
-                                                    decimal difference = gtValue - previousGtValue;
-                                                    <div>@difference </div>
+                                                    decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
+                                                    decimal fiveMinutesLaterGtValue = decimal.Parse(fiveMinutesLaterGt.Gia_Tri);
+                                                    decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
+                                                    decimal difference = (fiveMinutesLaterGtValue * 10) - (fiveMinutesBeforeGtValue * 10);
+                                                    decimal absvalue = Math.Abs(difference);
+                                                    <div>@absvalue</div>
                                                 }
                                                 else
                                                 {
@@ -119,6 +122,7 @@
                                             }
                                         </Template>
                                     </GridColumn>
+
                                 }
                             }
 

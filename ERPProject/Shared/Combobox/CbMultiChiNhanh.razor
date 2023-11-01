@@ -14,6 +14,7 @@
     SfMultiSelect<int[], Dm_ChiNhanh> MultiSelectObj;
     private List<Dm_ChiNhanh> Data = new List<Dm_ChiNhanh>();
 
+
     [Parameter]
     public string PopupWidth { get; set; } = "200px";
 
@@ -28,6 +29,7 @@
     }
     private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
     {
+
         Value = args.Value;
         foreach(var item in Value)
         {

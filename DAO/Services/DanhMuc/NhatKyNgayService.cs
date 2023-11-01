@@ -89,7 +89,7 @@ namespace DAO.Services.DanhMuc
             catch (Exception ex) { return new ResultModel<List<prc_Nhat_Ky_Ngay>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
 
-        public static ResultModel<List<prc_Nhat_Ky_Ngay>> Get_prc_Nhat_Ky_Ngay(int Id_ChiNhanh, int Id_Tram, int Id_ThongSo)
+        public static ResultModel<List<prc_Nhat_Ky_Ngay>> Get_prc_Nhat_Ky_Ngay(string Id_ChiNhanh, string Id_Tram, string Id_ThongSo)
         {
             try
             {

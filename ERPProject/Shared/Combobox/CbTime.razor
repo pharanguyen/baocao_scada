@@ -1,0 +1,36 @@
+﻿<SfDropDownList TValue="int" TItem="Time" Placeholder="Chọn loại dữ liệu" DataSource="@LocalData" @bind-Value="Value"
+                @ref="cb"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                AllowFiltering="true"
+                FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                ShowClearButton="true">
+    <DropDownListFieldSettings Value="ID" Text="Text"></DropDownListFieldSettings>
+    <DropDownListEvents TValue="int" TItem="Time" ValueChange="OnValueChange"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    public class Time
+    {
+        public int ID { get; set; }
+        public string Text { get; set; }
+    }
+    List<Time> LocalData = new List<Time> {
+    new Time() { ID= 1, Text= "Phút" },
+    new Time() { ID= 2, Text= "Giờ" },
+    new Time() { ID= 3, Text= "Ngày" },
+    };
+    private SfDropDownList<int, Time> cb;
+    [Parameter]
+    public string PopupWidth { get; set; } = "400px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+    [Parameter]
+    public int Value { get; set; }
+    public void OnValueChange(ChangeEventArgs<int, Time> args)
+    {
+        Value = args.Value;
+    }
+
+}

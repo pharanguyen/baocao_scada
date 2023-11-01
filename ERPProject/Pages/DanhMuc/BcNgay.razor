@@ -22,6 +22,9 @@
         border:1px solid #333;
         text-align: center;
     }
+    .ml{
+        margin-left: 15px;
+    }
 </style>
 
 <BodyCard>
@@ -29,7 +32,7 @@
         <ToolbarItems>
             <ToolbarItem Type="ItemType.Button">
                 <Template>
-                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Tải lại</SfButton>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
                 </Template>
             </ToolbarItem>
             <ToolbarItem Type="ItemType.Separator">
@@ -46,6 +49,10 @@
 
 
         </ToolbarItems>
+        <div class="ml mt-2 mb-1 d-flex align-items-center">
+            <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+            <CbTime PopupWidth="100%" Width="220px"></CbTime>
+        </div>
     </SfToolbar>
     
     <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">        

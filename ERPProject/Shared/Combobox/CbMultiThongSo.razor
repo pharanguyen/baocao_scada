@@ -28,7 +28,9 @@
     }
     private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
     {
-        Value = args.Value;
-        
+        if (args.Value != null)
+        {
+            Value = args.Value;
+        }
     }
 }

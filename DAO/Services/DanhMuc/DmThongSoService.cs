@@ -21,6 +21,32 @@ namespace DAO.Services.DanhMuc
             }
             catch (Exception ex) { return new ResultModel<List<Dm_ThongSo>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
+        public static ResultModel<List<prcThongSo>> GetToComBobyIdThongSo(int? Id_ChiNhanh)
+        {
+            try
+            {
+                var _db = new SqlHelper();
+                DynamicParameters p = new DynamicParameters();
+                p.Add("IdChiNhanh", Id_ChiNhanh);
+
+                var _obj = _db.QueryProc<prcThongSo>("[prc_GetComboThongSo]", p).ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prcThongSo>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prcThongSo>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
+        public static ResultModel<List<prcThongSo>> GetToComBobyIdThongSoAll()
+        {
+            try
+            {
+                var _db = new SqlHelper();
+
+                var _obj = _db.QueryProc<prcThongSo>("[prc_GetComboThongSoAll]").ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prcThongSo>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prcThongSo>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
 
         public static ResultModel<List<Dm_ThongSo>> GetAll()
         {

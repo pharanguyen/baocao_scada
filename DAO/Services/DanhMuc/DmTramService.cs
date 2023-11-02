@@ -20,6 +20,32 @@ namespace DAO.Services.DanhMuc
             }
             catch (Exception ex) { return new ResultModel<List<Dm_Tram>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
+        public static ResultModel<List<prcTram>> GetToComBobyIdTram(int? Id_ChiNhanh)
+        {
+            try
+            {
+                var _db = new SqlHelper();
+                DynamicParameters p = new DynamicParameters();
+                p.Add("IdChiNhanh", Id_ChiNhanh);
+
+                var _obj = _db.QueryProc<prcTram>("[prc_GetComboTram]", p).ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prcTram>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prcTram>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
+        public static ResultModel<List<prcTram>> GetToComBobyIdTramAll()
+        {
+            try
+            {
+                var _db = new SqlHelper();
+
+                var _obj = _db.QueryProc<prcTram>("[prc_GetComboTramAll]").ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prcTram>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prcTram>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
 
         public static ResultModel<List<Dm_Tram>> GetAll()
         {

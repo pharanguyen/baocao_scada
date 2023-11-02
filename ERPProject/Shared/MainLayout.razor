@@ -1,5 +1,6 @@
 ﻿@using System.Security.Claims
 @using DAO.Services.PhanQuyen
+@using MsUtils
 @inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager NavigationManager
@@ -20,6 +21,7 @@
             {              
                 //Console.WriteLine("Authorized");
                 nhansu = System.Text.Json.JsonSerializer.Deserialize<DAO.Models.PhanQuyen.ds_thanhvien>(context.User.FindFirst("User").Value);
+                GlobalValue.ms_chinhanh = nhansu.ms_chinhanh;
                 if (nhansu == null) throw new Exception();
             }
             catch (Exception ex)

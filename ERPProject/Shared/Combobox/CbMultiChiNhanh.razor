@@ -1,18 +1,19 @@
 ﻿@using System.Collections.ObjectModel;
 @using DAO.Services.DanhMuc;
 @using DAO.Models.DanhMuc;
+@using MsUtils;
 
-<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="Dm_ChiNhanh" Placeholder="Chọn chi nhánh" @bind-Value="Value" DataSource="@Data"
+<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="prc_ChiNhanh" Placeholder="Chọn chi nhánh" @bind-Value="Value" DataSource="@Data"
                AllowFiltering="true"
                Width="@Width"
                PopupWidth="@PopupWidth">
-    <MultiSelectEvents TItem="Dm_ChiNhanh" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>
+    <MultiSelectEvents TItem="prc_ChiNhanh" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>
     <MultiSelectFieldSettings Text="Ten" Value="Id"></MultiSelectFieldSettings>
 </SfMultiSelect>
 
 @code {
-    SfMultiSelect<int[], Dm_ChiNhanh> MultiSelectObj;
-    private List<Dm_ChiNhanh> Data = new List<Dm_ChiNhanh>();
+    SfMultiSelect<int[], prc_ChiNhanh> MultiSelectObj;
+    private List<prc_ChiNhanh> Data = new List<prc_ChiNhanh>();
 
 
     [Parameter]
@@ -24,7 +25,17 @@
     public int[] Value { get; set; } = new int[] { };
     protected override void OnInitialized()
     {
-        Data = DmChiNhanhService.GetToComBo().Data;
+        if(GlobalValue.ms_chinhanh != null)
+        {
+            Data = DmChiNhanhService.GetToComBobyIdChiNhanh(GlobalValue.ms_chinhanh).Data;
+        }
+        else
+        {
+            Data = DmChiNhanhService.GetToComBobyIdChiNhanhAll().Data;
+        }
+
+        
+       
 
     }
     private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)

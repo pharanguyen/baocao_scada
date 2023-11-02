@@ -20,6 +20,34 @@ namespace DAO.Services.DanhMuc
             }
             catch (Exception ex) { return new ResultModel<List<Dm_ChiNhanh>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
+        public static ResultModel<List<prc_ChiNhanh>> GetToComBobyIdChiNhanh( int? Id_ChiNhanh)
+        {
+            try
+            {
+                var _db = new SqlHelper();
+                DynamicParameters p = new DynamicParameters();
+                p.Add("IdChiNhanh", Id_ChiNhanh);
+               
+                var _obj = _db.QueryProc<prc_ChiNhanh>("[prc_GetComboChiNhanh]", p).ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prc_ChiNhanh>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prc_ChiNhanh>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
+        public static ResultModel<List<prc_ChiNhanh>> GetToComBobyIdChiNhanhAll()
+        {
+            try
+            {
+                var _db = new SqlHelper();
+              
+                var _obj = _db.QueryProc<prc_ChiNhanh>("[prc_GetComboChiNhanhAll]").ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prc_ChiNhanh>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prc_ChiNhanh>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
+
+
 
         public static ResultModel<List<Dm_ChiNhanh>> GetAll()
         {

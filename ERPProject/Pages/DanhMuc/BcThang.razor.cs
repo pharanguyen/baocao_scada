@@ -92,6 +92,10 @@ namespace ERPProject.Pages.DanhMuc
                         data.Add(thongsotong);
                     }
                 }
+                if (ListNhatKyThang.Count == 0)
+                {
+                    toastService.ShowWarning("Không có dữ liệu phù hợp");
+                }
                 AppData.loadingPanel.hide();
             }
             else

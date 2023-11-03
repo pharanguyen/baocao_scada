@@ -32,6 +32,10 @@ namespace ERPProject.Pages.DanhMuc
         protected CbMultiTram CbTram;
         protected CbMultiThongSo CbThongSo;
         protected CbTime CbThoiGian;
+        protected DateTime CbDateTime;
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+
         [Inject]
         protected ToastService toastService { get; set; }
         [Inject]
@@ -72,9 +76,11 @@ namespace ERPProject.Pages.DanhMuc
             int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
             int[] Id_Tram = CbTram.Value ?? new int[0];
             int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
+            
 
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Thang>>();
-            await Task.Run(() => { rsModel = NhatKyThangService.Get_prc_Nhat_Ky_Thang(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo)); });
+            await Task.Run(() => { rsModel = NhatKyThangService.Get_prc_Nhat_Ky_Thang(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date.ToString("yyyy/MM/dd"),
+        EndDate.Date.ToString("yyyy/MM/dd")); });
             if (rsModel.isThanhCong)
             {
                 ListNhatKyThang = rsModel.Data;
@@ -106,7 +112,9 @@ namespace ERPProject.Pages.DanhMuc
             }
             StateHasChanged();
         }
+        
 
+       
         public void PaginationData(PagerItemClickEventArgs args)
         {
             curPage = args.CurrentPage;

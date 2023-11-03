@@ -79,12 +79,20 @@
 
 
         </ToolbarItems>
-        <div class="ml mt-2 mb-1 d-flex align-items-center">
-            <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
-            <div class="ml-4">
+        <div class="d-flex align-items-center">
+            <div class="ml mt-2 mb-1">
+                <span>Từ ngày</span>
+                <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+                
+            </div>
+
+            <div class="ml mt-2 mb-1">
+                <span>Đến ngày</span>
+                <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
                 <CbTime PopupWidth="100%" Width="220px"></CbTime>
             </div>
         </div>
+
     </SfToolbar>
 
     <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">

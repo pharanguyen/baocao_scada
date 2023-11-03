@@ -32,6 +32,8 @@ namespace ERPProject.Pages.DanhMuc
         protected CbMultiTram CbTram;
         protected CbMultiThongSo CbThongSo;
         protected CbTime CbThoiGian;
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         [Inject]
         protected ToastService toastService { get; set; }
         [Inject]
@@ -74,7 +76,7 @@ namespace ERPProject.Pages.DanhMuc
             int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
 
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Nam>>();
-            await Task.Run(() => { rsModel = NhatKyNamService.Get_prc_Nhat_Ky_Nam(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo)); });
+            await Task.Run(() => { rsModel = NhatKyNamService.Get_prc_Nhat_Ky_Nam(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date); });
             if (rsModel.isThanhCong)
             {
                 ListNhatKyNam = rsModel.Data;

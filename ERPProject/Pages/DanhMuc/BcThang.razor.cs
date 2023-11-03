@@ -77,10 +77,10 @@ namespace ERPProject.Pages.DanhMuc
             int[] Id_Tram = CbTram.Value ?? new int[0];
             int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
             
+           
 
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Thang>>();
-            await Task.Run(() => { rsModel = NhatKyThangService.Get_prc_Nhat_Ky_Thang(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date.ToString("yyyy/MM/dd"),
-        EndDate.Date.ToString("yyyy/MM/dd")); });
+            await Task.Run(() => { rsModel = NhatKyThangService.Get_prc_Nhat_Ky_Thang(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo),StartDate.Date,EndDate.Date); });
             if (rsModel.isThanhCong)
             {
                 ListNhatKyThang = rsModel.Data;

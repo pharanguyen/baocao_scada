@@ -25,7 +25,30 @@
     .ml{
         margin-left: 15px;
     }
-   
+
+    .e-rowcell.e-attr{
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 99999;
+    }
+    .e-columnheader:first-child .e-headercell:nth-child(2){
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 99999;
+    }
+    .e-row:nth-of-type(odd) .e-rowcell.e-attr{
+        background: #F9F9F9;
+    }
+
+    .e-row:nth-of-type(even) .e-rowcell.e-attr {
+        background: white;
+    }
+
+    .e-multiselect{
+        margin-right:5px;
+    }
 </style>
 
 <BodyCard>
@@ -52,14 +75,17 @@
         </ToolbarItems>
         <div class="ml mt-2 mb-1 d-flex align-items-center">
             <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
-            <CbTime PopupWidth="100%" Width="220px"></CbTime>
+            <div class="ml-4">
+                <CbTime PopupWidth="100%" Width="220px"></CbTime>
+            </div>
+
         </div>
     </SfToolbar>
     
-    <SfGrid DataSource="@data" AllowPaging="true" AllowFiltering="true" AllowResizing="true">
+    <SfGrid DataSource="@data" AllowPaging="true" AllowResizing="true">
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
-            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150"></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
             @if (ListNhatKyNgay != null)
             {
                 var listTram = ListNhatKyNgay.GroupBy(x => x.TenTram).Distinct();

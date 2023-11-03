@@ -34,6 +34,8 @@ namespace ERPProject.Pages.DanhMuc
         protected CbMultiTram CbTram;
         protected CbMultiThongSo CbThongSo;
         protected CbTime CbThoiGian;
+        public DateTime ToDay { get; set; } = DateTime.Now;
+        public int Index { get; set; } = 1;
         [Inject]
         protected ToastService toastService { get; set; }
         [Inject]
@@ -73,7 +75,7 @@ namespace ERPProject.Pages.DanhMuc
             AppData.loadingPanel.show();
             int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
             int[] Id_Tram = CbTram.Value ?? new int[0];
-            int[] Id_ThongSo = CbThongSo.Value ?? new int[0]; 
+            int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
 
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Ngay>>();
             await Task.Run(() => { rsModel = NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh) , string.Join(',', Id_Tram), string.Join(',', Id_ThongSo)); });
@@ -82,16 +84,33 @@ namespace ERPProject.Pages.DanhMuc
                 ListNhatKyNgay = rsModel.Data;
                 if (ListNhatKyNgay != null)
                 {
-                    var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).ToList();
-                    data = new List<BaoCaoNgayViewModel>();
-                    var i = 0;
-                    foreach(var item in listNK)
+                    if(CbThoiGian.Value == 1)
                     {
-                        i++;
-                        var thongsotong = new BaoCaoNgayViewModel();
-                        thongsotong.TT = i;
-                        thongsotong.ThoiGian = item.Key;
-                        data.Add(thongsotong);
+                        var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key).ToList();
+                        data = new List<BaoCaoNgayViewModel>();
+                        var i = 0;
+                        foreach (var item in listNK)
+                        {
+                            i++;
+                            var thongsotong = new BaoCaoNgayViewModel();
+                            thongsotong.TT = i;
+                            thongsotong.ThoiGian = item.Key;
+                            data.Add(thongsotong);
+                        }
+                    }
+                    if(CbThoiGian.Value == 2)
+                    {
+                        var listNK = ListNhatKyNgay.Where(x => x.Thoi_Gian.Minute == 0).GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key).ToList();
+                        data = new List<BaoCaoNgayViewModel>();
+                        var i = 0;
+                        foreach (var item in listNK)
+                        {
+                            i++;
+                            var thongsotong = new BaoCaoNgayViewModel();
+                            thongsotong.TT = i;
+                            thongsotong.ThoiGian = item.Key;
+                            data.Add(thongsotong);
+                        }
                     }
                 }
                 if(ListNhatKyNgay.Count == 0)

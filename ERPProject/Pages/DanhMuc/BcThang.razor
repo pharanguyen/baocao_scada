@@ -85,7 +85,7 @@
             <div class="ml mt-2 mb-1">
                 <span>Đến ngày</span>
                 <SfDatePicker TValue="DateTime" @bind-Value="EndDate" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
-                <CbTime PopupWidth="100%" Width="220px"></CbTime>
+                <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
             </div>
         </div>
 

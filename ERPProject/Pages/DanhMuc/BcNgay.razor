@@ -74,9 +74,9 @@
 
         </ToolbarItems>
         <div class="ml mt-2 mb-1 d-flex align-items-center">
-            <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+            <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px" @bind-Value="ToDay"></SfDatePicker>
             <div class="ml-4">
-                <CbTime PopupWidth="100%" Width="220px"></CbTime>
+                <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
             </div>
 
         </div>

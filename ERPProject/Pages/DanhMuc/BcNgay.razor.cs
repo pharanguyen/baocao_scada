@@ -3,6 +3,7 @@ using DAO.Models.DanhMuc;
 using DAO.Models.PhanQuyen;
 using DAO.Services.DanhMuc;
 using DAO.Services.PhanQuyen;
+using DAO.Services.XuatExcel;
 using DAO.ViewModel;
 using ERPProject.Services;
 using ERPProject.Shared;
@@ -10,6 +11,7 @@ using ERPProject.Shared.Combobox;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Navigations;
+
 
 namespace ERPProject.Pages.DanhMuc
 {
@@ -194,18 +196,7 @@ namespace ERPProject.Pages.DanhMuc
         }
         public async Task onXuatExcel()
         {
-            ExcelExportProperties excelExportProperties = new ExcelExportProperties();
-            excelExportProperties.FileName = "Danh sach diem dung.xlsx";
-            var selectedRecord = await gdv.GetSelectedRecordsAsync();
-            if (selectedRecord.Count() > 0)
-            {
-                excelExportProperties.DataSource = selectedRecord;
-            }
-            else
-            {
-                excelExportProperties.DataSource = ListNhatKyNgay;
-            }
-            await gdv.ExportToExcelAsync(excelExportProperties);
+            var Employee = ExcelExportService.BaoCaoNgay();
         }
 
 

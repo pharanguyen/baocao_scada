@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.Totp" Version="2.3.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
+    <PackageReference Include="DocumentFormat.OpenXmlSDK" Version="2.0.0" />
     <PackageReference Include="Syncfusion.Blazor" Version="21.2.9" />
   </ItemGroup>
 

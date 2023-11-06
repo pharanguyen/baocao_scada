@@ -114,6 +114,30 @@ namespace ERPProject.Pages.DanhMuc
                             data.Add(thongsotong);
                         }
                     }
+                    if (CbThoiGian.Value == 3)
+                    {
+                        var targetTime = new TimeSpan(23, 55, 0); // The target time of 23:55:00
+
+                        var filteredListNK = ListNhatKyThang
+                            .Where(x => x.Thoi_Gian.TimeOfDay == targetTime) // Filter by the target time
+                            .GroupBy(x => x.Thoi_Gian.Date) // Group by date to get the maximum Thoi_Gian of each day
+                            .OrderByDescending(group => group.Key)
+                            .ToList();
+
+                        data = new List<BaoCaoThangViewModel>();
+                        var i = 0;
+                        foreach (var item in filteredListNK)
+                        {
+                            i++;
+                            var maxThoiGianOfDay = item.Max(x => x.Thoi_Gian); // Get the maximum Thoi_Gian of the day
+                            var thongsotong = new BaoCaoThangViewModel();
+                            thongsotong.TT = i;
+                            thongsotong.ThoiGian = maxThoiGianOfDay;
+                            data.Add(thongsotong);
+                        }
+                    }
+
+
                 }
                 if (ListNhatKyThang.Count == 0)
                 {

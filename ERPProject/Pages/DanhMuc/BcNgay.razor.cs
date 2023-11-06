@@ -112,8 +112,31 @@ namespace ERPProject.Pages.DanhMuc
                             data.Add(thongsotong);
                         }
                     }
+                    if (CbThoiGian.Value == 3)
+                    {
+                        var listNK = ListNhatKyNgay
+                            .Where(x => x.Thoi_Gian.Minute == 0)
+                            .GroupBy(x => x.Thoi_Gian)
+                            .OrderByDescending(group => group.Key)
+                            .ToList();
+
+                        data = new List<BaoCaoNgayViewModel>();
+                        var i = 0;
+
+                        // Sắp xếp danh sách listNK theo thời gian giảm dần và chọn phần tử đầu tiên
+                        var latestThoiGian = listNK.OrderByDescending(item => item.Key).FirstOrDefault();
+
+                        if (latestThoiGian != null)
+                        {
+                            var thongsotong = new BaoCaoNgayViewModel();
+                            thongsotong.TT = i + 1;
+                            thongsotong.ThoiGian = latestThoiGian.Key;
+                            data.Add(thongsotong);
+                        }
+                    }
+
                 }
-                if(ListNhatKyNgay.Count == 0)
+                if (ListNhatKyNgay.Count == 0)
                 {
                     toastService.ShowWarning("Không có dữ liệu phù hợp");
                 }

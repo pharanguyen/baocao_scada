@@ -122,19 +122,21 @@ namespace DAO.Services.XuatExcel
                 sheetData.AppendChild(row);
 
                 row = new Row();
-                row.Append(
-                    ConstructCell("STT", CellValues.String, 2),
-                    ConstructCell("Tên cuộc họp", CellValues.String, 2),
-                    ConstructCell("Đơn vị tổ chức", CellValues.String, 2),
-                    ConstructCell("Thời gian bắt đầu", CellValues.String, 2),
-                    ConstructCell("Thời gian điểm danh", CellValues.String, 2),
-                    ConstructCell("Trạng thái", CellValues.String, 2));
+
+                row.Append(ConstructCell("STT", CellValues.String, 2));
+                row.Append(ConstructCell("Tên cuộc họp", CellValues.String, 2));
+
+                row.Append(ConstructCell("Đơn vị tổ chức", CellValues.String, 2));
+                row.Append(ConstructCell("Thời gian bắt đầu", CellValues.String, 2));
+                row.Append(ConstructCell("Thời gian điểm danh", CellValues.String, 2));
+                row.Append(ConstructCell("Trạng thái", CellValues.String, 2));
                 // Insert the header row to the Sheet Data
                 sheetData.AppendChild(row);
                 var STT = 1;
                 // Inserting each data
                 for(int i  = 0; i< 5; i++)
                 {
+
                     row = new Row();
                     row.Append(
                         ConstructCell(STT.ToString(), CellValues.Number, 4),

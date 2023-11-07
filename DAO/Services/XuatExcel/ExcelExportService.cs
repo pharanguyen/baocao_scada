@@ -20,10 +20,11 @@ namespace DAO.Services.XuatExcel
     public class ExcelExportService
     {
 
-        public static string BaoCaoNgay()
+        public static string BaoCaoNgay(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, int CbThoiGian)
         {
+            
             // var data = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay("", "", "");
-            var resultModel = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay("", "", "");
+            var resultModel = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo));
             var FileName = "Danh sách cuộc họp.xlsx";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "UploadFiles\\FileTam");
@@ -51,6 +52,8 @@ namespace DAO.Services.XuatExcel
             }
 
             List<prc_Nhat_Ky_Ngay> ListNhatKyNgay = resultModel.Data;
+            var data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+            var dataFirst = data.FirstOrDefault();
 
             using (SpreadsheetDocument document = SpreadsheetDocument.Create(FilePath, SpreadsheetDocumentType.Workbook))
             {
@@ -81,8 +84,8 @@ namespace DAO.Services.XuatExcel
           new Column // Tên cuộc họp
           {
               Min = 3,
-              Max = 10,
-              Width = 10,
+              Max = Convert.ToUInt32(dataFirst.Count()),
+              Width = 12,
               CustomWidth = true
           }
 
@@ -116,13 +119,13 @@ namespace DAO.Services.XuatExcel
 
                 // Construct the header row with merged cells
                 Row row = new Row();
+                Row row1 = new Row();
                 row.Append(ConstructCell("STT", CellValues.String));
                 row.Append(ConstructCell("Thời Gian", CellValues.String));
+                row1.Append(ConstructCell("STT", CellValues.String));
+                row1.Append(ConstructCell("Thời Gian", CellValues.String));
                 mergeCells.Append(new MergeCell() { Reference = new StringValue("B1:B2") });
-                var data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian);
-               
-
-                var dataFirst = data.FirstOrDefault();
+                
 
 
                 foreach (var items in dataFirst.GroupBy(x => x.TenTram))
@@ -130,41 +133,59 @@ namespace DAO.Services.XuatExcel
                     foreach (var item in items.OrderBy(x => x.Id))
                     {
                         row.Append(ConstructCell(items.Key, CellValues.String, 1));
+                        row1.Append(ConstructCell(item.TenThongSo, CellValues.String, 1));
+                        if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
+                                    || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
+                        {
+                            row.Append(ConstructCell(items.Key, CellValues.String, 1));
+                            row1.Append(ConstructCell("TIÊU THỤ", CellValues.String, 1));
+                        }
+            
+
                     }
                  
                 }
                 sheetData.AppendChild(row);
-                row = new Row();
-                row.Append(ConstructCell("STT", CellValues.String));
-                row.Append(ConstructCell("Thời Gian", CellValues.String));
-                foreach (var items in dataFirst.GroupBy(x=>x.Id_Tram))
-                {
-                    foreach(var item in items.OrderBy(x=>x.Id))
-                    {
-                        row.Append(ConstructCell(item.TenThongSo, CellValues.String, 1));
-                    }                  
-                }
-                sheetData.AppendChild(row);
+                sheetData.AppendChild(row1);
+
                 var i = 1;
-                foreach(var list in data)
+                foreach (var list in data)
                 {
                     
                     row = new Row();
                     row.Append(ConstructCell(i.ToString(), CellValues.String, 1));
                     row.Append(ConstructCell(list.Key.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String, 1));
-                    foreach (var items in list.GroupBy(x=>x.TenTram))
+                    
+                    foreach (var items in list.GroupBy(x => x.TenTram))
                     {
+                        var j = 0;
                         foreach (var item in items.OrderBy(x => x.Id))
                         {
                             var gt = item.Gia_Tri != null ? item.Gia_Tri.ToString() : "";
                             row.Append(ConstructCell(gt, CellValues.String, 1));
+                            if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
+                                    || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
+                            {
+                                var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
+                                if (nextItem != null)
+                                {
+                                    var tieuthu = (decimal.Parse(nextItem.Gia_Tri) - decimal.Parse(item.Gia_Tri)) * 10;
+                                    row.Append(ConstructCell(tieuthu.ToString(), CellValues.String, 1));
+                                }
+                                else
+                                {
+                                    row.Append(ConstructCell("--", CellValues.String, 1));
+                                }
+
+                            }
+                            j++;
                         }
                     }
                     sheetData.AppendChild(row);
                     i++;
                 }
 
-               
+
 
                 worksheetPart.Worksheet.Save();
             }

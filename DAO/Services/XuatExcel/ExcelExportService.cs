@@ -79,71 +79,47 @@ namespace DAO.Services.XuatExcel
                 SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
 
                 // Construct the header row with merged cells
-                Row headerRow1 = new Row();
-                headerRow1.Append(ConstructCell("STT", CellValues.String));
-                headerRow1.Append(ConstructCell("Thời Gian", CellValues.String));
+                Row row = new Row();
+                row.Append(ConstructCell("STT", CellValues.String));
+                row.Append(ConstructCell("Thời Gian", CellValues.String));
 
-                foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
+                var data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian);
+                
+                var dataFirst = data.FirstOrDefault();
+
+                var listTenTram = dataFirst.Select(item => item.TenTram).Distinct();
+                foreach (var tenTram in listTenTram)
                 {
-                    var tenThongSoList = ListNhatKyNgay
-                        .Where(item => item.TenTram == tenTram)
-                        .Select(item => item.TenThongSo)
-                        .Distinct()
-                        .ToList();
-
-                    foreach (var tenThongSo in tenThongSoList)
-                    {
-                        headerRow1.Append(ConstructCell(tenTram, CellValues.String));
-                    }
+                    row.Append(ConstructCell(tenTram, CellValues.String, 1));
+                    
                 }
+                sheetData.AppendChild(row);
+                row = new Row();
 
-                Row headerRow2 = new Row();
-                foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
+                foreach(var items in dataFirst.GroupBy(x=>x.Id_Tram))
                 {
-                    var tenThongSoList = ListNhatKyNgay
-                        .Where(item => item.TenTram == tenTram)
-                        .Select(item => item.TenThongSo)
-                        .Distinct()
-                        .ToList();
-
-                    foreach (var tenThongSo in tenThongSoList)
+                    foreach(var item in items.OrderBy(x=>x.Id))
                     {
-                        headerRow2.Append(ConstructCell(tenThongSo, CellValues.String));
-                    }
+                        row.Append(ConstructCell(item.TenThongSo, CellValues.String, 1));
+                    }                  
                 }
+                sheetData.AppendChild(row);
 
-                sheetData.AppendChild(headerRow1);
-                sheetData.AppendChild(headerRow2);
-
-                int stt = 1;
-                foreach (var thoiGian in ListNhatKyNgay.Select(item => item.Thoi_Gian).Distinct())
+                foreach(var list in data)
                 {
-                    Row dataRow = new Row();
-                    dataRow.Append(ConstructCell(stt.ToString(), CellValues.Number));
-                    dataRow.Append(ConstructCell(thoiGian.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String));
-
-                    foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
+                    row = new Row();
+                    foreach (var items in list.GroupBy(x=>x.Id_Tram))
                     {
-                        var tenThongSoList = ListNhatKyNgay
-                            .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian)
-                            .Select(item => item.TenThongSo)
-                            .Distinct()
-                            .ToList();
-
-                        foreach (var tenThongSo in tenThongSoList)
+                        foreach (var item in items.OrderBy(x => x.Id))
                         {
-                            var giaTri = ListNhatKyNgay
-                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian && item.TenThongSo == tenThongSo)
-                                .Select(item => item.Gia_Tri)
-                                .FirstOrDefault();
-
-                            dataRow.Append(ConstructCell((giaTri != null) ? giaTri : "", CellValues.String));
+                            var gt = item.Gia_Tri != null ? item.Gia_Tri.ToString() : "";
+                            row.Append(ConstructCell(gt, CellValues.String, 1));
                         }
                     }
-
-                    sheetData.AppendChild(dataRow);
-                    stt++;
+                    sheetData.AppendChild(row);
                 }
+
+               
 
                 worksheetPart.Worksheet.Save();
             }

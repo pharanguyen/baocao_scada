@@ -63,6 +63,38 @@ namespace DAO.Services.XuatExcel
                 WorkbookStylesPart stylePart = workbookPart.AddNewPart<WorkbookStylesPart>();
                 stylePart.Stylesheet = GenerateStylesheet();
                 stylePart.Stylesheet.Save();
+                Columns columns = new Columns(
+         new Column // STT column
+         {
+             Min = 1,
+             Max = 2,
+             Width = 5,
+             CustomWidth = true
+         },
+         new Column // Tên cuộc họp
+         {
+             Min = 2,
+             Max = 3,
+             Width = 30,
+             CustomWidth = true
+         },
+          new Column // Tên cuộc họp
+          {
+              Min = 3,
+              Max = 10,
+              Width = 10,
+              CustomWidth = true
+          }
+
+        );
+
+                worksheetPart.Worksheet.AppendChild(columns);
+                SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+
+                MergeCells mergeCells = new MergeCells();
+                mergeCells.Append(new MergeCell() { Reference = new StringValue("A1:A2") });
+  
+
 
                 Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
                 Sheet sheet = new Sheet()
@@ -76,27 +108,36 @@ namespace DAO.Services.XuatExcel
 
                 workbookPart.Workbook.Save();
 
-                SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+               
+
+                worksheetPart.Worksheet.InsertAfter(mergeCells, sheetData);
+
+
 
                 // Construct the header row with merged cells
                 Row row = new Row();
                 row.Append(ConstructCell("STT", CellValues.String));
                 row.Append(ConstructCell("Thời Gian", CellValues.String));
-
+                mergeCells.Append(new MergeCell() { Reference = new StringValue("B1:B2") });
                 var data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian);
-                
+               
+
                 var dataFirst = data.FirstOrDefault();
 
-                var listTenTram = dataFirst.Select(item => item.TenTram).Distinct();
-                foreach (var tenTram in listTenTram)
+
+                foreach (var items in dataFirst.GroupBy(x => x.TenTram))
                 {
-                    row.Append(ConstructCell(tenTram, CellValues.String, 1));
-                    
+                    foreach (var item in items.OrderBy(x => x.Id))
+                    {
+                        row.Append(ConstructCell(items.Key, CellValues.String, 1));
+                    }
+                 
                 }
                 sheetData.AppendChild(row);
                 row = new Row();
-
-                foreach(var items in dataFirst.GroupBy(x=>x.Id_Tram))
+                row.Append(ConstructCell("STT", CellValues.String));
+                row.Append(ConstructCell("Thời Gian", CellValues.String));
+                foreach (var items in dataFirst.GroupBy(x=>x.Id_Tram))
                 {
                     foreach(var item in items.OrderBy(x=>x.Id))
                     {
@@ -104,11 +145,14 @@ namespace DAO.Services.XuatExcel
                     }                  
                 }
                 sheetData.AppendChild(row);
-
+                var i = 1;
                 foreach(var list in data)
                 {
+                    
                     row = new Row();
-                    foreach (var items in list.GroupBy(x=>x.Id_Tram))
+                    row.Append(ConstructCell(i.ToString(), CellValues.String, 1));
+                    row.Append(ConstructCell(list.Key.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String, 1));
+                    foreach (var items in list.GroupBy(x=>x.TenTram))
                     {
                         foreach (var item in items.OrderBy(x => x.Id))
                         {
@@ -117,6 +161,7 @@ namespace DAO.Services.XuatExcel
                         }
                     }
                     sheetData.AppendChild(row);
+                    i++;
                 }
 
                

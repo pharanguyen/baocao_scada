@@ -7,9 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace DAO.Services.XuatExcel
 {
@@ -18,8 +22,8 @@ namespace DAO.Services.XuatExcel
 
         public static string BaoCaoNgay()
         {
-           
-
+            // var data = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay("", "", "");
+            var resultModel = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay("", "", "");
             var FileName = "Danh sách cuộc họp.xlsx";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "UploadFiles\\FileTam");
@@ -39,6 +43,15 @@ namespace DAO.Services.XuatExcel
 
             var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "UploadFiles\\FileTam", FileName);
 
+            if (resultModel == null || resultModel.Data == null)
+            {
+                // Handle the case where data retrieval is unsuccessful
+                // You can add error handling or return an error message here.
+                return "Error: Unable to retrieve data";
+            }
+
+            List<prc_Nhat_Ky_Ngay> ListNhatKyNgay = resultModel.Data;
+
             using (SpreadsheetDocument document = SpreadsheetDocument.Create(FilePath, SpreadsheetDocumentType.Workbook))
             {
                 WorkbookPart workbookPart = document.AddWorkbookPart();
@@ -47,123 +60,90 @@ namespace DAO.Services.XuatExcel
                 WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
                 worksheetPart.Worksheet = new Worksheet();
 
-                // Adding style
                 WorkbookStylesPart stylePart = workbookPart.AddNewPart<WorkbookStylesPart>();
                 stylePart.Stylesheet = GenerateStylesheet();
                 stylePart.Stylesheet.Save();
 
-                // Setting up columns
-                Columns columns = new Columns(
-                        new Column // STT column
-                        {
-                            Min = 1,
-                            Max = 2,
-                            Width = 5,
-                            CustomWidth = true
-                        },
-                        new Column // Tên cuộc họp
-                        {
-                            Min = 2,
-                            Max = 3,
-                            Width = 55,
-                            CustomWidth = true
-                        },
-                        new Column // Đơn vị tổ chức
-                        {
-                            Min = 3,
-                            Max = 4,
-                            Width = 25,
-                            CustomWidth = true
-                        },
-                        new Column // Thờ gian bắt đầu
-                        {
-                            Min = 5,
-                            Max = 6,
-                            Width = 11,
-                            CustomWidth = true
-                        },
-                        new Column // Thờ gian kết thúc
-                        {
-                            Min = 6,
-                            Max = 7,
-                            Width = 11,
-                            CustomWidth = true
-                        },
-                        new Column // Trạng thái
-                        {
-                            Min = 6,
-                            Max = 7,
-                            Width = 12,
-                            CustomWidth = true
-                        });
-
-                worksheetPart.Worksheet.AppendChild(columns);
-
                 Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
-
-                Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
+                Sheet sheet = new Sheet()
+                {
+                    Id = workbookPart.GetIdOfPart(worksheetPart),
+                    SheetId = 1,
+                    Name = "Sheet1"
+                };
 
                 sheets.Append(sheet);
 
                 workbookPart.Workbook.Save();
 
                 SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
-                MergeCells mergeCells = new MergeCells();
-                mergeCells.Append(new MergeCell() { Reference = new StringValue("A1:F1") });
 
-                worksheetPart.Worksheet.InsertAfter(mergeCells, sheetData);
+                // Construct the header row with merged cells
+                Row headerRow1 = new Row();
+                headerRow1.Append(ConstructCell("STT", CellValues.String));
+                headerRow1.Append(ConstructCell("Thời Gian", CellValues.String));
 
-                // Constructing header
-                Row row = new Row();
-                row.Append(
-                    ConstructCell("Thống kê điểm danh", CellValues.String, 5));
-                row.CustomHeight = true;
-                row.Height = 40;
-                sheetData.AppendChild(row);
-
-                row = new Row();
-
-                row.Append(ConstructCell("STT", CellValues.String, 2));
-                row.Append(ConstructCell("Tên cuộc họp", CellValues.String, 2));
-
-                row.Append(ConstructCell("Đơn vị tổ chức", CellValues.String, 2));
-                row.Append(ConstructCell("Thời gian bắt đầu", CellValues.String, 2));
-                row.Append(ConstructCell("Thời gian điểm danh", CellValues.String, 2));
-                row.Append(ConstructCell("Trạng thái", CellValues.String, 2));
-                // Insert the header row to the Sheet Data
-                sheetData.AppendChild(row);
-                var STT = 1;
-                // Inserting each data
-                for(int i  = 0; i< 5; i++)
+                foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
                 {
+                    var tenThongSoList = ListNhatKyNgay
+                        .Where(item => item.TenTram == tenTram)
+                        .Select(item => item.TenThongSo)
+                        .Distinct()
+                        .ToList();
 
-                    row = new Row();
-                    row.Append(
-                        ConstructCell(STT.ToString(), CellValues.Number, 4),
-                        ConstructCell("a", CellValues.String, 1),
-                        ConstructCell("a1", CellValues.String, 1),
-                        ConstructCell("a2", CellValues.String, 1),
-                        ConstructCell("a3", CellValues.String, 1),
-                        ConstructCell("a4", CellValues.String, 1)
-                        );
-
-                    sheetData.AppendChild(row);
+                    foreach (var tenThongSo in tenThongSoList)
+                    {
+                        headerRow1.Append(ConstructCell(tenTram, CellValues.String));
+                    }
                 }
-                //foreach (var item in ListData)
-                //{
-                //    row = new Row();
-                //    row.Append(
-                //        ConstructCell(STT.ToString(), CellValues.Number, 4),
-                //        ConstructCell(item.Title, CellValues.String, 1),
-                //        ConstructCell(item.Department, CellValues.String, 1),
-                //        ConstructCell(item.txtStartTime, CellValues.String, 1),
-                //        ConstructCell(item.txtEndTime, CellValues.String, 1),
-                //        ConstructCell(item.TxtStatus, CellValues.String, 1)
-                //        );
 
-                //    STT++;
-                //    sheetData.AppendChild(row);
-                //}
+                Row headerRow2 = new Row();
+                foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
+                {
+                    var tenThongSoList = ListNhatKyNgay
+                        .Where(item => item.TenTram == tenTram)
+                        .Select(item => item.TenThongSo)
+                        .Distinct()
+                        .ToList();
+
+                    foreach (var tenThongSo in tenThongSoList)
+                    {
+                        headerRow2.Append(ConstructCell(tenThongSo, CellValues.String));
+                    }
+                }
+
+                sheetData.AppendChild(headerRow1);
+                sheetData.AppendChild(headerRow2);
+
+                int stt = 1;
+                foreach (var thoiGian in ListNhatKyNgay.Select(item => item.Thoi_Gian).Distinct())
+                {
+                    Row dataRow = new Row();
+                    dataRow.Append(ConstructCell(stt.ToString(), CellValues.Number));
+                    dataRow.Append(ConstructCell(thoiGian.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String));
+
+                    foreach (var tenTram in ListNhatKyNgay.Select(item => item.TenTram).Distinct())
+                    {
+                        var tenThongSoList = ListNhatKyNgay
+                            .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian)
+                            .Select(item => item.TenThongSo)
+                            .Distinct()
+                            .ToList();
+
+                        foreach (var tenThongSo in tenThongSoList)
+                        {
+                            var giaTri = ListNhatKyNgay
+                                .Where(item => item.TenTram == tenTram && item.Thoi_Gian == thoiGian && item.TenThongSo == tenThongSo)
+                                .Select(item => item.Gia_Tri)
+                                .FirstOrDefault();
+
+                            dataRow.Append(ConstructCell((giaTri != null) ? giaTri : "", CellValues.String));
+                        }
+                    }
+
+                    sheetData.AppendChild(dataRow);
+                    stt++;
+                }
 
                 worksheetPart.Worksheet.Save();
             }
@@ -171,6 +151,17 @@ namespace DAO.Services.XuatExcel
             return "UploadFiles/FileTam/" + FileName;
         }
 
+        private Cell ConstructCell(string value, CellValues dataType)
+        {
+            Cell cell = new Cell()
+            {
+                DataType = dataType,
+                CellValue = new CellValue(value)
+            };
+            return cell;
+        }
+
+        
 
         #region Hàm hỗ trợ
         private static Stylesheet GenerateStylesheet()

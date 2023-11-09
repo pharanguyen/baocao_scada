@@ -53,6 +53,7 @@ namespace DAO.Services.XuatExcel
 
             List<prc_Nhat_Ky_Ngay> ListNhatKyNgay = resultModel.Data;
             var data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+            var latestThoiGian = data.OrderByDescending(item => item.Key).FirstOrDefault();
             switch (CbThoiGian)
             {
                 case 1:
@@ -65,11 +66,14 @@ namespace DAO.Services.XuatExcel
                         .OrderByDescending(group => group.Key);
                     break;
                 case 3:
+
+
+                
                     data = ListNhatKyNgay
-                        .Where(x => x.Thoi_Gian.Minute == 0)
+                        .Where(x => x.Thoi_Gian == latestThoiGian.Key)
                         .GroupBy(x => x.Thoi_Gian)
-                        .OrderByDescending(group => group.Key)
-                        .FirstOrDefault();
+                        .OrderByDescending(group => group.Key);
+                    break;
                     break;
 
                 default:
@@ -78,7 +82,7 @@ namespace DAO.Services.XuatExcel
                     break;
             }
 
-            var latestThoiGian = data.OrderByDescending(item => item.Key).FirstOrDefault();
+           
             var dataFirst = data.FirstOrDefault();
 
             using (SpreadsheetDocument document = SpreadsheetDocument.Create(FilePath, SpreadsheetDocumentType.Workbook))

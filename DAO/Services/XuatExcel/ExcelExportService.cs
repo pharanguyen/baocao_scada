@@ -166,10 +166,10 @@ namespace DAO.Services.XuatExcel
                             if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
                                     || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
                             {
-                                var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
+                                var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
-                                    var tieuthu = (decimal.Parse(nextItem.Gia_Tri) - decimal.Parse(item.Gia_Tri)) * 10;
+                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
                                     row.Append(ConstructCell(tieuthu.ToString(), CellValues.String, 1));
                                 }
                                 else

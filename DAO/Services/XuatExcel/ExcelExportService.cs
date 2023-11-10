@@ -160,7 +160,7 @@ namespace DAO.Services.XuatExcel
 
                 foreach (var items in dataFirst.GroupBy(x => x.TenTram))
                 {
-                    foreach (var item in items.OrderBy(x => x.Id))
+                    foreach (var item in items.OrderBy(x => x.TenThongSo))
                     {
                         row.Append(ConstructCell(items.Key, CellValues.String, 1));
                         row1.Append(ConstructCell(item.TenThongSo, CellValues.String, 1));
@@ -189,17 +189,17 @@ namespace DAO.Services.XuatExcel
                     foreach (var items in list.GroupBy(x => x.TenTram))
                     {
                         var j = 0;
-                        foreach (var item in items.OrderBy(x => x.Id))
+                        foreach (var item in items.OrderBy(x => x.TenThongSo))
                         {
                             var gt = item.Gia_Tri != null ? item.Gia_Tri.ToString() : "";
                             row.Append(ConstructCell(gt, CellValues.String, 1));
                             if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
                                     || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
                             {
-                                var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo && x.TenTram == item.TenTram);
+                                var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
-                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
+                                   var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
                                     row.Append(ConstructCell(tieuthu.ToString(), CellValues.String, 1));
                                 }
                                 else

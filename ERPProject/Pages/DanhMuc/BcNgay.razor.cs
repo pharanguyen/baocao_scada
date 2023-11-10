@@ -196,11 +196,13 @@ namespace ERPProject.Pages.DanhMuc
         }
         public async Task onXuatExcel()
         {
+            AppData.loadingPanel.show();
             int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
             int[] Id_Tram = CbTram.Value ?? new int[0];
             int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
 
             var Employee = ExcelExportService.BaoCaoNgay(Id_ChiNhanh, Id_Tram, Id_ThongSo, CbThoiGian.Value);
+            AppData.loadingPanel.hide();
         }
 
 

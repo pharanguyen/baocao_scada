@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using DAO.ViewModel;
 
 namespace DAO.Services.XuatExcel
 {
@@ -140,12 +141,45 @@ namespace DAO.Services.XuatExcel
                 sheets.Append(sheet);
 
                 workbookPart.Workbook.Save();
-
-               
-
                 worksheetPart.Worksheet.InsertAfter(mergeCells, sheetData);
 
-
+                var ListText = ("A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z").Split(";").ToList();
+                var ListRows = new List<RowExcells>();
+                var dem = 1;
+                foreach (var a in ListText)
+                {
+                    var RowData = new RowExcells();
+                    RowData.id = dem;
+                    RowData.ten_cot = a;
+                    ListRows.Add(RowData);
+                    dem++;
+                }
+                foreach (var a in ListText)
+                {
+                    foreach (var b in ListText)
+                    {
+                        var RowData = new RowExcells();
+                        RowData.id = dem;
+                        RowData.ten_cot = a + b;
+                        ListRows.Add(RowData);
+                        dem++;
+                    }                     
+                }
+                foreach (var a in ListText)
+                {
+                    foreach (var b in ListText)
+                    {
+                        foreach (var c in ListText)
+                        {
+                            var RowData = new RowExcells();
+                            RowData.id = dem;
+                            RowData.ten_cot = a + b + c;
+                            ListRows.Add(RowData);
+                            dem++;
+                        }
+                    }
+                       
+                }
 
                 // Construct the header row with merged cells
                 Row row = new Row();
@@ -155,9 +189,7 @@ namespace DAO.Services.XuatExcel
                 row1.Append(ConstructCell("STT", CellValues.String));
                 row1.Append(ConstructCell("Thời Gian", CellValues.String));
                 mergeCells.Append(new MergeCell() { Reference = new StringValue("B1:B2") });
-                
-
-
+                var check = 2;
                 foreach (var items in dataFirst.GroupBy(x => x.TenTram))
                 {
                     foreach (var item in items.OrderBy(x => x.TenThongSo))
@@ -165,27 +197,53 @@ namespace DAO.Services.XuatExcel
                         row.Append(ConstructCell(items.Key, CellValues.String, 1));
                         row1.Append(ConstructCell(item.TenThongSo, CellValues.String, 1));
                         if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
-                                    || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
+                                    || item.TenThongSo == "TỔNG LƯU LƯỢNG 4" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
                         {
                             row.Append(ConstructCell(items.Key, CellValues.String, 1));
                             row1.Append(ConstructCell("TIÊU THỤ", CellValues.String, 1));
                         }
-            
-
                     }
-                 
+                    var demTieuThu = 0;
+                    if (items.FirstOrDefault(x => x.TenThongSo == "TỔNG LƯU LƯỢNG 1") != null)
+                    {
+                        demTieuThu++;
+                    }
+                    if (items.FirstOrDefault(x => x.TenThongSo == "TỔNG LƯU LƯỢNG 2") != null)
+                    {
+                        demTieuThu++;
+                    }
+                    if (items.FirstOrDefault(x => x.TenThongSo == "TỔNG LƯU LƯỢNG 3") != null)
+                    {
+                        demTieuThu++;
+                    }
+                    if (items.FirstOrDefault(x => x.TenThongSo == "TỔNG LƯU LƯỢNG 4") != null)
+                    {
+                        demTieuThu++;
+                    }
+                    if (items.FirstOrDefault(x => x.TenThongSo == "TỔNG LƯU LƯỢNG 5") != null)
+                    {
+                        demTieuThu++;
+                    }
+                    if (items.FirstOrDefault(x => x.TenThongSo == "ÁP LỰC 2") != null)
+                    {
+                        demTieuThu++;
+                    }
+
+                    var bien1 = check + 1;
+                    var cot1 = ListRows.FirstOrDefault(x => x.id == bien1).ten_cot;
+                    var bien2 = check + demTieuThu + items.Count();
+                    var cot2 = ListRows.FirstOrDefault(x => x.id == bien2).ten_cot;
+                    mergeCells.Append(new MergeCell() { Reference = new StringValue(cot1 + "1:" + cot2 + "1") });
+                    check = check + demTieuThu + items.Count();
                 }
                 sheetData.AppendChild(row);
                 sheetData.AppendChild(row1);
-
                 var i = 1;
                 foreach (var list in data)
-                {
-                    
+                {                    
                     row = new Row();
                     row.Append(ConstructCell(i.ToString(), CellValues.String, 1));
-                    row.Append(ConstructCell(list.Key.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String, 1));
-                    
+                    row.Append(ConstructCell(list.Key.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String, 1));                    
                     foreach (var items in list.GroupBy(x => x.TenTram))
                     {
                         var j = 0;
@@ -193,20 +251,18 @@ namespace DAO.Services.XuatExcel
                         {
                             var gt = item.Gia_Tri != null ? item.Gia_Tri.ToString() : "";
                             row.Append(ConstructCell(gt, CellValues.String, 1));
-                            if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
-                                    || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
+                            if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3" || item.TenThongSo == "TỔNG LƯU LƯỢNG 4" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
                             {
                                 var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
-                                   var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
+                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
                                     row.Append(ConstructCell(tieuthu.ToString(), CellValues.String, 1));
                                 }
                                 else
                                 {
                                     row.Append(ConstructCell("--", CellValues.String, 1));
                                 }
-
                             }
                             j++;
                         }
@@ -214,12 +270,8 @@ namespace DAO.Services.XuatExcel
                     sheetData.AppendChild(row);
                     i++;
                 }
-
-
-
                 worksheetPart.Worksheet.Save();
             }
-
             return "UploadFiles/FileTam/" + FileName;
         }
 

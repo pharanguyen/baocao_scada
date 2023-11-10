@@ -11,8 +11,14 @@ namespace DAO.ViewModel
         public int id_Tram { get; set; }
         public List<ThongSoTram> listThongSo { get; set; }
     }
-public class ThongSoTram
-{
-    public string TenThongSo { get; set; }
+    public class ThongSoTram
+    {
+        public string TenThongSo { get; set; }
+    }
+
+    public class RowExcells
+    {
+        public long id { get; set; }
+        public string ten_cot { get; set; }
     }
 }

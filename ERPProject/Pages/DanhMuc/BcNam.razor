@@ -1,8 +1,11 @@
 ﻿@page "/Dm_BcNam"
 @using DAO.Models.DanhMuc
+@using DAO.Services.XuatExcel;
 @using DAO.ViewModel;
 @using ERPProject.Shared.Combobox;
 @inherits BcNamBase
+@inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <style type="text/css">
     #gdv > div.e-gridcontent > div {
         max-height: calc(100vh - 185px) !important;
@@ -171,3 +174,21 @@
     </SfGrid>
 
 </BodyCard>
+@code
+{
+    public async Task onXuatExcel()
+    {
+
+        int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
+        int[] Id_Tram = CbTram.Value ?? new int[0];
+        int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
+
+        urlFile = ExcelExportNam.BaoCaoNam(Id_ChiNhanh, Id_Tram, Id_ThongSo, StartDate.Date, EndDate.Date, CbThoiGian.Value);
+        dowloadFile();
+    }
+
+    public void dowloadFile()
+    {
+        IJSRuntime.InvokeVoidAsync("open", urlFile);
+    }
+}

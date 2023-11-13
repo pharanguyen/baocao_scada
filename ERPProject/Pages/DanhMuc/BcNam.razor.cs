@@ -1,5 +1,7 @@
 ﻿using DAO.Models.CommonModels;
 using DAO.Models.DanhMuc;
+using DAO.Models.CommonModels;
+using DAO.Models.DanhMuc;
 using DAO.Models.PhanQuyen;
 using DAO.Services.DanhMuc;
 using DAO.Services.PhanQuyen;
@@ -11,6 +13,8 @@ using ERPProject.Shared.Combobox;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Navigations;
+using System.Net;
+
 
 namespace ERPProject.Pages.DanhMuc
 {
@@ -18,6 +22,7 @@ namespace ERPProject.Pages.DanhMuc
     {
         public List<prc_Nhat_Ky_Nam> ListNhatKyNam { get; set; }
         public List<BaoCaoNamViewModel> data { get; set; }
+        public string urlFile { get; set; }
 
         public int take = 20;
         public int totalPages = 0;
@@ -191,16 +196,7 @@ namespace ERPProject.Pages.DanhMuc
             // StateHasChanged();
             //   gdv.Refresh();
         }
-        public async Task onXuatExcel()
-        {
-            AppData.loadingPanel.show();
-            int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
-            int[] Id_Tram = CbTram.Value ?? new int[0];
-            int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
-
-            var Employee = ExcelExportNam.BaoCaoNam(Id_ChiNhanh, Id_Tram, Id_ThongSo, StartDate.Date, EndDate.Date, CbThoiGian.Value);
-            AppData.loadingPanel.hide();
-        }
+        
 
 
         protected void onXoa(int _ID)

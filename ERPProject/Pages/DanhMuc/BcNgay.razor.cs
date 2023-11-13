@@ -11,6 +11,7 @@ using ERPProject.Shared.Combobox;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Navigations;
+using System.Net;
 
 
 namespace ERPProject.Pages.DanhMuc
@@ -21,7 +22,7 @@ namespace ERPProject.Pages.DanhMuc
 
         public List<prc_Nhat_Ky_Ngay> ListNhatKyNgay { get; set; }
         public List<BaoCaoNgayViewModel> data { get; set; }
-
+        public string urlFile { get; set; }
         public int take = 20;
         public int totalPages = 0;      
         public int curPage = 1;
@@ -194,16 +195,6 @@ namespace ERPProject.Pages.DanhMuc
             // StateHasChanged();
             //   gdv.Refresh();
         }
-        public async Task onXuatExcel()
-        {
-            AppData.loadingPanel.show();
-            int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
-            int[] Id_Tram = CbTram.Value ?? new int[0];
-            int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
-
-            var Employee = ExcelExportService.BaoCaoNgay(Id_ChiNhanh, Id_Tram, Id_ThongSo, CbThoiGian.Value);
-            AppData.loadingPanel.hide();
-        }
 
 
         protected void onXoa(int _ID)
@@ -230,7 +221,7 @@ namespace ERPProject.Pages.DanhMuc
     //xuat ra các dòng được chọn
    
 
-    }
+}
 
 
 

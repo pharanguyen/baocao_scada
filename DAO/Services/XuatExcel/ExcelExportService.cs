@@ -28,7 +28,7 @@ namespace DAO.Services.XuatExcel
             var resultModel = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo));
             var FileName = "Báo Cáo Ngày.xlsx";
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "UploadFiles\\FileTam");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\file");
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
@@ -43,7 +43,7 @@ namespace DAO.Services.XuatExcel
                 catch { }
             }
 
-            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "UploadFiles\\FileTam", FileName);
+            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\file", FileName);
 
             if (resultModel == null || resultModel.Data == null)
             {
@@ -272,7 +272,7 @@ namespace DAO.Services.XuatExcel
                 }
                 worksheetPart.Worksheet.Save();
             }
-            return "UploadFiles/FileTam/" + FileName;
+            return "/file/" + FileName;
         }
 
         private Cell ConstructCell(string value, CellValues dataType)

@@ -18,15 +18,16 @@ using DAO.ViewModel;
 
 namespace DAO.Services.XuatExcel
 {
-    public class ExcelExportService
+    public class ExcelExportNam
+
     {
 
-        public static string BaoCaoNgay(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, int CbThoiGian)
+        public static string BaoCaoNam(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, DateTime StartDate, DateTime EndDate, int CbThoiGian)
         {
-            
-            // var data = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay("", "", "");
-            var resultModel = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo));
-            var FileName = "Báo Cáo Ngày.xlsx";
+
+            // var data = DAO.Services.DanhMuc.NhatKyNamService.Get_prc_Nhat_Ky_Nam("", "", "");
+            var resultModel = DAO.Services.DanhMuc.NhatKyNamService.Get_prc_Nhat_Ky_Nam(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date);
+            var FileName = "Báo Cáo Năm.xlsx";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "UploadFiles\\FileTam");
             if (!Directory.Exists(path))
@@ -52,16 +53,16 @@ namespace DAO.Services.XuatExcel
                 return "Error: Unable to retrieve data";
             }
 
-            List<prc_Nhat_Ky_Ngay> ListNhatKyNgay = resultModel.Data;
-            var data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+            List<prc_Nhat_Ky_Nam> ListNhatKyNam = resultModel.Data;
+            var data = ListNhatKyNam.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
             var latestThoiGian = data.OrderByDescending(item => item.Key).FirstOrDefault();
             switch (CbThoiGian)
             {
                 case 1:
-                    data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+                    data = ListNhatKyNam.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
                     break;
                 case 2:
-                    data = ListNhatKyNgay
+                    data = ListNhatKyNam
                         .Where(x => x.Thoi_Gian.Minute == 0)
                         .GroupBy(x => x.Thoi_Gian)
                         .OrderByDescending(group => group.Key);
@@ -69,8 +70,8 @@ namespace DAO.Services.XuatExcel
                 case 3:
 
 
-                
-                    data = ListNhatKyNgay
+
+                    data = ListNhatKyNam
                         .Where(x => x.Thoi_Gian == latestThoiGian.Key)
                         .GroupBy(x => x.Thoi_Gian)
                         .OrderByDescending(group => group.Key);
@@ -79,11 +80,11 @@ namespace DAO.Services.XuatExcel
 
                 default:
                     // Handle an invalid CbThoiGian value or set a default behavior.
-                    data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+                    data = ListNhatKyNam.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
                     break;
             }
 
-           
+
             var dataFirst = data.FirstOrDefault();
 
             using (SpreadsheetDocument document = SpreadsheetDocument.Create(FilePath, SpreadsheetDocumentType.Workbook))
@@ -127,7 +128,7 @@ namespace DAO.Services.XuatExcel
 
                 MergeCells mergeCells = new MergeCells();
                 mergeCells.Append(new MergeCell() { Reference = new StringValue("A1:A2") });
-  
+
 
 
                 Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
@@ -163,7 +164,7 @@ namespace DAO.Services.XuatExcel
                         RowData.ten_cot = a + b;
                         ListRows.Add(RowData);
                         dem++;
-                    }                     
+                    }
                 }
                 foreach (var a in ListText)
                 {
@@ -178,7 +179,7 @@ namespace DAO.Services.XuatExcel
                             dem++;
                         }
                     }
-                       
+
                 }
 
                 // Construct the header row with merged cells
@@ -240,10 +241,10 @@ namespace DAO.Services.XuatExcel
                 sheetData.AppendChild(row1);
                 var i = 1;
                 foreach (var list in data)
-                {                    
+                {
                     row = new Row();
                     row.Append(ConstructCell(i.ToString(), CellValues.String, 1));
-                    row.Append(ConstructCell(list.Key.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String, 1));                    
+                    row.Append(ConstructCell(list.Key.ToString("dd/MM/yyyy HH:mm:ss"), CellValues.String, 1));
                     foreach (var items in list.GroupBy(x => x.TenTram))
                     {
                         var j = 0;
@@ -253,7 +254,7 @@ namespace DAO.Services.XuatExcel
                             row.Append(ConstructCell(gt, CellValues.String, 1));
                             if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3" || item.TenThongSo == "TỔNG LƯU LƯỢNG 4" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
                             {
-                                var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
+                                var nextItem = ListNhatKyNam.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
                                     var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
@@ -285,7 +286,7 @@ namespace DAO.Services.XuatExcel
             return cell;
         }
 
-        
+
 
         #region Hàm hỗ trợ
         private static Stylesheet GenerateStylesheet()

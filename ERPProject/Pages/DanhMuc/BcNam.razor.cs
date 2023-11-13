@@ -3,6 +3,7 @@ using DAO.Models.DanhMuc;
 using DAO.Models.PhanQuyen;
 using DAO.Services.DanhMuc;
 using DAO.Services.PhanQuyen;
+using DAO.Services.XuatExcel;
 using DAO.ViewModel;
 using ERPProject.Services;
 using ERPProject.Shared;
@@ -192,18 +193,13 @@ namespace ERPProject.Pages.DanhMuc
         }
         public async Task onXuatExcel()
         {
-            ExcelExportProperties excelExportProperties = new ExcelExportProperties();
-            excelExportProperties.FileName = "Danh sach diem dung.xlsx";
-            var selectedRecord = await gdv.GetSelectedRecordsAsync();
-            if (selectedRecord.Count() > 0)
-            {
-                excelExportProperties.DataSource = selectedRecord;
-            }
-            else
-            {
-                excelExportProperties.DataSource = ListNhatKyNam;
-            }
-            await gdv.ExportToExcelAsync(excelExportProperties);
+            AppData.loadingPanel.show();
+            int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
+            int[] Id_Tram = CbTram.Value ?? new int[0];
+            int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
+
+            var Employee = ExcelExportNam.BaoCaoNam(Id_ChiNhanh, Id_Tram, Id_ThongSo, StartDate.Date, EndDate.Date, CbThoiGian.Value);
+            AppData.loadingPanel.hide();
         }
 
 

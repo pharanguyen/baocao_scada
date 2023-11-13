@@ -18,15 +18,15 @@ using DAO.ViewModel;
 
 namespace DAO.Services.XuatExcel
 {
-    public class ExcelExportService
+    public class ExcelExportThang
     {
 
-        public static string BaoCaoNgay(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, int CbThoiGian)
+        public static string BaoCaoThang(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, DateTime StartDate,DateTime EndDate, int CbThoiGian)
         {
             
-            // var data = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay("", "", "");
-            var resultModel = DAO.Services.DanhMuc.NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo));
-            var FileName = "Báo Cáo Ngày.xlsx";
+            // var data = DAO.Services.DanhMuc.NhatKyThangService.Get_prc_Nhat_Ky_Thang("", "", "");
+            var resultModel = DAO.Services.DanhMuc.NhatKyThangService.Get_prc_Nhat_Ky_Thang(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date);
+            var FileName = "Báo Cáo Tháng.xlsx";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "UploadFiles\\FileTam");
             if (!Directory.Exists(path))
@@ -52,16 +52,16 @@ namespace DAO.Services.XuatExcel
                 return "Error: Unable to retrieve data";
             }
 
-            List<prc_Nhat_Ky_Ngay> ListNhatKyNgay = resultModel.Data;
-            var data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+            List<prc_Nhat_Ky_Thang> ListNhatKyThang = resultModel.Data;
+            var data = ListNhatKyThang.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
             var latestThoiGian = data.OrderByDescending(item => item.Key).FirstOrDefault();
             switch (CbThoiGian)
             {
                 case 1:
-                    data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+                    data = ListNhatKyThang.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
                     break;
                 case 2:
-                    data = ListNhatKyNgay
+                    data = ListNhatKyThang
                         .Where(x => x.Thoi_Gian.Minute == 0)
                         .GroupBy(x => x.Thoi_Gian)
                         .OrderByDescending(group => group.Key);
@@ -70,7 +70,7 @@ namespace DAO.Services.XuatExcel
 
 
                 
-                    data = ListNhatKyNgay
+                    data = ListNhatKyThang
                         .Where(x => x.Thoi_Gian == latestThoiGian.Key)
                         .GroupBy(x => x.Thoi_Gian)
                         .OrderByDescending(group => group.Key);
@@ -79,7 +79,7 @@ namespace DAO.Services.XuatExcel
 
                 default:
                     // Handle an invalid CbThoiGian value or set a default behavior.
-                    data = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+                    data = ListNhatKyThang.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
                     break;
             }
 
@@ -253,7 +253,7 @@ namespace DAO.Services.XuatExcel
                             row.Append(ConstructCell(gt, CellValues.String, 1));
                             if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3" || item.TenThongSo == "TỔNG LƯU LƯỢNG 4" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
                             {
-                                var nextItem = ListNhatKyNgay.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
+                                var nextItem = ListNhatKyThang.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
                                     var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;

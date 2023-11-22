@@ -256,7 +256,7 @@ namespace DAO.Services.XuatExcel
                                 var nextItem = ListNhatKyThang.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
-                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
+                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) ;
                                     row.Append(ConstructCell(tieuthu.ToString(), CellValues.String, 1));
                                 }
                                 else

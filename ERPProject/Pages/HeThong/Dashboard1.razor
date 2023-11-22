@@ -1,4 +1,4 @@
-﻿@using Syncfusion.Blazor.Charts
+﻿@*@using Syncfusion.Blazor.Charts
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Layouts
 <SfDashboardLayout Columns="8">
@@ -144,11 +144,11 @@
 				</SfGrid>
 				</ContentTemplate>
 		</DashboardLayoutPanel>*@
-    </DashboardLayoutPanels>     
+ @*   </DashboardLayoutPanels>     
 </SfDashboardLayout>
 
 
-  @code{
+ @* @code{
 	 private List<IncomeExpense> IncomeExpenseData = new List<IncomeExpense>
 	{
 	new IncomeExpense { Period = new DateTime(2021, 01, 01), Income = 7490, Expense = 6973 },
@@ -284,3 +284,4 @@
   }
 </style>
 
+*@

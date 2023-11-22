@@ -1,0 +1,64 @@
+﻿@page "/DoiMatKhau"
+@layout LoginLayout
+
+<div class="card mb-0">
+    <div class="card-body">
+        <h4 class="card-title">Đổi mật khẩu</h4>
+
+        <EditForm Model="@changePasswordModel" OnValidSubmit="@ChangePassword">
+            @if (changePasswordMessage != null)
+            {
+                <div class="alert alert-warning alert-styled-left">
+                    @changePasswordMessage
+                </div>
+            }
+
+            <div class="form-group form-group-feedback form-group-feedback-left">
+                <input type="password" class="form-control" placeholder="Mật khẩu cũ" @bind="changePasswordModel.OldPassword">
+                <div class="form-control-feedback">
+                    <i class="icon-lock2 text-muted"></i>
+                </div>
+            </div>
+
+            <div class="form-group form-group-feedback form-group-feedback-left">
+                <input type="password" class="form-control" placeholder="Mật khẩu mới" @bind="changePasswordModel.NewPassword">
+                <div class="form-control-feedback">
+                    <i class="icon-lock2 text-muted"></i>
+                </div>
+            </div>
+
+            <div class="form-group form-group-feedback form-group-feedback-left">
+                <input type="password" class="form-control" placeholder="Nhập lại mật khẩu mới" @bind="changePasswordModel.ConfirmPassword">
+                <div class="form-control-feedback">
+                    <i class="icon-lock2 text-muted"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Đổi mật khẩu <i class="icon-circle-right2 ml-2"></i></button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private ChangePasswordModel changePasswordModel = new ChangePasswordModel();
+    private string changePasswordMessage { get; set; }
+
+    private async Task ChangePassword()
+    {
+        // Implement your password change logic here
+        // Use changePasswordModel.OldPassword, changePasswordModel.NewPassword, changePasswordModel.ConfirmPassword
+        // Validate the input and perform the necessary actions
+
+        // Example: Display a success message
+        changePasswordMessage = "Mật khẩu đã được thay đổi thành công!";
+    }
+
+    public class ChangePasswordModel
+    {
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
+        public string ConfirmPassword { get; set; }
+    }
+}

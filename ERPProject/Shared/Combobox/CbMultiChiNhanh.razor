@@ -34,8 +34,8 @@
             Data = DmChiNhanhService.GetToComBobyIdChiNhanhAll().Data;
         }
 
-        
-       
+
+
 
     }
     private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
@@ -43,6 +43,12 @@
         if (args.Value != null)
         {
             Value = args.Value;
+            foreach (var i in Value)
+            {
+                GlobalValue.listcn.Add(i);
+            }
+            Console.WriteLine("abc");
         }
+
     }
 }

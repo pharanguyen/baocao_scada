@@ -1,4 +1,5 @@
 ﻿using DAO.Models.CommonModels;
+using DAO.Models.DanhMuc;
 using DAO.Models.PhanQuyen;
 using Dapper;
 using System;
@@ -30,14 +31,15 @@ namespace DAO.Services.PhanQuyen
             }
             catch (Exception ex) { return new ResultModel<List<prc_ThanhVien_DanhSach>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
+        
 
-        public static ResultModel<prc_ThanhVien_DanhSach> GetById(int id_thanhvien)
+        public static ResultModel<prc_ThanhVien_DanhSach> GetById(int thanhvien_id)
         {
             try
             {
                 var _db = new SqlHelper();
                 DynamicParameters p = new DynamicParameters();
-                p.Add("@thanhvien_id", id_thanhvien);
+                p.Add("@thanhvien_id", thanhvien_id);
                 var _obj = _db.QueryProc<prc_ThanhVien_DanhSach>("prc_ThanhVien_DanhSach_ByThanhVienId", p).ToList().FirstOrDefault();
                 if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
                 return new ResultModel<prc_ThanhVien_DanhSach>() { Data = _obj };
@@ -45,6 +47,7 @@ namespace DAO.Services.PhanQuyen
             }
             catch (Exception ex) { return new ResultModel<prc_ThanhVien_DanhSach>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
+
         public static ResultModel<List<prc_ThanhVien_DanhSach>> GetThanhVienByTenDangNhap(string thanhvien_name)
         {
             try
@@ -105,6 +108,22 @@ namespace DAO.Services.PhanQuyen
                 p.Add("@tendangnhap", TenDangNhap);
                 p.Add("@matkhau", MatKhau);
                 return new ResultModel<ds_thanhvien>() { Data = _db.GetAllByWhereCondition<ds_thanhvien>("where tendangnhap=@tendangnhap AND matkhau=@matkhau", p).FirstOrDefault() };
+            }
+            catch (Exception ex) { return new ResultModel<ds_thanhvien>() { isThanhCong = false, ThongBao = ex.Message }; }
+
+        }
+        public static ResultModel<ds_thanhvien> ChangePassword(int thanhvien_id, string MatKhau)
+        {
+            try
+            {
+                var _db = new SqlHelper();
+                DynamicParameters p = new DynamicParameters();
+                p.Add("@thanhvien_id", thanhvien_id);
+                p.Add("@new_password", MatKhau);
+                var _obj = _db.QueryProc<ds_thanhvien>("ChangePassword", p).ToList().FirstOrDefault();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<ds_thanhvien>() { Data = _obj };
+                
             }
             catch (Exception ex) { return new ResultModel<ds_thanhvien>() { isThanhCong = false, ThongBao = ex.Message }; }
 

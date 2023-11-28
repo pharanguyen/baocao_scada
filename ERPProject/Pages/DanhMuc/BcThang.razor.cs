@@ -19,6 +19,7 @@ namespace ERPProject.Pages.DanhMuc
 {
     public partial class BcThangBase : ComponentBase
     {
+        public List<prcTram> prcTrams = new List<prcTram>();
         public List<prc_Nhat_Ky_Thang> ListNhatKyThang { get; set; }
         public List<BaoCaoThangViewModel> data { get; set; }
         public string urlFile { get; set; }
@@ -72,7 +73,13 @@ namespace ERPProject.Pages.DanhMuc
             });
             base.OnInitialized();
         }
-
+        public void ValueChangeHandler(int[] args)
+        {
+            if (args != null)
+            {
+                prcTrams = DmTramService.GetComboTramMutiCN(args).Data;
+            }
+        }
         protected async void onTaiLai()
         {
 

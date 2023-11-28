@@ -13,7 +13,8 @@
 
 @code {
     SfMultiSelect<int[], prcTram> MultiSelectObj;
-    private List<prcTram> Data = new List<prcTram>();
+    [Parameter]
+    public List<prcTram> Data { get; set; } = new List<prcTram>();
     [Parameter]
     public string PopupWidth { get; set; } = "200px";
 
@@ -23,14 +24,19 @@
     public int[] Value { get; set; } = new int[] { };
     protected override void OnInitialized()
     {
-        if (GlobalValue.ms_chinhanh != null)
+        if (Data.Count() == 0)
         {
             Data = DmTramService.GetToComBobyIdTram(GlobalValue.ms_chinhanh).Data;
         }
-        else
-        {
-            Data = DmTramService.GetToComBobyIdTramAll().Data;
-        }
+        //if (GlobalValue.ms_chinhanh != null)
+        //{
+        //    Data = DmTramService.GetToComBobyIdTram(GlobalValue.ms_chinhanh).Data;
+        //}
+        //else
+        //{   
+           
+        //    Data = DmTramService.GetToComBobyIdTramAll().Data;
+        //}
     }
     private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
     {

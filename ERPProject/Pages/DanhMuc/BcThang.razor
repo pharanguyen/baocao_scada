@@ -40,7 +40,7 @@
         position: sticky;
         top: 0;
         left: 0;
-        z-index: 99999;
+        z-index: 1;
     }
 
     .e-row:nth-of-type(odd) .e-rowcell.e-attr {
@@ -72,8 +72,9 @@
                     <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
                 </Template>
             </ToolbarItem>
-            <CbMultiChiNhanh @ref= "CbChiNhanh" Width="300px"  PopupWidth="100%"> </CbMultiChiNhanh>
-            <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%"></CbMultiTram>
+            <CbMultiChiNhanh @ref= "CbChiNhanh" Width="300px"  PopupWidth="100%" OnDataSent="ValueChangeHandler"> </CbMultiChiNhanh>
+            <CbMultiTram @ref=" CbTram" Width="300px" PopupWidth="100%" Data="prcTrams">
+                </CbMultiTram>
             <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%"></CbMultiThongSo>
 
 

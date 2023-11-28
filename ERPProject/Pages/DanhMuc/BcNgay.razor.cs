@@ -5,10 +5,13 @@ using DAO.Services.DanhMuc;
 using DAO.Services.PhanQuyen;
 using DAO.Services.XuatExcel;
 using DAO.ViewModel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using ERPProject.Services;
 using ERPProject.Shared;
 using ERPProject.Shared.Combobox;
 using Microsoft.AspNetCore.Components;
+using MsUtils;
+using Syncfusion.Blazor.DropDowns;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Navigations;
 using System.Net;
@@ -18,7 +21,7 @@ namespace ERPProject.Pages.DanhMuc
 {
     public class BcNgayBase : ComponentBase
     {
-
+        public List<prcTram> prcTrams = new List<prcTram>();
 
         public List<prc_Nhat_Ky_Ngay> ListNhatKyNgay { get; set; }
         public List<BaoCaoNgayViewModel> data { get; set; }
@@ -63,12 +66,19 @@ namespace ERPProject.Pages.DanhMuc
 
 
                     }
-                    //onTaiLai();
-
+                   
 
                 });
             });
             base.OnInitialized();
+        }
+
+        public void ValueChangeHandler(int[] args)
+        {
+            if (args != null)
+            {
+                prcTrams = DmTramService.GetComboTramMutiCN(args).Data;                
+            }
         }
 
         protected async void onTaiLai()

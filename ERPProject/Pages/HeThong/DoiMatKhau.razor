@@ -1,6 +1,17 @@
 ﻿@page "/DoiMatKhau"
 @layout LoginLayout
+@using DAO.Models.CommonModels;
+@using DAO.Models.PhanQuyen;
+@using DAO.Services.PhanQuyen;
+@using System.Security.Claims;
+@using MsUtils;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime jsRunTime
 
+
+<link href="/assets/css/login.css" rel="stylesheet" />
 <div class="card mb-0">
     <div class="card-body">
         <h4 class="card-title">Đổi mật khẩu</h4>
@@ -42,18 +53,117 @@
 </div>
 
 @code {
+    ds_phanquyen _QSD = new ds_phanquyen();
+    
+    protected override void OnInitialized()
+    {
+        Task.Run(() =>
+        {
+            InvokeAsync(async () =>
+            {
+                var _tokenE = await localStorage.GetItemAsync<string>("Token");
+                var _token = MsUtils.Encryption.DecryptString(_tokenE);
+                var strInfo = _token.Split("@MS@");
+                if (strInfo.Length == 5)
+                {
+                    var rsModel = new ResultModel<ds_phanquyen>();
+                    await Task.Run(() => { rsModel = ds_phanquyenService.GetQuyenThanhVien(Convert.ToInt32(strInfo[0]), "btnBC_Ngay"); });
+                    _QSD = rsModel.Data;
+
+
+
+                }
+
+
+            });
+        });
+        base.OnInitialized();
+    }
+    private DAO.Models.PhanQuyen.ds_thanhvien objModel = new DAO.Models.PhanQuyen.ds_thanhvien();
     private ChangePasswordModel changePasswordModel = new ChangePasswordModel();
+    private List<ds_thanhvien> Data = new List<DAO.Models.PhanQuyen.ds_thanhvien>();
     private string changePasswordMessage { get; set; }
 
-    private async Task ChangePassword()
+    private void ChangePassword()
     {
-        // Implement your password change logic here
-        // Use changePasswordModel.OldPassword, changePasswordModel.NewPassword, changePasswordModel.ConfirmPassword
-        // Validate the input and perform the necessary actions
+        try
+        {
+            // Validate the input
+            if (string.IsNullOrWhiteSpace(changePasswordModel.OldPassword) ||
+                string.IsNullOrWhiteSpace(changePasswordModel.NewPassword) ||
+                string.IsNullOrWhiteSpace(changePasswordModel.ConfirmPassword))
+            {
+                changePasswordMessage = "Vui long nhập đủ các trường";
+                return;
+            }
 
-        // Example: Display a success message
-        changePasswordMessage = "Mật khẩu đã được thay đổi thành công!";
+           
+            if (changePasswordModel.NewPassword != changePasswordModel.ConfirmPassword)
+            {
+                changePasswordMessage = "mật khẩu chưa phù hợp";
+                return;
+            }
+
+            
+            var existingPassword = GetPasswordFromDatabase();
+
+            
+            if (changePasswordModel.OldPassword != existingPassword)
+            {
+                changePasswordMessage = "Nhập mật khẩu cũ sai";
+                return;
+            }
+
+            
+            var rsModel = ds_thanhvienService.GetByUserName(objModel.tendangnhap, objModel.matkhau);
+
+            if (rsModel.isThanhCong)
+            {
+                objModel = rsModel.Data;
+
+                
+                var changePasswordResult = ds_thanhvienService.ChangePassword(_QSD.thanhvien_id, changePasswordModel.NewPassword);
+
+                if (changePasswordResult.isThanhCong)
+                {
+                   
+                    changePasswordMessage = "Password thay đổi thành công ";
+                    NavigationManager.NavigateTo("/", true);
+                }
+                else
+                {
+                    
+                    changePasswordMessage = changePasswordResult.ThongBao;
+                }
+            }
+            else
+            {
+               
+                changePasswordMessage = "Invalid login credentials!";
+            }
+        }
+        catch (Exception ex)
+        {
+            
+            changePasswordMessage = "An error occurred while processing the password change.";
+        }
     }
+
+    private string GetPasswordFromDatabase()
+    {
+        if (_QSD.thanhvien_id != null)
+        {
+            var result = ds_thanhvienService.GetById(_QSD.thanhvien_id).Data;
+
+            return result.matkhau;
+        }
+
+        // Handle the case where thanhvien_id is null.
+        // For example, return string.Empty; or throw new Exception("thanhvien_id is null");
+        return string.Empty;
+    }
+
+
 
     public class ChangePasswordModel
     {

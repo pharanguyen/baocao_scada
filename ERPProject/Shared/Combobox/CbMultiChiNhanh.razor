@@ -14,8 +14,9 @@
 @code {
     SfMultiSelect<int[], prc_ChiNhanh> MultiSelectObj;
     private List<prc_ChiNhanh> Data = new List<prc_ChiNhanh>();
-
-
+    [Parameter]
+    public EventCallback<int[]> OnDataSent { get; set; }
+    public int[] selectedChiNhanh { get; set; }
     [Parameter]
     public string PopupWidth { get; set; } = "200px";
 
@@ -33,22 +34,29 @@
         {
             Data = DmChiNhanhService.GetToComBobyIdChiNhanhAll().Data;
         }
-
-
-
-
     }
-    private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
+
+    public async Task ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
     {
+        // Assuming Value and listcn are defined somewhere in your code
+        // and are accessible in this scope.
+
         if (args.Value != null)
         {
             Value = args.Value;
-            foreach (var i in Value)
-            {
-                GlobalValue.listcn.Add(i);
-            }
-            Console.WriteLine("abc");
+            //GlobalValue.tramCn = Value;
+            selectedChiNhanh =  Value;
+            // Emit the event with the selected values
+            await SendDataToParent();
         }
 
     }
+
+    public async Task SendDataToParent()
+    {        
+        await OnDataSent.InvokeAsync(selectedChiNhanh);
+        
+        StateHasChanged();
+    }
+
 }

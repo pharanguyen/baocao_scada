@@ -49,8 +49,9 @@
                 <div class="sidebar-content">
                     <div class="card card-sidebar-mobile">
                          <ul id="_NavMenu" class="nav nav-sidebar" data-nav-type="accordion">
-                            <NavMenuItem Title="I. Báo Cáo Scada" CssIcon="icon-home"></NavMenuItem>                           
-                          
+                            <NavMenuItem Title="I. Bản đồ Scada" Link="http://scada.capnuochaiphong.com.vn/" CssIcon="icon-home"></NavMenuItem>
+                            <NavMenuItem Title="II. Báo Cáo Scada" CssIcon="icon-home"></NavMenuItem>
+                           
                             @{
                                 
                                 var dsquyentheotvid = ds_quyenService.prc_ds_quyen_theothanhvienId(nhansu.thanhvien_id);
@@ -101,6 +102,8 @@
                                         }
 
                                      </NavMenuItem>
+
+                                       
                                     }
 
                                 }

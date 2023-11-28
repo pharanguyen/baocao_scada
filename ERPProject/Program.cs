@@ -22,6 +22,7 @@ builder.Services.AddScoped<AppDataScoped>();
 builder.Services.AddScoped<SfDialogService>();
 builder.Services.AddTransient<AppUser>();
 
+
 DAO.SqlConnectString.init(builder.Configuration.GetSection("ConnectionStrings")[builder.Configuration.GetSection("ConnectionStrings")["Type"]]);
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration.GetSection("SyncfusionConfig")["LicenseKey"]);
 var app = builder.Build();

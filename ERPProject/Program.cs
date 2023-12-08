@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -26,6 +28,7 @@ builder.Services.AddTransient<AppUser>();
 DAO.SqlConnectString.init(builder.Configuration.GetSection("ConnectionStrings")[builder.Configuration.GetSection("ConnectionStrings")["Type"]]);
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration.GetSection("SyncfusionConfig")["LicenseKey"]);
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

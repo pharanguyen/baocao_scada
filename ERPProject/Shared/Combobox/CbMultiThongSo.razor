@@ -3,8 +3,9 @@
 @using DAO.Models.DanhMuc;
 @using MsUtils;
 
-<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="prcThongSo" Placeholder="Chọn thông số" @bind-Value="Value" DataSource="@Data"
+<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="prcThongSo" Placeholder="Chọn thông số" Mode="VisualMode.CheckBox" @bind-Value="Value" DataSource="@Data"
                AllowFiltering="true"
+               ShowSelectAll="@selectAll"
                Width="@Width"
                PopupWidth="@PopupWidth">
     <MultiSelectEvents TItem="prcThongSo" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>
@@ -12,6 +13,7 @@
 </SfMultiSelect>
 
 @code {
+    public bool selectAll { get; set; } = true;
     SfMultiSelect<int[], prcThongSo> MultiSelectObj;
     private List<prcThongSo> Data = new List<prcThongSo>();
 

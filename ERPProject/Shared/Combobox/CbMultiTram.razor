@@ -18,6 +18,9 @@
     [Parameter]
     public List<prcTram> Data { get; set; } = new List<prcTram>();
     [Parameter]
+    public EventCallback<int[]> OnDataSent { get; set; }
+    public int[] selectedTram { get; set; }
+    [Parameter]
     public string PopupWidth { get; set; } = "200px";
 
     [Parameter]
@@ -40,11 +43,21 @@
         //    Data = DmTramService.GetToComBobyIdTramAll().Data;
         //}
     }
-    private void ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
+    public async Task ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
     {
         if (args.Value != null)
         {
             Value = args.Value;
+            //GlobalValue.tramCn = Value;
+            selectedTram = Value;
+            // Emit the event with the selected values
+            await SendDataToParent();
         }
+    }
+    public async Task SendDataToParent()
+    {        
+        await OnDataSent.InvokeAsync(selectedTram);
+        
+        StateHasChanged();
     }
 }

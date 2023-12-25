@@ -33,6 +33,7 @@ namespace ERPProject.Pages.DanhMuc
         ds_phanquyen _QSD = new ds_phanquyen();
         [Inject]
         AppDataScoped AppData { get; set; }
+        public List<prcThongSo> prcThongSos = new List<prcThongSo>();
         protected FormXacNhan frmXacNhan;
         protected CbMultiChiNhanh CbChiNhanh;
         protected CbMultiTram CbTram;
@@ -78,6 +79,13 @@ namespace ERPProject.Pages.DanhMuc
             if (args != null)
             {
                 prcTrams = DmTramService.GetComboTramMutiCN(args).Data;
+            }
+        }
+        public void ValueChangeHandler1(int[] args)
+        {
+            if (args != null)
+            {
+                prcThongSos = DmThongSoService.GetComboThongSoMutiTram(args).Data;
             }
         }
         protected async void onTaiLai()

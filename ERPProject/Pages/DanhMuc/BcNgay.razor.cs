@@ -22,6 +22,7 @@ namespace ERPProject.Pages.DanhMuc
     public class BcNgayBase : ComponentBase
     {
         public List<prcTram> prcTrams = new List<prcTram>();
+        public List<prcThongSo> prcThongSos = new List<prcThongSo>();
 
         public List<prc_Nhat_Ky_Ngay> ListNhatKyNgay { get; set; }
         public List<BaoCaoNgayViewModel> data { get; set; }
@@ -79,8 +80,18 @@ namespace ERPProject.Pages.DanhMuc
             {
                 prcTrams = DmTramService.GetComboTramMutiCN(args).Data;                
             }
+            else
+            {
+                prcTrams = DmTramService.GetToComBobyIdTramAll().Data;
+            }
         }
-
+        public void ValueChangeHandler1(int[] args)
+        {
+            if (args != null)
+            {
+                prcThongSos = DmThongSoService.GetComboThongSoMutiTram(args).Data;
+            }
+        }
         protected async void onTaiLai()
         {
 

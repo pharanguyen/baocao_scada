@@ -35,6 +35,20 @@ namespace DAO.Services.DanhMuc
             }
             catch (Exception ex) { return new ResultModel<List<prcThongSo>>() { isThanhCong = false, ThongBao = ex.Message }; }
         }
+        public static ResultModel<List<prcThongSo>> GetComboThongSoMutiTram(int[] Id_Tram)
+        {
+            try
+            {
+                var _db = new SqlHelper();
+                DynamicParameters p = new DynamicParameters();
+                p.Add("IdTram", string.Join(',', Id_Tram));
+
+                var _obj = _db.QueryProc<prcThongSo>("prc_GetComboThongSoMutiTram", p).ToList();
+                if (_obj == null) throw new Exception(_db.LoiNgoaiLe);
+                return new ResultModel<List<prcThongSo>>() { Data = _obj };
+            }
+            catch (Exception ex) { return new ResultModel<List<prcThongSo>>() { isThanhCong = false, ThongBao = ex.Message }; }
+        }
         public static ResultModel<List<prcThongSo>> GetToComBobyIdThongSoAll()
         {
             try

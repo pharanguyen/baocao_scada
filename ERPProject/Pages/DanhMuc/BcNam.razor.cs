@@ -21,6 +21,7 @@ namespace ERPProject.Pages.DanhMuc
     public  class BcNamBase : ComponentBase
     {
         public List<prcTram> prcTrams = new List<prcTram>();
+        public List<prcThongSo> prcThongSos = new List<prcThongSo>();
         public List<prc_Nhat_Ky_Nam> ListNhatKyNam { get; set; }
         public List<BaoCaoNamViewModel> data { get; set; }
         public string urlFile { get; set; }
@@ -78,6 +79,13 @@ namespace ERPProject.Pages.DanhMuc
             if (args != null)
             {
                 prcTrams = DmTramService.GetComboTramMutiCN(args).Data;
+            }
+        }
+        public void ValueChangeHandler1(int[] args)
+        {
+            if (args != null)
+            {
+                prcThongSos = DmThongSoService.GetComboThongSoMutiTram(args).Data;
             }
         }
 

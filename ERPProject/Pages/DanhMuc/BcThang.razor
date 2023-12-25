@@ -33,7 +33,7 @@
         position: sticky;
         top: 0;
         left: 0;
-        z-index: 99999;
+        /*z-index: 99999;*/
     }
 
     .e-columnheader:first-child .e-headercell:nth-child(2) {
@@ -95,7 +95,7 @@
 
     </SfToolbar>
     
-    <SfGrid DataSource="@data" AllowPaging="true"  AllowResizing="true">
+    <SfGrid DataSource="@data" AllowResizing="true">
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
             <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>

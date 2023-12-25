@@ -99,7 +99,7 @@ namespace ERPProject.Pages.DanhMuc
                 {
                     if(CbThoiGian.Value == 1)
                     {
-                        var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key).ToList();
+                        var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderBy(group => group.Key).ToList();
                         data = new List<BaoCaoNgayViewModel>();
                         var i = 0;
                         foreach (var item in listNK)

@@ -10,38 +10,44 @@
     #gdv > div.e-gridcontent > div {
         max-height: calc(100vh - 185px) !important;
     }
-     .scrollable-table {
-            width: 100%;
-            height: 100%; /* Adjust the height as needed */
-            overflow: auto; /* Enable both horizontal and vertical scrolling */
-        }
-    .heading-col{
+
+    .scrollable-table {
+        width: 100%;
+        height: 100%; /* Adjust the height as needed */
+        overflow: auto; /* Enable both horizontal and vertical scrolling */
+    }
+
+    .heading-col {
         background-color: #00676B;
-        color:#fff;
+        color: #fff;
         text-align: center;
         border: 1px solid #333;
     }
-    .row-style{
-        border:1px solid #333;
+
+    .row-style {
+        border: 1px solid #333;
         text-align: center;
     }
-    .ml{
+
+    .ml {
         margin-left: 15px;
     }
 
-    .e-rowcell.e-attr{
+    .e-rowcell.e-attr {
         position: sticky;
         top: 0;
         left: 0;
-        z-index: 99999;
+        /*z-index: 99999;*/
     }
-    .e-columnheader:first-child .e-headercell:nth-child(2){
+
+    .e-columnheader:first-child .e-headercell:nth-child(2) {
         position: sticky;
         top: 0;
         left: 0;
         z-index: 1;
     }
-    .e-row:nth-of-type(odd) .e-rowcell.e-attr{
+
+    .e-row:nth-of-type(odd) .e-rowcell.e-attr {
         background: #F9F9F9;
     }
 
@@ -49,8 +55,8 @@
         background: white;
     }
 
-    .e-multiselect{
-        margin-right:5px;
+    .e-multiselect {
+        margin-right: 5px;
     }
 </style>
 
@@ -72,20 +78,16 @@
             </ToolbarItem>
             <CbMultiChiNhanh @ref="CbChiNhanh" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"> </CbMultiChiNhanh>
             <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%" Data="prcTrams"></CbMultiTram>
-            <CbMultiThongSo  @ref="CbThongSo" Width="300px" PopupWidth="100%"></CbMultiThongSo>
+            <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%"></CbMultiThongSo>
 
 
         </ToolbarItems>
-        <div class="ml mt-2 mb-1 d-flex align-items-center">
-            <SfDatePicker TValue="DateTime" Format="dd/MM/yyyy" Width="200px" @bind-Value="ToDay"></SfDatePicker>
-            <div class="ml-4">
-                <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
-            </div>
-
+        <div class="mt-2 mb-1 ml">
+            <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
         </div>
     </SfToolbar>
-    
-    <SfGrid DataSource="@data" AllowPaging="true" AllowResizing="true">
+
+    <SfGrid DataSource="@data" AllowResizing="true">
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
             <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
@@ -122,8 +124,8 @@
                                     </Template>
                                 </GridColumn>
                                 @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
-                                    || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
-                                    )
+                               || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
+                               )
                                 {
                                     <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
                                         <Template>
@@ -138,8 +140,8 @@
                                                     decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
                                                     decimal fiveMinutesLaterGtValue = decimal.Parse(fiveMinutesLaterGt.Gia_Tri);
                                                     decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
-                                                    decimal difference = (fiveMinutesLaterGtValue ) - (fiveMinutesBeforeGtValue );
-                                                   // decimal absvalue = Math.Abs(difference);
+                                                    decimal difference = (fiveMinutesLaterGtValue) - (fiveMinutesBeforeGtValue);
+                                                    // decimal absvalue = Math.Abs(difference);
                                                     <div>@difference</div>
                                                 }
                                                 else

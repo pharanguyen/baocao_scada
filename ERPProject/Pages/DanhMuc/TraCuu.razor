@@ -1,0 +1,197 @@
+﻿@page "/Dm_TraCuu"
+@using DAO.Models.DanhMuc
+@using DAO.Services.XuatExcel;
+@using DAO.ViewModel;
+@using ERPProject.Shared.Combobox;
+@inherits BcNamBase
+@inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+
+    .scrollable-table {
+        width: 100%;
+        height: 100%; /* Adjust the height as needed */
+        overflow: auto; /* Enable both horizontal and vertical scrolling */
+    }
+
+    .heading-col {
+        background-color: #00676B;
+        color: #fff;
+        text-align: center;
+        border: 1px solid #333;
+    }
+
+    .row-style {
+        border: 1px solid #333;
+        text-align: center;
+    }
+
+    .ml {
+        margin-left: 15px;
+    }
+
+    .e-rowcell.e-attr {
+        position: sticky;
+        top: 0;
+        left: 0;
+        /*z-index: 99999;*/
+    }
+
+    .e-columnheader:first-child .e-headercell:nth-child(2) {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .e-row:nth-of-type(odd) .e-rowcell.e-attr {
+        background: #F9F9F9;
+    }
+
+    .e-row:nth-of-type(even) .e-rowcell.e-attr {
+        background: white;
+    }
+
+    .e-multiselect {
+        margin-right: 5px;
+    }
+</style>
+
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
+                </Template>
+            </ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator">
+            </ToolbarItem>
+
+            <ToolbarItem Type="ItemType.Button">
+                <Template>
+                    <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
+                </Template>
+            </ToolbarItem>
+            <CbMultiChiNhanh @ref="CbChiNhanh" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"> </CbMultiChiNhanh>
+            <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%" Data="prcTrams" OnDataSent="ValueChangeHandler1"></CbMultiTram>
+            <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%" Data1="prcThongSos"></CbMultiThongSo>
+
+
+        </ToolbarItems>
+        <div class="d-flex align-items-center">
+            <div class="ml mt-2 mb-1">
+                <span>Từ ngày</span>
+                <SfDatePicker TValue="DateTime" @bind-Value="StartDate" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+
+            </div>
+
+            <div class="ml mt-2 mb-1">
+                <span>Đến ngày</span>
+                <SfDatePicker TValue="DateTime" @bind-Value="EndDate" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+                <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
+            </div>
+        </div>
+
+    </SfToolbar>
+
+    <SfGrid DataSource="@data" AllowResizing="true">
+        <GridColumns>
+            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
+            @if (ListNhatKyNam != null)
+            {
+                var listTram = ListNhatKyNam.GroupBy(x => x.TenTram).Distinct();
+                @foreach (var list in listTram)
+                {
+                    var asx = list.OrderByDescending(x => x.Thoi_Gian).FirstOrDefault();
+                    var time = new DateTime();
+                    if (asx != null)
+                    {
+                        time = asx.Thoi_Gian;
+                    }
+                    var items = list.Where(x => x.Thoi_Gian == time).ToList();
+                    <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
+                        <GridColumns>
+                            @foreach (var item in items)
+                            {
+                                <GridColumn HeaderText="@item.TenThongSo" TextAlign="TextAlign.Center" Width="150">
+                                    <Template>
+                                        @{
+                                            var cx = context as BaoCaoNamViewModel;
+                                            var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                            if (gt != null)
+                                            {
+                                                <div>@gt.Gia_Tri</div>
+                                            }
+                                            else
+                                            {
+                                                <div>--</div>
+                                            }
+                                        }
+                                    </Template>
+                                </GridColumn>
+                                @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
+                               || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
+                               )
+                                {
+                                    <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
+                                        <Template>
+                                            @{
+                                                var cx = context as BaoCaoNamViewModel;
+                                                var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                                var fiveMinutesLaterGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(0) && x.Id_ThongSo == item.Id_ThongSo);
+                                                var fiveMinutesBeforeGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
+
+                                                if (currentGt != null && fiveMinutesLaterGt != null && fiveMinutesBeforeGt != null)
+                                                {
+                                                    decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
+                                                    decimal fiveMinutesLaterGtValue = decimal.Parse(fiveMinutesLaterGt.Gia_Tri);
+                                                    decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
+                                                    decimal difference = (fiveMinutesLaterGtValue) - (fiveMinutesBeforeGtValue);
+                                                    decimal absvalue = Math.Abs(difference);
+                                                    <div>@absvalue</div>
+                                                }
+                                                else
+                                                {
+                                                    <div>--</div>
+                                                }
+                                            }
+                                        </Template>
+                                    </GridColumn>
+
+                                }
+                            }
+
+                        </GridColumns>
+                    </GridColumn>
+                }
+            }
+        </GridColumns>
+    </SfGrid>
+
+</BodyCard>
+@code
+{
+    public async Task onXuatExcel()
+    {
+
+        int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
+        int[] Id_Tram = CbTram.Value ?? new int[0];
+        int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
+
+        urlFile = ExcelExportNam.BaoCaoNam(Id_ChiNhanh, Id_Tram, Id_ThongSo, StartDate.Date, EndDate.Date, CbThoiGian.Value);
+        dowloadFile();
+    }
+
+    public void dowloadFile()
+    {
+        IJSRuntime.InvokeVoidAsync("open", urlFile);
+    }
+}
+
+
+

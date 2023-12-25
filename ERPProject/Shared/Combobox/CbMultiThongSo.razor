@@ -17,6 +17,8 @@
     SfMultiSelect<int[], prcThongSo> MultiSelectObj;
     [Parameter]
     public List<prcThongSo> Data1 { get; set; } = new List<prcThongSo>();
+    [Parameter]
+    public EventCallback<int[]> OnDataSent { get; set; }
     
 
     [Parameter]
@@ -29,10 +31,10 @@
     protected override void OnInitialized()
 
     {
-    if (Data1.Count() == 0)
-    {
-      Data1= DmThongSoService.GetToComBobyIdThongSo(GlobalValue.ms_chinhanh).Data;
-    }
+    //if (Data1.Count() == 0)
+    //{
+    //        Data1 = DmThongSoService.GetComboThongSoMutiTram(args).Data; 
+    //}
     //if (GlobalValue.ms_chinhanh != null)
     //{
     //    Data = DmTramService.GetToComBobyIdTram(GlobalValue.ms_chinhanh).Data;
@@ -52,4 +54,5 @@
         }
         
     }
+    
 }

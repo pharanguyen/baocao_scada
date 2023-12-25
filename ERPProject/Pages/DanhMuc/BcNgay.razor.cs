@@ -30,6 +30,7 @@ namespace ERPProject.Pages.DanhMuc
         public int take = 20;
         public int totalPages = 0;      
         public int curPage = 1;
+        public int[] Id_ThongSo { get; set; }
 
         //public List<to_quan_ly> ListNhatKyNgay{ get; set; }
         protected Dm_Tram_CapNhat fCapNhat;
@@ -99,7 +100,7 @@ namespace ERPProject.Pages.DanhMuc
             AppData.loadingPanel.show();
             int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
             int[] Id_Tram = CbTram.Value ?? new int[0];
-            int[] Id_ThongSo = CbThongSo.Value ?? new int[0];
+            Id_ThongSo = CbThongSo.Value ?? new int[0];
 
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Ngay>>();
             await Task.Run(() => { rsModel = NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh) , string.Join(',', Id_Tram), string.Join(',', Id_ThongSo)); });

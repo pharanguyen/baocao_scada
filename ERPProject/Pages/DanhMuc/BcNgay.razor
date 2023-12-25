@@ -103,7 +103,7 @@
                     {
                         time = asx.Thoi_Gian;
                     }
-                    var items = list.Where(x => x.Thoi_Gian == time).ToList();
+                    var items = list.Where(x => x.Thoi_Gian == time && Id_ThongSo.Contains(x.Id_ThongSo)).ToList();
                     <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
                         <GridColumns>
                             @foreach (var item in items)

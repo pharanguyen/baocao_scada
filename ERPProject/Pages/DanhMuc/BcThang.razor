@@ -33,6 +33,8 @@
         position: sticky;
         top: 0;
         left: 0;
+        border-right: 0.5px solid #DEE2E6;
+        border-left: 0.5px solid #DEE2E6;
         /*z-index: 99999;*/
     }
 
@@ -96,8 +98,8 @@
     
     <SfGrid DataSource="@data" AllowResizing="true">
         <GridColumns>
-            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="150"></GridColumn>
-            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="150" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
+            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="30"></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="30" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
             @if (ListNhatKyThang != null)
             {
                 var listTram = ListNhatKyThang.GroupBy(x => x.TenTram).Distinct();

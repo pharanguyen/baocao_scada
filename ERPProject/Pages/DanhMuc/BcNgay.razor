@@ -90,13 +90,16 @@
         </div>
     </SfToolbar>
 
-    <SfGrid DataSource="@data" AllowResizing="true">
+    <SfGrid DataSource="@data" AllowResizing="true" Width="100%" Height="500">
+
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="30"></GridColumn>
-            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="30" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="80" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
             @if (ListNhatKyNgay != null)
             {
                 var listTram = ListNhatKyNgay.GroupBy(x => x.TenTram).Distinct();
+                var minValues = ListSum.Select(item => item.MinGiaTriThongSo).ToList();
+            var maxValues = ListSum.Select(item => item.MaxGiaTriThongSo).ToList();
                 @foreach (var list in listTram)
                 {
                     var asx = list.OrderByDescending(x => x.Thoi_Gian).FirstOrDefault();
@@ -106,6 +109,10 @@
                         time = asx.Thoi_Gian;
                     }
                     var items = list.Where(x => x.Thoi_Gian == time && Id_ThongSo.Contains(x.Id_ThongSo)).ToList();
+                    var max = 0;
+                    var min = 0;
+                    decimal avr = 0;
+                    decimal sum = 0;
                     <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
                         <GridColumns>
                             @foreach (var item in items)
@@ -113,16 +120,49 @@
                                 <GridColumn HeaderText="@item.TenThongSo" TextAlign="TextAlign.Center" Width="150">
                                     <Template>
                                         @{
+                                            string tenTramThongSo = list.Key + item.TenThongSo;
+                                            int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
                                             var cx = context as BaoCaoNgayViewModel;
                                             var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
                                             if (gt != null)
                                             {
                                                 <div>@gt.Gia_Tri</div>
+
+                                                decimal giaTri = decimal.Parse(@gt.Gia_Tri); //decimal.Parse(item.Gia_Tri)
+                                                
+                                                if (index >= 0)
+                                                {
+                                                    ListSum[index].TongGiaTriThongSo += giaTri;
+                                                    ListSum[index].CountGiaTriThongSo ++;
+                                                    ListSum[index].AvrGiaTriThongSo = Math.Round( ListSum[index].TongGiaTriThongSo / ListSum[index].CountGiaTriThongSo,1);
+                                                   
+                                                    if (ListSum[index].MinGiaTriThongSo > giaTri)
+                                                    {
+                                                        ListSum[index].MinGiaTriThongSo = giaTri;
+                                                    }
+                                                    if (ListSum[index].MaxGiaTriThongSo < giaTri)
+                                                    {
+                                                        ListSum[index].MaxGiaTriThongSo = giaTri;
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    ListSum.Add(new ChiTietViewModel
+                                                    {
+                                                        TenThongSo = tenTramThongSo,
+                                                        TongGiaTriThongSo = giaTri,
+                                                        MinGiaTriThongSo = giaTri,
+                                                        MaxGiaTriThongSo = giaTri,
+                                                        AvrGiaTriThongSo = giaTri,
+                                                    });
+                                                }
                                             }
                                             else
                                             {
                                                 <div>--</div>
                                             }
+
                                         }
                                     </Template>
                                 </GridColumn>
@@ -133,6 +173,9 @@
                                     <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
                                         <Template>
                                             @{
+                                                string tenTramTieuThu = list.Key + item.TenThongSo + "Tiêu thụ";
+                                                string tenTramThongSo = list.Key + item.TenThongSo;
+                                                int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
                                                 var cx = context as BaoCaoNgayViewModel;
                                                 var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
                                                 var fiveMinutesLaterGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(0) && x.Id_ThongSo == item.Id_ThongSo);
@@ -144,8 +187,39 @@
                                                     decimal fiveMinutesLaterGtValue = decimal.Parse(fiveMinutesLaterGt.Gia_Tri);
                                                     decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
                                                     decimal difference = (fiveMinutesLaterGtValue) - (fiveMinutesBeforeGtValue);
+
+
                                                     // decimal absvalue = Math.Abs(difference);
                                                     <div>@difference</div>
+
+                                                    
+                                                    if (index >= 0)
+                                                    {
+                                                        ListSum[index].TongGiaTriTieuThu += difference;
+                                                        ListSum[index].CountGiaTriTieuThu ++;
+                                                        ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+
+                                                        if (ListSum[index].MinGiaTriTieuThu > difference)
+                                                        {
+                                                            ListSum[index].MinGiaTriTieuThu = difference;
+                                                        }
+                                                        if (ListSum[index].MaxGiaTriTieuThu < difference)
+                                                        {
+                                                            ListSum[index].MaxGiaTriTieuThu = difference;
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        //ListSum.Add(new ChiTietViewModel
+                                                        //    {
+                                                        //        TenThongSo = tenTramTieuThu,
+                                                        //        TongGiaTriTieuThu = difference,
+                                                        //        MinGiaTriTieuThu = difference,
+                                                        //        MaxGiaTriTieuThu = difference,
+                                                        //        AvrGiaTriTieuThu = difference,
+                                                        //    });
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -153,21 +227,131 @@
                                                 }
                                             }
                                         </Template>
+
                                     </GridColumn>
 
                                 }
+                                else
+                                {
+                                    string tenTramTieuThu = list.Key + item.TenThongSo + "Tiêu thụ";
+                                    string tenTramThongSo = list.Key + item.TenThongSo;
+                                    int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
+                                    if (index >= 0)
+                                    {
+                                        ListSum[index].MaxGiaTriTieuThu = -1;
+                                        ListSum[index].MinGiaTriTieuThu = -1;
+                                        ListSum[index].AvrGiaTriTieuThu = -1;
+
+                                    }
+                                }
                             }
+                            
+
 
                         </GridColumns>
                     </GridColumn>
                 }
             }
         </GridColumns>
+        <GridAggregates>
+            <GridAggregate> 
+                <GridAggregateColumns>
+                    <GridAggregateColumn Field="ThoiGian" Type="AggregateType.Custom" >
+                        <FooterTemplate>
+                            @{
+                                //var listTram = ListNhatKyNgay.GroupBy(x => x.TenTram).Distinct();
+                                //foreach (var item in items)
+                                //{
+                                //    string tenTramThongSo = list.Key + item.TenThongSo;
+                                //    int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
+                                //}
+                               
+                                
+                                <div>
+                                    <table class="table">
+                                        <tr>
+                                        <div> TB </div>
+                                            @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
+                                            {
+
+                                              //  <td> @item.TongGiaTriThongSo / @item.CountGiaTriThongSo;</td>
+                                                <td> @item.AvrGiaTriThongSo</td>
+
+                                                if (@item.AvrGiaTriTieuThu != -1)
+                                                {
+                                                    <td>@item.AvrGiaTriTieuThu</td>
+                                                }
+                                                
+                                                
+
+
+
+                                            }
+                                        </tr>
+                                       <tr>
+                                        <div> TT </div>
+                                        @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
+                                        {
+                                           
+                                                <td> @item.MinGiaTriThongSo</td>
+
+                                                if (@item.MinGiaTriTieuThu != -1)
+                                                {
+                                                    <td>@item.MinGiaTriTieuThu</td>
+                                                }
+                                                
+                                                
+                                           
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <div> TĐ </div>
+                                        @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
+                                        {
+                                                <td>@item.MaxGiaTriThongSo</td>
+                                                if (@item.MaxGiaTriTieuThu != -1)
+                                                {
+                                                    <td>@item.MaxGiaTriTieuThu</td>
+                                                }                                              
+                                                
+                                            
+                                        }
+                                    </tr>
+                                        <tr>
+                                            <div> Tổng </div>
+                                            @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
+                                            {
+                                               
+                                                <td>@item.TongGiaTriThongSo</td>
+                                                if(@item.TongGiaTriTieuThu > 0)
+                                                {
+                                                    <td>@item.TongGiaTriTieuThu</td>
+                                                }
+                                               
+                                            }
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                ListSum = new List<ChiTietViewModel>();
+                            }
+                            
+                        </FooterTemplate>
+                    </GridAggregateColumn>
+                </GridAggregateColumns>
+            </GridAggregate>
+        </GridAggregates>
+
+
+
     </SfGrid>
 
 </BodyCard>
 @code
 {
+    decimal minTongGiaTriThongSo = 0;
+    decimal maxTongGiaTriThongSo = 0;
+
     public async Task onXuatExcel()
     {
         int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];

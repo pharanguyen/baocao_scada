@@ -100,10 +100,10 @@
 
     </SfToolbar>
 
-    <SfGrid DataSource="@data" AllowResizing="true">
+    <SfGrid DataSource="@data" AllowResizing="true"Width="100%" Height="500">
         <GridColumns>
             <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="30"></GridColumn>
-            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="30" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="80" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
             @if (ListNhatKyNam != null)
             {
                 var listTram = ListNhatKyNam.GroupBy(x => x.TenTram).Distinct();

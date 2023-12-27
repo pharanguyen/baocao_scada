@@ -22,15 +22,15 @@ namespace ERPProject.Pages.DanhMuc
 
         public List<prcTram> prcTrams = new List<prcTram>();
         public List<prcThongSo> prcThongSos = new List<prcThongSo>();
-        public List<prc_Nhat_Ky> ListNhatKyNam { get; set; }
-        public List<BaoCaoNamViewModel> data { get; set; }
+        public List<prc_Nhat_Ky> ListNhatKy { get; set; }
+        public List<BaoCaoTraCuuViewModel> data { get; set; }
         public string urlFile { get; set; }
 
         public int take = 20;
         public int totalPages = 0;
         public int curPage = 1;
 
-        //public List<to_quan_ly> ListNhatKyNam{ get; set; }
+        //public List<to_quan_ly> ListNhatKy{ get; set; }
         protected Dm_Tram_CapNhat fCapNhat;
         ds_phanquyen _QSD = new ds_phanquyen();
         [Inject]
@@ -102,18 +102,18 @@ namespace ERPProject.Pages.DanhMuc
             await Task.Run(() => { rsModel = NhatKyService.Get_prc_Nhat_Ky(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date); });
             if (rsModel.isThanhCong)
             {
-                ListNhatKyNam = rsModel.Data;
-                if (ListNhatKyNam != null)
+                ListNhatKy = rsModel.Data;
+                if (ListNhatKy != null)
                 {
                     if (CbThoiGian.Value == 1)
                     {
-                        var listNK = ListNhatKyNam.GroupBy(x => x.Thoi_Gian).OrderBy(group => group.Key).ToList();
-                        data = new List<BaoCaoNamViewModel>();
+                        var listNK = ListNhatKy.GroupBy(x => x.Thoi_Gian).OrderBy(group => group.Key).ToList();
+                        data = new List<BaoCaoTraCuuViewModel>();
                         var i = 0;
                         foreach (var item in listNK)
                         {
                             i++;
-                            var thongsotong = new BaoCaoNamViewModel();
+                            var thongsotong = new BaoCaoTraCuuViewModel();
                             thongsotong.TT = i;
                             thongsotong.ThoiGian = item.Key;
                             data.Add(thongsotong);
@@ -121,13 +121,13 @@ namespace ERPProject.Pages.DanhMuc
                     }
                     if (CbThoiGian.Value == 2)
                     {
-                        var listNK = ListNhatKyNam.Where(x => x.Thoi_Gian.Minute == 0).GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key).ToList();
-                        data = new List<BaoCaoNamViewModel>();
+                        var listNK = ListNhatKy.Where(x => x.Thoi_Gian.Minute == 0).GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key).ToList();
+                        data = new List<BaoCaoTraCuuViewModel>();
                         var i = 0;
                         foreach (var item in listNK)
                         {
                             i++;
-                            var thongsotong = new BaoCaoNamViewModel();
+                            var thongsotong = new BaoCaoTraCuuViewModel();
                             thongsotong.TT = i;
                             thongsotong.ThoiGian = item.Key;
                             data.Add(thongsotong);
@@ -137,26 +137,26 @@ namespace ERPProject.Pages.DanhMuc
                     {
                         var targetTime = new TimeSpan(23, 55, 0); // The target time of 23:55:00
 
-                        var filteredListNK = ListNhatKyNam
+                        var filteredListNK = ListNhatKy
                             .Where(x => x.Thoi_Gian.TimeOfDay == targetTime) // Filter by the target time
                             .GroupBy(x => x.Thoi_Gian.Date) // Group by date to get the maximum Thoi_Gian of each day
                             .OrderByDescending(group => group.Key)
                             .ToList();
 
-                        data = new List<BaoCaoNamViewModel>();
+                        data = new List<BaoCaoTraCuuViewModel>();
                         var i = 0;
                         foreach (var item in filteredListNK)
                         {
                             i++;
                             var maxThoiGianOfDay = item.Max(x => x.Thoi_Gian); // Get the maximum Thoi_Gian of the day
-                            var thongsotong = new BaoCaoNamViewModel();
+                            var thongsotong = new BaoCaoTraCuuViewModel();
                             thongsotong.TT = i;
                             thongsotong.ThoiGian = maxThoiGianOfDay;
                             data.Add(thongsotong);
                         }
                     }
                 }
-                if (ListNhatKyNam.Count == 0)
+                if (ListNhatKy.Count == 0)
                 {
                     toastService.ShowWarning("Không có dữ liệu phù hợp");
                 }

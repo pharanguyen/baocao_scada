@@ -23,6 +23,12 @@ namespace ERPProject.Pages.DanhMuc
     {
         public List<prcTram> prcTrams = new List<prcTram>();
         public List<prcThongSo> prcThongSos = new List<prcThongSo>();
+        public List<ChiTietViewModel> ListSum = new List<ChiTietViewModel>();
+        public decimal TongGiaTri = 0;
+        
+
+
+        public Decimal sum = 0;
 
         public List<prc_Nhat_Ky_Ngay> ListNhatKyNgay { get; set; }
         public List<BaoCaoNgayViewModel> data { get; set; }
@@ -52,6 +58,7 @@ namespace ERPProject.Pages.DanhMuc
 
         protected override void OnInitialized()
         {
+
             Task.Run(() =>
             {
                 InvokeAsync(async () =>
@@ -95,7 +102,7 @@ namespace ERPProject.Pages.DanhMuc
         }
         protected async void onTaiLai()
         {
-
+           // ListSum = new List<ChiTietViewModel>();
 
             AppData.loadingPanel.show();
             int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
@@ -173,6 +180,12 @@ namespace ERPProject.Pages.DanhMuc
                 toastService.ShowDanger(rsModel.ThongBao);
                 return;
             }
+            if(ListSum != null)
+            {
+                ListSum.Clear();
+            }
+           
+           // gdv.Refresh();
             StateHasChanged();
         }
 

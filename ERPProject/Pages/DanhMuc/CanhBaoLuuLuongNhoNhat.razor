@@ -1,0 +1,159 @@
+﻿@page "/Dm_LuuLuongNhoNhat"
+@using DAO.Models.DanhMuc
+@inherits CanhBaoLuuLuongNhoNhatBase
+
+<style>
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 200px) !important;
+    }
+
+    .side-panel {
+        max-width: 18%; /* Adjust to ensure better use of space */
+        min-width: 250px;
+    }
+
+    .row-red {
+        background-color: #ffa07a; /* Light red-orange */
+        color: #000; /* Black text for contrast */
+    }
+
+    .row-white {
+        background-color: #fff; /* White */
+        color: #000; /* Black text */
+    }
+
+    .container-fluid {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    body, html {
+        margin: 0;
+        padding: 0;
+    }
+
+
+</style>
+
+<BodyCard>
+    <SfToolbar>
+        <div class="row align-items-center">
+            <!-- Từ ngày -->
+            <div class="col-auto">
+                <label>Từ ngày</label>
+                <SfDatePicker TValue="DateTime" @bind-Value="FromDate" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+            </div>
+
+            <!-- Đến ngày -->
+            <div class="col-auto">
+                <label>Đến ngày</label>
+                <SfDatePicker TValue="DateTime" @bind-Value="ToDate" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
+            </div>
+
+            <!-- Toolbar Buttons -->
+            <div class="col-auto">
+                <div class="col-auto">
+                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="ReloadData" Style="margin-right: 10px;">Tải lại</SfButton>
+                    <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="ExportToExcel">Xuất Excel</SfButton>
+                </div>
+            </div>
+        </div>
+    </SfToolbar>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Main Grid Content -->
+            <div class="col-10" style="border-right: 1px solid #ddd;">
+                <SfGrid id="gdv"
+                        DataSource="@listThongSoTram"
+                        AllowReordering="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        AllowSorting="true"
+                        GridLines="GridLine.Both"
+                        AutoFit="true"
+                        @ref="gdv"
+                        RowDataBound="OnRowDataBound">
+                    <GridPageSettings PageSize="40"></GridPageSettings>
+                    <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                    <GridEvents RowDataBound="OnRowDataBound" TValue="ViewModelLuuLuongNhoNhat" RowSelected="@(row => SelectedThongSo = row.Data)"></GridEvents>
+                    
+                    <GridColumns>
+                        <GridColumn Field="Id_dongho" AutoFit="true" HeaderText="Mã ĐH" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="Tendongho" AutoFit="true" HeaderText="Tên đồng hồ" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="sonhonhat" AutoFit="true" HeaderText="Lưu lượng nhỏ nhất (m3/h)" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="aplucthoidiemnhonhat" AutoFit="true" HeaderText="AL_TD nhỏ nhất" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="Ngaythangnam_nhonhat"
+                                    HeaderText="Ngày tháng năm NN"
+                                    Format="dd/MM/yyyy"
+                                    Type="ColumnType.Date"
+                                    TextAlign="TextAlign.Center"
+                                    AutoFit="true" />
+
+                        <GridColumn Field="giophutgiaynhonhat" AutoFit="true" HeaderText="Giờ phút giây NN" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="solonnhat" AutoFit="true" HeaderText="Lưu lượng lớn nhất" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="aplucthoidiemlonnhat" AutoFit="true" HeaderText="AL_TD lớn nhất" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                       
+                        <GridColumn Field="Ngaythangnam_lonnhat"
+                                    HeaderText="Ngày tháng năm LN"
+                                    Format="dd/MM/yyyy"
+                                    Type="ColumnType.Date"
+                                    TextAlign="TextAlign.Center"
+                                    AutoFit="true" />
+                        <GridColumn Field="giophutgiaylonnhat" AutoFit="true" HeaderText="Giờ phút giây LN" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="Nguongcanhbao" AutoFit="true" HeaderText="Ngưỡng cảnh báo" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="co_dongho" AutoFit="true" HeaderText="Cỡ đồng hồ" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="soluongkhachhang" AutoFit="true" HeaderText="Số lượng khách hàng" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="TenChiNhanh" AutoFit="true" HeaderText="Tên chi nhánh" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                        <GridColumn Field="trangthaicanhbao" AutoFit="true" HeaderText="Trạng thái cảnh báo" TextAlign="TextAlign.Center" AllowFiltering="true"></GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </div>
+
+            <!-- Right-Side Panel -->
+            <div class="col-2 side-panel">
+                <div class="card p-3">
+                    <div class="mb-2">
+                        <label>Mã đồng hồ</label>
+                        <input class="form-control" type="text" readonly value="@SelectedThongSo?.Id_dongho.ToString()" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Tên đồng hồ</label>
+                        <input class="form-control" type="text" readonly value="@SelectedThongSo?.Tendongho" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Thời gian</label>
+                        <input class="form-control" type="text" readonly value="" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Lưu Lượng tức thời</label>
+                        <input class="form-control" type="text" readonly value="" />
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <SfButton CssClass="e-primary" @onclick="onDoc">Đọc</SfButton>
+                        <SfButton CssClass="e-danger" @onclick="onDung">Dừng</SfButton>
+                    </div>
+                    <div class="mb-2">
+                        <label>Ngưỡng cảnh báo</label>
+                        <input class="form-control" type="text" readonly value="@SelectedThongSo?.Nguongcanhbao" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Cỡ đồng hồ </label>
+                        <input class="form-control" type="text" readonly value="@SelectedThongSo?.co_dongho?.ToString()" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Số lượng khách hàng</label>
+                        <input class="form-control" type="text" readonly value="@SelectedThongSo?.soluongkhachhang" />
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-3">
+                        <SfButton CssClass="e-warning" @onclick="onSua">Sửa</SfButton>
+                        <SfButton CssClass="e-success" @onclick="onGhiNhan">Ghi nhận</SfButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</BodyCard>

@@ -21,12 +21,180 @@ namespace DAO.Services.XuatExcel
     public class ExcelExportThang
     {
 
-        public static string BaoCaoThang(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, DateTime StartDate,DateTime EndDate, int CbThoiGian)
+        public static string BaoCaoThang(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, DateTime StartDate, DateTime EndDate, int CbThoiGian)
         {
-            
-            // var data = DAO.Services.DanhMuc.NhatKyThangService.Get_prc_Nhat_Ky_Thang("", "", "");
-            var resultModel = DAO.Services.DanhMuc.NhatKyThangService.Get_prc_Nhat_Ky_Thang(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date);
+            var resultModel = DAO.Services.DanhMuc.NhatKyThangService.Get_prc_Nhat_Ky_Thang(
+                string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date);
+
             var FileName = "Báo Cáo Tháng.xlsx";
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\file");
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            DirectoryInfo di = new DirectoryInfo(path);
+            foreach (FileInfo file in di.GetFiles())
+            {
+                try
+                {
+                    file.Delete();
+                }
+                catch { }
+            }
+
+            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\file", FileName);
+
+            if (resultModel == null || resultModel.Data == null)
+            {
+                return "Error: Unable to retrieve data";
+            }
+
+            List<prc_Nhat_Ky_Thang> ListNhatKyThang = resultModel.Data;
+
+            // Filter data to only include rows where time is 23:55
+            var filteredData = ListNhatKyThang
+                .Where(x => x.Thoi_Gian.Hour == 23 && x.Thoi_Gian.Minute == 55)  // Ensure the time is exactly 23:55
+                .GroupBy(x => x.Thoi_Gian.Date)
+                .OrderBy(group => group.Key);  // Ensure chronological order
+
+            using (SpreadsheetDocument document = SpreadsheetDocument.Create(FilePath, SpreadsheetDocumentType.Workbook))
+            {
+                WorkbookPart workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
+
+                WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                worksheetPart.Worksheet = new Worksheet();
+
+                WorkbookStylesPart stylePart = workbookPart.AddNewPart<WorkbookStylesPart>();
+                stylePart.Stylesheet = GenerateStylesheet();
+                stylePart.Stylesheet.Save();
+
+                Columns columns = new Columns(
+                    new Column { Min = 1, Max = 1, Width = 5, CustomWidth = true },  // STT
+                    new Column { Min = 2, Max = 2, Width = 20, CustomWidth = true }, // Thời Gian
+                    new Column { Min = 3, Max = 10, Width = 15, CustomWidth = true } // Remaining columns
+                );
+                worksheetPart.Worksheet.AppendChild(columns);
+
+                SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+                MergeCells mergeCells = new MergeCells();
+
+                Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
+                Sheet sheet = new Sheet()
+                {
+                    Id = workbookPart.GetIdOfPart(worksheetPart),
+                    SheetId = 1,
+                    Name = "Sheet1"
+                };
+                sheets.Append(sheet);
+
+                workbookPart.Workbook.Save();
+                worksheetPart.Worksheet.InsertAfter(mergeCells, sheetData);
+
+                // Construct the header rows
+                Row headerRow1 = new Row();
+                Row headerRow2 = new Row();
+
+                headerRow1.Append(ConstructCell("STT", CellValues.String));
+                headerRow1.Append(ConstructCell("Thời Gian", CellValues.String));
+                headerRow2.Append(ConstructCell("STT", CellValues.String));
+                headerRow2.Append(ConstructCell("Thời Gian", CellValues.String));
+
+                mergeCells.Append(new MergeCell() { Reference = "B1:B2" });
+
+                int colIndex = 2;
+
+                foreach (var tramGroup in filteredData.First().GroupBy(x => x.TenTram))
+                {
+                    foreach (var item in tramGroup.OrderBy(x => x.TenThongSo))
+                    {
+                        headerRow1.Append(ConstructCell(tramGroup.Key, CellValues.String));
+                        headerRow2.Append(ConstructCell(item.TenThongSo, CellValues.String));
+
+                        // Add "TIÊU THỤ" column for "TỔNG LƯU LƯỢNG"
+                        if (item.TenThongSo.Contains("TỔNG LƯU LƯỢNG"))
+                        {
+                            headerRow1.Append(ConstructCell(tramGroup.Key, CellValues.String));
+                            headerRow2.Append(ConstructCell("TIÊU THỤ", CellValues.String));
+                        }
+
+                        colIndex += 2;
+                    }
+
+                    // Merge cells for tram names
+                    string startCol = GetColumnName(colIndex - tramGroup.Count());
+                    string endCol = GetColumnName(colIndex - 1);
+                    mergeCells.Append(new MergeCell() { Reference = $"{startCol}1:{endCol}1" });
+                }
+
+                sheetData.Append(headerRow1);
+                sheetData.Append(headerRow2);
+
+                // Add the data rows for 23:55 entries
+                int rowIndex = 1;
+                foreach (var group in filteredData)
+                {
+                    var thoiGian = group.FirstOrDefault()?.Thoi_Gian.ToString("dd/MM/yyyy HH:mm:ss") ?? "--";
+                    Row dataRow = new Row();
+                    dataRow.Append(ConstructCell(rowIndex.ToString(), CellValues.String));  // STT
+                    dataRow.Append(ConstructCell(thoiGian, CellValues.String));  // Thời Gian
+
+                    foreach (var tramGroup in group.GroupBy(x => x.TenTram))
+                    {
+                        foreach (var item in tramGroup.OrderBy(x => x.TenThongSo))
+                        {
+                            string value = item.Gia_Tri ?? "";
+                            dataRow.Append(ConstructCell(value, CellValues.String));
+
+                            // Add "TIÊU THỤ" column values based on previous records
+                            if (item.TenThongSo.Contains("TỔNG LƯU LƯỢNG"))
+                            {
+                                var previous = ListNhatKyThang.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
+                                if (previous != null)
+                                {
+                                    decimal consumption = decimal.Parse(item.Gia_Tri) - decimal.Parse(previous.Gia_Tri);
+                                    dataRow.Append(ConstructCell(consumption.ToString(), CellValues.String));
+                                }
+                                else
+                                {
+                                    dataRow.Append(ConstructCell("--", CellValues.String));
+                                }
+                            }
+                        }
+                    }
+
+                    sheetData.Append(dataRow);
+                    rowIndex++;
+                }
+
+                worksheetPart.Worksheet.Save();
+            }
+
+            return "/file/" + FileName;
+        }
+        private static string GetColumnName(int index)
+        {
+            int dividend = index;
+            string columnName = "";
+            int modifier;
+
+            while (dividend > 0)
+            {
+                modifier = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modifier).ToString() + columnName;
+                dividend = (dividend - modifier) / 26;
+            }
+
+            return columnName;
+        }
+
+
+        public static string BaoCaoTraCuu(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, DateTime StartDate, DateTime EndDate, int CbThoiGian)
+        {
+
+            // var data = DAO.Services.DanhMuc.NhatKyService.Get_prc_Nhat_Ky("", "", "");
+            var resultModel = DAO.Services.DanhMuc.NhatKyService.Get_prc_Nhat_Ky(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date);
+            var FileName = "Báo Cáo Tra Cứu.xlsx";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\file");
             if (!Directory.Exists(path))
@@ -52,39 +220,92 @@ namespace DAO.Services.XuatExcel
                 return "Error: Unable to retrieve data";
             }
 
-            List<prc_Nhat_Ky_Thang> ListNhatKyThang = resultModel.Data;
-            var data = ListNhatKyThang.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
-            var latestThoiGian = data.OrderByDescending(item => item.Key).FirstOrDefault();
-            switch (CbThoiGian)
-            {
-                case 1:
-                    data = ListNhatKyThang.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
-                    break;
-                case 2:
-                    data = ListNhatKyThang
-                        .Where(x => x.Thoi_Gian.Minute == 0)
-                        .GroupBy(x => x.Thoi_Gian)
-                        .OrderByDescending(group => group.Key);
-                    break;
-                case 3:
+            //List<prc_Nhat_Ky> ListNhatKy = resultModel.Data;
+            //var data = ListNhatKy.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+            //var latestThoiGian = data.OrderByDescending(item => item.Key).FirstOrDefault();
+            //switch (CbThoiGian)
+            //{
+            //    case 1:
+            //        data = ListNhatKy.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+            //        break;
+            //    case 2:
+            //        data = ListNhatKy
+            //            .Where(x => x.Thoi_Gian.Minute == 0)
+            //            .GroupBy(x => x.Thoi_Gian)
+            //            .OrderByDescending(group => group.Key);
+            //        break;
+            //    case 3:
 
 
 
-                    data = ListNhatKyThang
-                        .Where(x => x.Thoi_Gian == latestThoiGian.Key)
-                        .GroupBy(x => x.Thoi_Gian)
-                        .OrderByDescending(group => group.Key);
-                    break;
-                    break;
+            //        data = ListNhatKy
+            //            .Where(x => x.Thoi_Gian == latestThoiGian.Key)
+            //            .GroupBy(x => x.Thoi_Gian)
+            //            .OrderByDescending(group => group.Key);
+            //        break;
+            //        break;
 
-                default:
-                    // Handle an invalid CbThoiGian value or set a default behavior.
-                    data = ListNhatKyThang.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
-                    break;
-            }
+            //    default:
+            //        // Handle an invalid CbThoiGian value or set a default behavior.
+            //        data = ListNhatKy.GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key);
+            //        break;
+            //}
+            List<prc_Nhat_Ky> ListNhatKy = resultModel.Data; // Assuming this is your list of prc_Nhat_Ky
+
+            var data = ListNhatKy
+                .GroupBy(x => x.Thoi_Gian) // Group by Thoi_Gian
+                .OrderByDescending(group => group.Key); // Order groups by descending Thoi_Gian
 
 
             var dataFirst = data.FirstOrDefault();
+            switch (CbThoiGian)
+            {
+                case 1:
+                    // Case 1: Order by descending Thoi_Gian
+                    data = ListNhatKy
+                        .GroupBy(x => x.Thoi_Gian)
+                        .OrderBy(group => group.Key);
+                    break;
+
+                case 2:
+                    // Case 2: Filter by minutes == 0 and order by descending Thoi_Gian
+                    data = ListNhatKy
+                        .Where(x => x.Thoi_Gian.Minute == 0)
+                        .GroupBy(x => x.Thoi_Gian)
+                        .OrderBy(group => group.Key);
+                    break;
+
+                case 3:
+                    // Case 3: Filter by latestThoiGian and order by descending Thoi_Gian
+                    var latestThoiGian = ListNhatKy
+                        .OrderByDescending(x => x.Thoi_Gian)
+                        .FirstOrDefault()?.Thoi_Gian;
+
+                    if (latestThoiGian != null)
+                    {
+                        data = ListNhatKy
+                            .Where(x => x.Thoi_Gian == latestThoiGian)
+                            .GroupBy(x => x.Thoi_Gian)
+                            .OrderBy(group => group.Key);
+                    }
+                    else
+                    {
+                        // Handle case where latestThoiGian is null
+                        // You can set a default behavior or handle the error condition here
+                        data = ListNhatKy
+                            .GroupBy(x => x.Thoi_Gian)
+                            .OrderByDescending(group => group.Key);
+                    }
+                    break;
+
+                default:
+                    // Default case: Handle an invalid CbThoiGian value or set a default behavior
+                    data = ListNhatKy
+                        .GroupBy(x => x.Thoi_Gian)
+                        .OrderByDescending(group => group.Key);
+                    break;
+            }
+
 
             using (SpreadsheetDocument document = SpreadsheetDocument.Create(FilePath, SpreadsheetDocumentType.Workbook))
             {
@@ -253,10 +474,10 @@ namespace DAO.Services.XuatExcel
                             row.Append(ConstructCell(gt, CellValues.String, 1));
                             if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3" || item.TenThongSo == "TỔNG LƯU LƯỢNG 4" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2")
                             {
-                                var nextItem = ListNhatKyThang.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
+                                var nextItem = ListNhatKy.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
-                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) ;
+                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri));
                                     row.Append(ConstructCell(tieuthu.ToString(), CellValues.String, 1));
                                 }
                                 else
@@ -274,8 +495,6 @@ namespace DAO.Services.XuatExcel
             }
             return "/file/" + FileName;
         }
-
-
         private Cell ConstructCell(string value, CellValues dataType)
         {
             Cell cell = new Cell()

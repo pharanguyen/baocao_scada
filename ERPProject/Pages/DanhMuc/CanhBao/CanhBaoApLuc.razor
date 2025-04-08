@@ -1,0 +1,221 @@
+﻿@page "/canhbao_apluc"
+@using DAO.Models.DanhMuc.CanhBao
+@using DAO.Services.XuatExcel;
+@using DAO.ViewModel;
+@using ERPProject.Shared.Combobox;
+@inherits CanhBaoApLucBase
+@inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
+<link href="assets/css/canhbao-apluc.css" rel="stylesheet" />
+
+
+@*<style>
+    /* Kích thước chiều cao tối ưu Grid */
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+
+    /* Header table */
+    .heading-col {
+        background-color: #00676B;
+        color: #fff;
+        text-align: center;
+        border: 1px solid #333;
+    }
+
+    /* Style cho ô */
+    .row-style {
+        border: 1px solid #333;
+        text-align: center;
+    }
+
+    /* Style ô sticky */
+    .e-rowcell.e-attr {
+        position: sticky;
+        top: 0;
+        left: 0;
+        border-right: 0.5px solid #DEE2E6;
+        border-left: 0.5px solid #DEE2E6;
+    }
+
+    /* Multiselect */
+    .e-multiselect {
+        margin-right: 5px;
+    }
+
+    /* Các row */
+    .e-row:nth-of-type(odd) .e-rowcell.e-attr {
+        background: #F9F9F9;
+    }
+
+    .e-row:nth-of-type(even) .e-rowcell.e-attr {
+        background: white;
+    }
+
+    /* Fix chiều rộng footer tổng */
+    .e-grid .e-summaryrow .e-summarycell {
+        width: 1% !important;
+    }
+
+    .e-grid.sf-grid .e-table .e-summaryrow td:nth-child(2) {
+        width: 80% !important;
+    }
+
+    tfoot > tr td:nth-child(2) {
+        width: 80% !important;
+    }
+
+    /* Layout hàng ngang */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px 0;
+    }
+
+    .col {
+        flex: 1;
+        min-width: 300px;
+        padding-bottom: 5px;
+    }
+
+    .title {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Icon cảnh báo */
+    .warning-icon {
+        color: red;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    /* 🔁 Nháy cảnh báo - MIN */
+   /* 🔁 Nháy cảnh báo - MIN */
+    @@keyframes blink-min {
+        0% {
+            background-color: #e0f7fa;
+        }
+
+        50% {
+            background-color: #0288d1;
+        }
+
+        100% {
+            background-color: #e0f7fa;
+        }
+    }
+
+    @@keyframes blink-max {
+        0% {
+            background-color: #ffe0b2;
+        }
+
+        50% {
+            background-color: #e65100;
+        }
+
+        100% {
+            background-color: #ffe0b2;
+        }
+    }
+
+    .e-grid .e-row.blink-min {
+        animation: blink-min 1s ease-in-out infinite !important;
+        background-color: #e0f7fa !important;
+        border-left: 4px solid #0288d1 !important;
+    }
+
+    .e-grid .e-row.blink-max {
+        animation: blink-max 1s ease-in-out infinite !important;
+        background-color: #ffe0b2 !important;
+        border-left: 4px solid #e65100 !important;
+    }
+
+        .e-grid .e-row.blink-min .e-rowcell,
+        .e-grid .e-row.blink-max .e-rowcell {
+            font-weight: bold !important;
+        }
+
+
+</style>*@
+
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <div class="row">
+                <div class="col">
+                    <span class="title">Chọn chi nhánh:</span>
+                    <CbMultiChiNhanh @ref="CbChiNhanh" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"></CbMultiChiNhanh>
+                </div>
+                <div class="col">
+                    <span class="title">Chọn Trạm:</span>
+                    <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%" Data="prcTrams" OnDataSent="ValueChangeHandler1"></CbMultiTram>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="title">Từ ngày</span>
+                    <SfDatePicker TValue="DateTime" @bind-Value="StartDate" Format="dd/MM/yyyy" Width="300px" />
+                </div>
+                <div class="col">
+                    <span class="title">Đến ngày</span>
+                    <SfDatePicker TValue="DateTime" @bind-Value="EndDate" Format="dd/MM/yyyy" Width="300px" />
+                </div>
+            </div>
+            <div class="col">
+                <ToolbarItem Type="ItemType.Button">
+                    <Template>
+                        <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
+                    </Template>
+                </ToolbarItem>
+                <ToolbarItem Type="ItemType.Separator" />
+                <ToolbarItem Type="ItemType.Button">
+                    <Template>
+                        <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel">Xuất excel</SfButton>
+                    </Template>
+                </ToolbarItem>
+            </div>
+        </ToolbarItems>
+    </SfToolbar>
+
+    <SfGrid DataSource="@data"
+            @ref="gdv"
+            AllowPaging="true"
+            EditSettings="@editSettings"
+            Toolbar="@Toolbar">
+
+        <GridEvents RowDataBound="@OnRowDataBound"
+                    OnActionBegin="@OnActionBegin"
+                    TValue="CanhBaoApLucViewModel" />
+
+        <GridPageSettings PageSize="12" />
+
+        <GridColumns>
+            <GridColumn HeaderText="" Width="40">
+                <Template Context="item">
+                    @GetCanhBaoIcon((CanhBaoApLucViewModel)item)
+                </Template>
+            </GridColumn>
+            <GridColumn Field="Id_Tram" HeaderText="Mã Trạm" Width="100" TextAlign="TextAlign.Center" AllowEditing="false" />
+            <GridColumn Field="TenTram" HeaderText="Tên Trạm" Width="200" AllowEditing="false" />
+            <GridColumn Field="ThoiGian" HeaderText="Thời gian" Format="g" Width="180" AllowEditing="false" />
+            <GridColumn Field="GiaTri" HeaderText="Áp lực (bar)" Width="150" AllowEditing="false">
+                <Template Context="item">
+                    <span style="color:@GetGiaTriStyle((CanhBaoApLucViewModel)item)">
+                        @(((CanhBaoApLucViewModel)item).GiaTri)
+                    </span>
+                </Template>
+            </GridColumn>
+
+
+            <GridColumn Field="ApLucMin" HeaderText="Cảnh báo Min" Width="100" Format="N2" TextAlign="TextAlign.Right" AllowEditing="true" />
+            <GridColumn Field="ApLucMax" HeaderText="Cảnh báo Max" Width="100" Format="N2" TextAlign="TextAlign.Right" AllowEditing="true" />
+
+        </GridColumns>
+    </SfGrid>
+</BodyCard>
+
+<LoadingPanel @ref="AppData.loadingPanel" />
+
+

@@ -1,0 +1,58 @@
+﻿@page "/Dm_Bieudo"
+@using DAO.Models.DanhMuc
+@using DAO.Services.XuatExcel;
+@using DAO.ViewModel;
+@using ERPProject.Shared.Combobox;
+
+@inherits BcNgayBase
+@inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
+
+@using Syncfusion.Blazor.Charts
+
+<SfChart>
+    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" />
+
+    <ChartSeriesCollection>
+        <ChartSeries DataSource="@MedalDetails" XName="X" YName="Y" Type="ChartSeriesType.Column" Opacity="0.5"
+                     DashArray="5,5" Fill="blue">
+            <ChartSeriesBorder Width="2" Color="red"></ChartSeriesBorder>
+        </ChartSeries>
+    </ChartSeriesCollection>
+</SfChart>
+
+@code {
+    public class ChartData
+    {
+        public string X { get; set; }
+        public double Y { get; set; }
+    }
+
+    public List<ChartData> MedalDetails = new List<ChartData>
+    {
+        new ChartData { X= "00:00", Y= 39.4 },
+        new ChartData { X= "01:00", Y= 61.3 },
+        new ChartData { X= "02:00", Y= 20.4 },
+        new ChartData { X= "03:00", Y= 65.1 },
+        new ChartData { X= "04:00", Y= 15.8 },
+        new ChartData { X= "05:00", Y= 29.2 },
+        new ChartData { X= "06:00", Y= 44.6 },
+        new ChartData { X= "07:00", Y= 9.7 },
+        new ChartData { X= "08:00", Y= 40.8 },
+        new ChartData { X= "09:00", Y= 31 },
+        new ChartData { X= "10:00", Y= 75.9 },
+        new ChartData { X= "11:00", Y= 51.4 },
+        new ChartData { X= "12:00", Y= 39.4 },
+        new ChartData { X= "13:00", Y= 61.3 },
+        new ChartData { X= "14:00", Y= 20.4 },
+        new ChartData { X= "15:00", Y= 65.1 },
+        new ChartData { X= "16:00", Y= 15.8 },
+        new ChartData { X= "17:00", Y= 29.2 },
+        new ChartData { X= "18:00", Y= 44.6 },
+        new ChartData { X= "19:00", Y= 9.7 },
+        new ChartData { X= "20:00", Y= 40.8 },
+        new ChartData { X= "21:00", Y= 31 },
+        new ChartData { X= "22:00", Y= 75.9 },
+        new ChartData { X= "23:00", Y= 51.4 }
+    };
+}

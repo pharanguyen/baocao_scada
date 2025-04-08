@@ -20,14 +20,13 @@ namespace DAO.Services.XuatExcel
 {
    public class ExcelExportTraCuu
     {
-        
 
         public static string BaoCaoTraCuu(int[] Id_ChiNhanh, int[] Id_Tram, int[] Id_ThongSo, DateTime StartDate, DateTime EndDate, int CbThoiGian)
         {
 
             // var data = DAO.Services.DanhMuc.NhatKyService.Get_prc_Nhat_Ky("", "", "");
             var resultModel = DAO.Services.DanhMuc.NhatKyService.Get_prc_Nhat_Ky(string.Join(',', Id_ChiNhanh), string.Join(',', Id_Tram), string.Join(',', Id_ThongSo), StartDate.Date, EndDate.Date);
-            var FileName = "Báo Cáo tra cuu.xlsx";
+            var FileName = "Báo Cáo Tra Cứu.xlsx";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\file");
             if (!Directory.Exists(path))
@@ -257,7 +256,7 @@ namespace DAO.Services.XuatExcel
                                 var nextItem = ListNhatKy.FirstOrDefault(x => x.Thoi_Gian == item.Thoi_Gian.AddMinutes(-5) && x.TenThongSo == item.TenThongSo && x.TenTram == item.TenTram);
                                 if (nextItem != null)
                                 {
-                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri)) * 10;
+                                    var tieuthu = (decimal.Parse(item.Gia_Tri) - decimal.Parse(nextItem.Gia_Tri));
                                     row.Append(ConstructCell(tieuthu.ToString(), CellValues.String, 1));
                                 }
                                 else
@@ -273,8 +272,9 @@ namespace DAO.Services.XuatExcel
                 }
                 worksheetPart.Worksheet.Save();
             }
-            return "UploadFiles/FileTam/" + FileName;
+            return "/file/" + FileName;
         }
+
 
         private Cell ConstructCell(string value, CellValues dataType)
         {

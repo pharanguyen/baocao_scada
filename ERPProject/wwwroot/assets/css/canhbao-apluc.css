@@ -1,0 +1,106 @@
+﻿/* ------------------- Layout tổng thể ------------------- */
+#gdv > div.e-gridcontent > div {
+    max-height: calc(100vh - 185px) !important;
+}
+
+.heading-col {
+    background-color: #00676B;
+    color: #fff;
+    text-align: center;
+    border: 1px solid #333;
+}
+
+.row-style {
+    border: 1px solid #333;
+    text-align: center;
+}
+
+.e-rowcell.e-attr {
+    position: sticky;
+    top: 0;
+    left: 0;
+    border-right: 0.5px solid #DEE2E6;
+    border-left: 0.5px solid #DEE2E6;
+}
+
+.e-multiselect {
+    margin-right: 5px;
+}
+
+.e-row:nth-of-type(odd) .e-rowcell.e-attr {
+    background: #F9F9F9;
+}
+
+.e-row:nth-of-type(even) .e-rowcell.e-attr {
+    background: white;
+}
+
+.e-grid .e-summaryrow .e-summarycell {
+    width: 1% !important;
+}
+
+.e-grid.sf-grid .e-table .e-summaryrow td:nth-child(2),
+tfoot > tr td:nth-child(2) {
+    width: 80% !important;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px 0;
+}
+
+.col {
+    flex: 1;
+    min-width: 300px;
+    padding-bottom: 5px;
+}
+
+.title {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.warning-icon {
+    color: red;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* ------------------- Hiệu ứng nhấp nháy ------------------- */
+
+/* Nháy liên tục - MIN (áp lực thấp) */
+@keyframes blink-min {
+    0%, 100% {
+        background-color: #e0f7fa;
+    }
+
+    50% {
+        background-color: #0288d1;
+    }
+}
+
+/* Nháy liên tục - MAX (áp lực cao) */
+@keyframes blink-max {
+    0%, 100% {
+        background-color: #ffe0b2;
+    }
+
+    50% {
+        background-color: #e65100;
+    }
+}
+
+/* Áp dụng animation cho từng ô (td) của dòng cảnh báo MIN */
+.e-grid .e-row.blink-min .e-rowcell {
+    animation: blink-min 2s ease-in-out infinite !important;
+    border-left: 4px solid #0288d1 !important;
+    font-weight: bold !important;
+}
+
+/* Áp dụng animation cho từng ô (td) của dòng cảnh báo MAX */
+.e-grid .e-row.blink-max .e-rowcell {
+    animation: blink-max 2s ease-in-out infinite !important;
+    border-left: 4px solid #e65100 !important;
+    font-weight: bold !important;
+}

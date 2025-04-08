@@ -1,11 +1,14 @@
 ﻿@using System.Security.Claims
 @using DAO.Services.PhanQuyen
 @using MsUtils
+@using Microsoft.AspNetCore.Hosting
+@using System.IO;
 @inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject Services.AppDataScoped AppData
+@inject IWebHostEnvironment webHostEnvironment
 <AuthorizeView>
     <NotAuthorized>
         @{
@@ -49,10 +52,11 @@
                 <div class="sidebar-content">
                     <div class="card card-sidebar-mobile">
                          <ul id="_NavMenu" class="nav nav-sidebar" data-nav-type="accordion">
-                            <NavMenuItem Title="I. Bản đồ Scada" Link="http://scada.capnuochaiphong.com.vn/" CssIcon="icon-home"></NavMenuItem>
-                            <NavMenuItem Title="II. Báo Cáo Scada" CssIcon="icon-home"></NavMenuItem>
+                            
+                           
                            
                             @{
+                                string imagePath = Path.Combine(webHostEnvironment.WebRootPath, "assets", "imgs", "report.png");
                                 
                                 var dsquyentheotvid = ds_quyenService.prc_ds_quyen_theothanhvienId(nhansu.thanhvien_id);
                                 listMenuCha = new List<DAO.Models.PhanQuyen.ds_quyen>();
@@ -62,7 +66,8 @@
                                     int k = glb.g_CapNode(dsquyen_id.ToString(), "22222");
                                     if (k == 1)
                                     {
-                                        <NavMenuItem Title="@(dsqCap1.dsquyen_name)" Link="@(dsqCap1.link)" ChildCount="2">
+                                        <NavMenuItem Title="@(dsqCap1.dsquyen_name)" Link="@(dsqCap1.link)"  CssIcon="icon-chart" ChildCount="2">
+                               
                                         @{
                                             string temp2kytudauCap1 = dsqCap1.dsquyen_id.Substring(0, 2);
                                             foreach (var dsqCap2 in dsquyentheotvid.Data)
@@ -73,7 +78,7 @@
                                                 {
                                                     <NavMenuSub>
                                                         <SubMenuItems>
-                                                            <NavMenuItem Title="@(dsqCap2.dsquyen_name)" Link="@(dsqCap2.link)" CssIcon="@(dsqCap2.css_icon)" ChildCount="@(dsqCap2.childcount)">
+                                                            <NavMenuItem  Title="@(dsqCap2.dsquyen_name)" Link="@(dsqCap2.link)" CssIcon="@(dsqCap2.css_icon)" ChildCount="@(dsqCap2.childcount)">
                                                                 @{
                                                                     string temp4kytudauCap2 = dsqCap2.dsquyen_id.Substring(0, 4);
                                                                     foreach (var dsqCap3 in dsquyentheotvid.Data)
@@ -100,15 +105,17 @@
                                 
                                             }
                                         }
-
+                                            
                                      </NavMenuItem>
+                                        
 
                                        
                                     }
 
+
                                 }
                               }                             
-                            
+                            <NavMenuItem Title=" Bản đồ Scada" Link="@urllogin" CssIcon="icon-map"></NavMenuItem>
 
                          </ul>
 
@@ -146,6 +153,7 @@
 
 
 
+
 @code {
     private Toast mainToast;
     private bool isAuthorized = false;
@@ -153,6 +161,8 @@
     [Inject]
     protected Services.AppUser appUser { get; set; }
     List<DAO.Models.PhanQuyen.ds_quyen> listMenuCha = new List<DAO.Models.PhanQuyen.ds_quyen>();
+    public string urllogin { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -182,6 +192,10 @@
                 if (await localStorage.ContainKeyAsync("Token"))
                 {
                     var accessKey = await localStorage.GetItemAsync<string>("Token");
+                    var Tendangnhap = await localStorage.GetItemAsync<string>("TenDangNhap");
+                    var Matkhau = await localStorage.GetItemAsync<string>("MatKhau");
+                   // var MatKhauMD5 = CreateMD5(Matkhau);
+                    urllogin = "http://capnuochaiphong.com.vn:8081/index.html?key=" + Tendangnhap.ToUpper() + "&" + Matkhau;
                     accessKey = MsUtils.Encryption.DecryptString(accessKey);
                     var strInfo = accessKey.Split("@MS@");
                     if (strInfo.Length != 5) return;
@@ -238,6 +252,17 @@
         StateHasChanged();
 
     }
+    public static string CreateMD5(string input)
+    {
+        // Use input string to calculate MD5 hash
+        using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+        {
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
 
+            return Convert.ToHexString(hashBytes); // .NET 5 +
+
+        }
+    }
     clsGlobal glb = new clsGlobal();
 }

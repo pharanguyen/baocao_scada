@@ -1,34 +1,80 @@
-﻿@if (HienThi)
+﻿@inherits ComponentBase
+
+@if (HienThi)
 {
-    @*<div id="showloading"><span class="spinner-border" role="status"></span></div>*@
     <div id="showloading">
-        <img src="/assets/imgs/loading.gif" width="100px">
+        <div class="loading-content">
+            <img src="/assets/imgs/loading.gif" width="100px" />
+            @if (!string.IsNullOrWhiteSpace(NoiDung))
+            {
+                <div class="loading-text">@NoiDung</div>
+            }
+        </div>
     </div>
 }
+
+<style>
+    #showloading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading-content {
+        text-align: center;
+    }
+
+    .loading-text {
+        margin-top: 10px;
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+    }
+</style>
+
 @code {
     [Parameter]
     public bool HienThi { get; set; } = false;
+
     private string NoiDung = "";
+    private DateTime startTime;
+
     public void show(string _noiDung = "")
     {
-        if (HienThi) return;
-        if (HienThi == false)
-        {
-            HienThi = true;
-            NoiDung = _noiDung;
-            StateHasChanged();
-        }
+        if (HienThi || !CanShowLoading()) return;
+
+        HienThi = true;
+        NoiDung = _noiDung;
+        startTime = DateTime.Now;
+        StateHasChanged();
     }
 
-    public async void hide(int delay = 0)
+    public async Task hide(int delay = 0)
     {
         if (!HienThi) return;
-        if (delay>0)
+
+        if (DateTime.Now - startTime > TimeSpan.FromMinutes(5))
+        {
+            HienThi = false;
+            StateHasChanged();
+            return;
+        }
+
+        if (delay > 0)
         {
             await Task.Delay(delay);
         }
+
         HienThi = false;
         StateHasChanged();
     }
 
+    private bool CanShowLoading() => true;
 }

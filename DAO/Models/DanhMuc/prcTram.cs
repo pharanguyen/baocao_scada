@@ -11,5 +11,6 @@ namespace DAO.Models.DanhMuc
         public int Id { get; set; }
 
         public string Ten { get; set; }
+        public string DisplayText { get; set; }
     }
 }

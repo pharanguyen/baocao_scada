@@ -1,0 +1,136 @@
+﻿@page "/Sua_chua"
+@using DAO.Models.DanhMuc.SuCoOngVo
+@using ERPProject.Shared.Combobox
+@using Syncfusion.Blazor.Charts;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Layouts;
+@using Syncfusion.Blazor.DropDowns;
+@inherits Sua_chuaBase
+
+<div class="card m-2 p-3">
+    <h5>Thông tin sửa chữa</h5>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <label>Đồng hồ khối</label>
+            <CbMultiDHK @ref="CbDhk" Width="100%" PopupWidth="300px" OnDataSent="ValueChangeHandlerDhk" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Ngày tìm kiếm</label>
+            <SfDatePicker @bind-Value="NgayTimKiem" Format="dd/MM/yyyy" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Ngày sửa chữa</label>
+            <SfDatePicker @bind-Value="NgaySuaChua" Format="dd/MM/yyyy" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Số điểm vỡ</label>
+            <input class="form-control" type="text" @bind="SoDiemVo" />
+        </div>
+
+        <div class="col-md-12">
+            <label>Mô tả điểm rò rỉ</label>
+            <input class="form-control" type="text" @bind="MoTa" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Tiêu thụ 13 Trước</label>
+            <input class="form-control" type="text" @bind="TieuThu13_Truoc" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Tiêu thụ 13 Sau</label>
+            <input class="form-control" type="text" @bind="TieuThu13_Sau" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Tiêu thụ 07 Trước</label>
+            <input class="form-control" type="text" @bind="TieuThu07_Truoc" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Tiêu thụ 07 Sau</label>
+            <input class="form-control" type="text" @bind="TieuThu07_Sau" />
+        </div>
+
+        <div class="col-md-12">
+            <label>Ghi chú</label>
+            <textarea class="form-control" @bind="GhiChu"></textarea>
+        </div>
+
+        <div class="col-md-12 d-flex justify-content-end">
+            <SfButton CssClass="e-primary" @onclick="OnSave">Lưu</SfButton>
+            <SfButton CssClass="e-danger ml-2" @onclick="ClearFields">Hủy</SfButton>
+        </div>
+    </div>
+</div>
+
+<div class="card m-2 p-3">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <label>Chi nhánh</label>
+            <CbChiNhanh @ref="CbChiNhanh" Width="100%" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Đồng hồ khối</label>
+            <CbTram @ref="CbTram" Width="100%" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Từ ngày</label>
+            <SfDatePicker @bind-Value="TuNgay" Format="dd/MM/yyyy" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Đến ngày</label>
+            <SfDatePicker @bind-Value="DenNgay" Format="dd/MM/yyyy" />
+        </div>
+
+        <div class="col-md-12 d-flex justify-content-start mt-2">
+            <SfButton CssClass="e-success" IconCss="e-icons e-search" @onclick="LoadData">Xem dữ liệu</SfButton>
+            <SfButton CssClass="e-info ml-2" IconCss="e-icons e-export-excel" @onclick="onXuatExcel">Xuất Excel</SfButton>
+        </div>
+    </div>
+</div>
+
+<div class="card m-2 p-3">
+    <SfGrid @ref="gdv" DataSource="@listThongSoTram" AllowPaging="true" AllowExcelExport="true" PageSettings="@(new() { PageSize = 10 })">
+        <GridColumns>
+            <GridColumn Field="Id" HeaderText="ID" Width="80" TextAlign="TextAlign.Center" />
+            <GridColumn Field="ten_dhk" HeaderText="Tên DHK" Width="80" TextAlign="TextAlign.Center" />
+            <GridColumn Field="NgayTimKiem" HeaderText="Ngày tìm kiếm" Format="dd/MM/yyyy" Width="150" />
+            <GridColumn Field="NgaySuaChua" HeaderText="Ngày sửa chữa" Format="dd/MM/yyyy" Width="150" />
+            <GridColumn Field="SoDiemVo" HeaderText="Số điểm vỡ" Width="100" />
+            <GridColumn Field="MoTa" HeaderText="Mô tả" Width="200" />
+            <GridColumn HeaderText="TIÊU THỤ NHỎ NHẤT( 1H-3H )" TextAlign="TextAlign.Center">
+                <GridColumns>
+                    <GridColumn Field="TieuThu13_Truoc" HeaderText="Trước sửa" Width="120" />
+                    <GridColumn Field="TieuThu13_Sau" HeaderText="Sau sửa" Width="120" />
+                </GridColumns>
+            </GridColumn>
+
+            <!-- NHÓM 2: TIÊU THỤ HÀNG NGÀY -->
+            <GridColumn HeaderText="TIÊU THỤ HÀNG NGÀY( 0H-7H )" TextAlign="TextAlign.Center">
+                <GridColumns>
+                    <GridColumn Field="TieuThu07_Truoc" HeaderText="Trước sửa" Width="120" />
+                    <GridColumn Field="TieuThu07_Sau" HeaderText="Sau sửa" Width="120" />
+                </GridColumns>
+            </GridColumn>
+
+            <GridColumn Field="GhiChu" HeaderText="Ghi chú" Width="200" />
+            <GridColumn HeaderText="Chức năng" Width="150">
+                <Template Context="data">
+                    @{
+                        var item = (SuCo_OngVo)data;
+                    }
+                    <SfButton CssClass="e-flat e-primary" @onclick="() => onCapNhat(item.Id)">Sửa</SfButton>
+                    <SfButton CssClass="e-flat e-danger ml-2" @onclick="() => onXoa(item.Id)">Xóa</SfButton>
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>

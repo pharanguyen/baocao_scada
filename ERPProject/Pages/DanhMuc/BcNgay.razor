@@ -3,6 +3,7 @@
 @using DAO.Services.XuatExcel;
 @using DAO.ViewModel;
 @using ERPProject.Shared.Combobox;
+
 @inherits BcNgayBase
 @inject NavigationManager NavigationManager
 @inject IJSRuntime IJSRuntime
@@ -42,12 +43,17 @@
         /*z-index: 99999;*/
     }
 
-    .e-columnheader:first-child .e-headercell:nth-child(2) {
+    
+    .e-columnheader:first-child .e-headercell:nth-child(3) {
         position: sticky;
         top: 0;
         left: 0;
         z-index: 1;
     }
+
+    
+
+
 
     .e-row:nth-of-type(odd) .e-rowcell.e-attr {
         background: #F9F9F9;
@@ -60,46 +66,172 @@
     .e-multiselect {
         margin-right: 5px;
     }
+
+    ::deep .e-grid .e-summaryrow .e-summarycell {
+        background: blue;
+    }
+
+    .table td {
+        width: 80px;
+        text-align: center; /* Đảm bảo văn bản ở giữa của mỗi ô */
+    }
+
+    .e-summarycell {
+        text-align: center;
+        /* Add other styles as needed */
+    }
+
+    /* Style for the second set of td elements outside the table */
+    .e-summarycell-outside {
+        text-align: center;
+        /* Add other styles as needed */
+    }
+    /* Global Styles */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    /* Heading Column */
+    .heading-col {
+        background-color: #00676B;
+        color: #fff;
+        text-align: center;
+        border: 1px solid #333;
+    }
+
+    /* Row Style */
+    .row-style {
+        border: 1px solid #333;
+        text-align: center;
+    }
+
+    /* Sticky Header Cell */
+    .e-rowcell.e-attr {
+        position: sticky;
+        top: 0;
+        left: 0;
+        border-right: 0.5px solid #DEE2E6;
+        border-left: 0.5px solid #DEE2E6;
+    }
+
+    /* Alternating Row Colors */
+    .e-row:nth-of-type(odd) .e-rowcell.e-attr {
+        background: #F9F9F9;
+    }
+
+    .e-row:nth-of-type(even) .e-rowcell.e-attr {
+        background: white;
+    }
+
+    /* Multiselect Margin */
+    .e-multiselect {
+        margin-right: 5px;
+    }
+
+    /* Custom Aggregates Row */
+    .e-grid .e-summaryrow .e-summarycell {
+        width: 80px;
+        box-sizing: border-box; /* Include padding and border in the width calculation */
+        text-align: center; /* Adjust text alignment as needed */
+        /* Add other styles as needed */
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px 0;
+    }
+
+    .col {
+        flex: 1; /* Mỗi cột sẽ chiếm đầy đủ không gian có thể */
+        min-width: 300px; /* Đảm bảo rằng nó không nhỏ hơn 300px */
+        padding-bottom: 5px;
+    }
+
+    .title {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table td {
+            width: 80px;
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            text-align: center; /* Adjust text alignment as needed */
+            /* Add other styles as needed */
+        }
+
+        .table .column-item {
+            width: 150px;
+            /* Add other styles as needed */
+        }
+
+    /* Your Custom Styles */
+    /* Add your specific styles for different components or sections */
+
 </style>
 
 <BodyCard>
     <SfToolbar>
         <ToolbarItems>
-            <ToolbarItem Type="ItemType.Button">
-                <Template>
-                    <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
-                </Template>
-            </ToolbarItem>
-            <ToolbarItem Type="ItemType.Separator">
-            </ToolbarItem>
+            <!-- Dropdowns for Chi Nhánh, Trạm, and Thông Số -->
+            <div class="row">
+                <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Chọn chi nhánh:</span>
+                    <CbMultiChiNhanh @ref="CbChiNhanh" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"></CbMultiChiNhanh>
+                </div>
+                <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Chọn Trạm:</span>
+                    <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%" Data="prcTrams" OnDataSent="ValueChangeHandler1"></CbMultiTram>
+                </div>
+                <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Chọn thông số:</span>
+                    <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%" Data1="prcThongSos"></CbMultiThongSo>
+                </div>
+            </div>
 
-            <ToolbarItem Type="ItemType.Button">
-                <Template>
-                    <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
-                </Template>
-            </ToolbarItem>
-            <CbMultiChiNhanh @ref="CbChiNhanh" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"> </CbMultiChiNhanh>
-            <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%" Data="prcTrams" OnDataSent="ValueChangeHandler1"></CbMultiTram>
-            <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%" Data1="prcThongSos"></CbMultiThongSo>
+            <!-- Time Selection -->
+            <div class="row">
+                <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Chọn thời gian:</span>
+                    <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
+                </div>
 
-
-
+                <div class="col">
+                    <ToolbarItem Type="ItemType.Button">
+                        <Template>
+                            <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
+                        </Template>
+                    </ToolbarItem>
+                    <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                    <ToolbarItem Type="ItemType.Button">
+                        <Template>
+                            <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
+                        </Template>
+                    </ToolbarItem>
+                </div>
+            </div>
         </ToolbarItems>
-        <div class="mt-2 mb-1 ml">
-            <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
-        </div>
     </SfToolbar>
 
-    <SfGrid DataSource="@data" AllowResizing="true" Width="100%" Height="500">
+    <SfGrid DataSource="@data" AllowResizing="true" Width="1200" Height="500">
 
         <GridColumns>
-            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="30"></GridColumn>
-            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="80" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
+            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="50" Freeze="FreezeDirection.Left" ></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy" TextAlign="TextAlign.Center" HeaderText="Ngày" Width="120"  CustomAttributes=@(new Dictionary<string, object>() { { "class", "e-attr" } })></GridColumn>
+            <GridColumn  Field="ThoiGian" Format="HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="120"  CustomAttributes=@(new Dictionary<string, object>() { { "class", "e-attr" } })></GridColumn>
+
             @if (ListNhatKyNgay != null)
             {
                 var listTram = ListNhatKyNgay.GroupBy(x => x.TenTram).Distinct();
                 var minValues = ListSum.Select(item => item.MinGiaTriThongSo).ToList();
-            var maxValues = ListSum.Select(item => item.MaxGiaTriThongSo).ToList();
+                var maxValues = ListSum.Select(item => item.MaxGiaTriThongSo).ToList();
                 @foreach (var list in listTram)
                 {
                     var asx = list.OrderByDescending(x => x.Thoi_Gian).FirstOrDefault();
@@ -113,7 +245,7 @@
                     var min = 0;
                     decimal avr = 0;
                     decimal sum = 0;
-                    <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center" Width="300">
+                    <GridColumn HeaderText="@list.Key" TextAlign="TextAlign.Center">
                         <GridColumns>
                             @foreach (var item in items)
                             {
@@ -163,11 +295,11 @@
                                                 <div>--</div>
                                             }
 
+
                                         }
                                     </Template>
                                 </GridColumn>
-                                @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
-                               || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
+                                @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3" || item.TenThongSo == "TỔNG LƯU LƯỢNG 4" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
                                )
                                 {
                                     <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
@@ -177,58 +309,148 @@
                                                 string tenTramThongSo = list.Key + item.TenThongSo;
                                                 int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
                                                 var cx = context as BaoCaoNgayViewModel;
-                                                var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
-                                                var fiveMinutesLaterGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(0) && x.Id_ThongSo == item.Id_ThongSo);
-                                                var fiveMinutesBeforeGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
 
-                                                if (currentGt != null && fiveMinutesLaterGt != null && fiveMinutesBeforeGt != null)
+                                                if (CbThoiGian.Value == 1 )
                                                 {
-                                                    decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
-                                                    decimal fiveMinutesLaterGtValue = decimal.Parse(fiveMinutesLaterGt.Gia_Tri);
-                                                    decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
-                                                    decimal difference = (fiveMinutesLaterGtValue) - (fiveMinutesBeforeGtValue);
+                                                    var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                                    var fiveMinutesBeforeGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
 
-
-                                                    // decimal absvalue = Math.Abs(difference);
-                                                    <div>@difference</div>
-
-                                                    
-                                                    if (index >= 0)
+                                                    if (currentGt != null && fiveMinutesBeforeGt != null)
                                                     {
-                                                        ListSum[index].TongGiaTriTieuThu += difference;
-                                                        ListSum[index].CountGiaTriTieuThu ++;
-                                                        ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+                                                        decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
+                                                        decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
+                                                        decimal difference = currentGtValue - fiveMinutesBeforeGtValue;
 
-                                                        if (ListSum[index].MinGiaTriTieuThu > difference)
-                                                        {
-                                                            ListSum[index].MinGiaTriTieuThu = difference;
-                                                        }
-                                                        if (ListSum[index].MaxGiaTriTieuThu < difference)
-                                                        {
-                                                            ListSum[index].MaxGiaTriTieuThu = difference;
-                                                        }
+                                                        <div>@difference</div>
 
+                                                        if (index >= 0)
+                                                        {
+                                                            ListSum[index].TongGiaTriTieuThu += difference;
+                                                            ListSum[index].CountGiaTriTieuThu++;
+                                                            ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+
+                                                            if (ListSum[index].MinGiaTriTieuThu > difference)
+                                                            {
+                                                                ListSum[index].MinGiaTriTieuThu = difference;
+                                                            }
+                                                            if (ListSum[index].MaxGiaTriTieuThu < difference)
+                                                            {
+                                                                ListSum[index].MaxGiaTriTieuThu = difference;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ListSum.Add(new ChiTietViewModel
+                                                {
+                                                    TenThongSo = tenTramTieuThu,
+                                                    TongGiaTriTieuThu = difference,
+                                                    MinGiaTriTieuThu = difference,
+                                                    MaxGiaTriTieuThu = difference,
+                                                    AvrGiaTriTieuThu = difference,
+                                                });
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        //ListSum.Add(new ChiTietViewModel
-                                                        //    {
-                                                        //        TenThongSo = tenTramTieuThu,
-                                                        //        TongGiaTriTieuThu = difference,
-                                                        //        MinGiaTriTieuThu = difference,
-                                                        //        MaxGiaTriTieuThu = difference,
-                                                        //        AvrGiaTriTieuThu = difference,
-                                                        //    });
+                                                        <div>--</div>
                                                     }
                                                 }
-                                                else
+                                                else if (CbThoiGian.Value == 2)
                                                 {
-                                                    <div>--</div>
+                                                    var currentHourGt = list.FirstOrDefault(x => x.Thoi_Gian.Hour == cx.ThoiGian.Hour && x.Thoi_Gian.Minute == 0 && x.Id_ThongSo == item.Id_ThongSo);
+                                                    var previousHourGt = list.FirstOrDefault(x => x.Thoi_Gian.Hour == cx.ThoiGian.AddHours(-1).Hour && x.Thoi_Gian.Minute == 0 && x.Id_ThongSo == item.Id_ThongSo);
+
+                                                    if (currentHourGt != null && previousHourGt != null)
+                                                    {
+                                                        decimal currentHourGtValue = decimal.Parse(currentHourGt.Gia_Tri);
+                                                        decimal previousHourGtValue = decimal.Parse(previousHourGt.Gia_Tri);
+                                                        decimal difference = currentHourGtValue - previousHourGtValue;
+
+                                                        <div>@difference</div>
+
+                                                        if (index >= 0)
+                                                        {
+                                                            ListSum[index].TongGiaTriTieuThu += difference;
+                                                            ListSum[index].CountGiaTriTieuThu++;
+                                                            ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+
+                                                            if (ListSum[index].MinGiaTriTieuThu > difference)
+                                                            {
+                                                                ListSum[index].MinGiaTriTieuThu = difference;
+                                                            }
+                                                            if (ListSum[index].MaxGiaTriTieuThu < difference)
+                                                            {
+                                                                ListSum[index].MaxGiaTriTieuThu = difference;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ListSum.Add(new ChiTietViewModel
+                                                {
+                                                    TenThongSo = tenTramTieuThu,
+                                                    TongGiaTriTieuThu = difference,
+                                                    MinGiaTriTieuThu = difference,
+                                                    MaxGiaTriTieuThu = difference,
+                                                    AvrGiaTriTieuThu = difference,
+                                                });
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div>--</div>
+                                                    }
+                                                }
+                                                else if (CbThoiGian.Value == 3)
+                                                {
+                                                    var currentDayGt = list.FirstOrDefault(x => x.Thoi_Gian.Date == cx.ThoiGian.Date && x.Id_ThongSo == item.Id_ThongSo);
+                                                    var previousDayGt = list.FirstOrDefault(x => x.Thoi_Gian.Date == cx.ThoiGian.AddDays(-1).Date && x.Id_ThongSo == item.Id_ThongSo);
+
+                                                    if (currentDayGt != null && previousDayGt != null)
+                                                    {
+                                                        decimal currentDayGtValue = decimal.Parse(currentDayGt.Gia_Tri);
+                                                        decimal previousDayGtValue = decimal.Parse(previousDayGt.Gia_Tri);
+                                                        decimal difference = currentDayGtValue - previousDayGtValue;
+
+                                                        <div>@difference</div>
+
+                                                        if (index >= 0)
+                                                        {
+                                                            ListSum[index].TongGiaTriTieuThu += difference;
+                                                            ListSum[index].CountGiaTriTieuThu++;
+                                                            ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+
+                                                            if (ListSum[index].MinGiaTriTieuThu > difference)
+                                                            {
+                                                                ListSum[index].MinGiaTriTieuThu = difference;
+                                                            }
+                                                            if (ListSum[index].MaxGiaTriTieuThu < difference)
+                                                            {
+                                                                ListSum[index].MaxGiaTriTieuThu = difference;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ListSum.Add(new ChiTietViewModel
+                                                {
+                                                    TenThongSo = tenTramTieuThu,
+                                                    TongGiaTriTieuThu = difference,
+                                                    MinGiaTriTieuThu = difference,
+                                                    MaxGiaTriTieuThu = difference,
+                                                    AvrGiaTriTieuThu = difference,
+                                                });
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div>--</div>
+                                                    }
                                                 }
                                             }
                                         </Template>
-
                                     </GridColumn>
+
+
+
 
                                 }
                                 else
@@ -254,9 +476,9 @@
             }
         </GridColumns>
         <GridAggregates>
-            <GridAggregate> 
+            <GridAggregate>
                 <GridAggregateColumns>
-                    <GridAggregateColumn Field="ThoiGian" Type="AggregateType.Custom" >
+                    <GridAggregateColumn Field="TT" Type="AggregateType.Custom">
                         <FooterTemplate>
                             @{
                                 //var listTram = ListNhatKyNgay.GroupBy(x => x.TenTram).Distinct();
@@ -265,77 +487,60 @@
                                 //    string tenTramThongSo = list.Key + item.TenThongSo;
                                 //    int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
                                 //}
-                               
-                                
-                                <div>
-                                    <table class="table">
-                                        <tr>
-                                        <div> TB </div>
-                                            @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
-                                            {
-
-                                              //  <td> @item.TongGiaTriThongSo / @item.CountGiaTriThongSo;</td>
-                                                <td> @item.AvrGiaTriThongSo</td>
-
-                                                if (@item.AvrGiaTriTieuThu != -1)
-                                                {
-                                                    <td>@item.AvrGiaTriTieuThu</td>
-                                                }
-                                                
-                                                
 
 
 
-                                            }
-                                        </tr>
-                                       <tr>
-                                        <div> TT </div>
-                                        @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
+                                <table class="table">
+                                    <tr>
+                                        <td style="width: 280px; min-width: 280px"> TB </td>
+                                        @foreach (var item in ListSum)
                                         {
-                                           
-                                                <td> @item.MinGiaTriThongSo</td>
-
-                                                if (@item.MinGiaTriTieuThu != -1)
-                                                {
-                                                    <td>@item.MinGiaTriTieuThu</td>
-                                                }
-                                                
-                                                
-                                           
+                                            <td style="width: 150px; min-width: 150px;">@item.AvrGiaTriThongSo</td>
+                                            @if (item.AvrGiaTriTieuThu != -1)
+                                            {
+                                                <td style="width: 150px; min-width: 150px;text-align:center">@item.AvrGiaTriTieuThu</td>
+                                            }
                                         }
                                     </tr>
                                     <tr>
-                                        <div> TĐ </div>
-                                        @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
+                                        <td style="width: 280px; min-width: 280px "> TT </td>
+                                        @foreach (var item in ListSum)
                                         {
-                                                <td>@item.MaxGiaTriThongSo</td>
-                                                if (@item.MaxGiaTriTieuThu != -1)
-                                                {
-                                                    <td>@item.MaxGiaTriTieuThu</td>
-                                                }                                              
-                                                
-                                            
+                                            <td style="width: 150px; min-width: 150px;">@item.MinGiaTriThongSo</td>
+                                            @if (item.MinGiaTriTieuThu != -1)
+                                            {
+                                                <td style="width: 150px; min-width: 150px;text-align:center;">@item.MinGiaTriTieuThu</td>
+                                            }
                                         }
                                     </tr>
-                                        <tr>
-                                            <div> Tổng </div>
-                                            @foreach (var item in ListSum) // Use DistinctBy to get unique "Tổng" values
+                                    <tr>
+                                        <td style="width: 280px; min-width: 280px"> TĐ </td>
+                                        @foreach (var item in ListSum)
+                                        {
+                                            <td style="width: 150px; min-width: 150px;">@item.MaxGiaTriThongSo</td>
+                                            @if (item.MaxGiaTriTieuThu != -1)
                                             {
-                                               
-                                                <td>@item.TongGiaTriThongSo</td>
-                                                if(@item.TongGiaTriTieuThu > 0)
-                                                {
-                                                    <td>@item.TongGiaTriTieuThu</td>
-                                                }
-                                               
+                                                <td style="width: 150px; min-width: 150px;text-align:center;">@item.MaxGiaTriTieuThu</td>
                                             }
-                                        </tr>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td> Tổng </td>
+                                        @foreach (var item in ListSum)
+                                        {
+                                            <td style="width: 150px; min-width: 150px">_</td>
+                                            @if (item.TongGiaTriTieuThu > 0)
+                                            {
+                                                <td style="width: 150px; min-width: 150px;text-align:center">@item.TongGiaTriTieuThu</td>
+                                            }
+                                        }
+                                    </tr>
+                                </table>
 
-                                    </table>
-                                </div>
+                                
                                 ListSum = new List<ChiTietViewModel>();
                             }
-                            
+
                         </FooterTemplate>
                     </GridAggregateColumn>
                 </GridAggregateColumns>
@@ -343,17 +548,21 @@
         </GridAggregates>
 
 
-
     </SfGrid>
+    
 
 </BodyCard>
 @code
 {
+    AppDataScoped AppData { get; set; }
     decimal minTongGiaTriThongSo = 0;
     decimal maxTongGiaTriThongSo = 0;
 
     public async Task onXuatExcel()
     {
+        
+       // AppData.loadingPanel.show();
+
         int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
         int[] Id_Tram = CbTram.Value ?? new int[0];
         int[] Id_ThongSo = CbThongSo.Value ?? new int[0];

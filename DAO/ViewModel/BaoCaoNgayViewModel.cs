@@ -7,6 +7,13 @@ namespace DAO.ViewModel
     {
         public int TT { get; set; }
         public DateTime ThoiGian { get; set; }
+        public DateTime Thoi_Gian { get; set; }
+        public string TenTram { get; set; }  // Add this if it makes sense for your logic
+       // public DateTime ThoiGian { get; set; }
+        public string Gia_Tri { get; set; }
+        public int Id_ThongSo { get; set; }
+        public string TenThongSo { get; set; }
+
     }
     public class DataBaoCaoNgayViewModel
     {

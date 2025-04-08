@@ -25,7 +25,30 @@ namespace DAO
             strConnectString = str;
         }
     }
-
+    public static class SqlConnectString2
+    {
+        public static string strConnectString = "";
+        public static void init(string str)
+        {
+            strConnectString = str;
+        }
+    }
+    public static class SqlConnectString3
+    {
+        public static string strConnectString = "";
+        public static void init(string str)
+        {
+            strConnectString = str;
+        }
+    }
+    public static class SqlConnectString4
+    {
+        public static string strConnectString = "";
+        public static void init(string str)
+        {
+            strConnectString = str;
+        }
+    }
     public class SqlHelper
     {
 
@@ -151,10 +174,41 @@ namespace DAO
         #endregion
 
         #region "# getSQLConnectionString #"
-        public string getSQLConnectionString()
+        public string getSQLConnectionString(int sttdb = 1)
         {
-            return SqlConnectString.strConnectString;
+            if(sttdb == 1)
+            {
+                return SqlConnectString.strConnectString;
+            }
+            else if(sttdb == 2)
+            {
+                return SqlConnectString2.strConnectString;
+            }
+            else if (sttdb == 3)
+            {
+                return SqlConnectString3.strConnectString;
+            }
+            else if (sttdb == 4)
+            {
+                return SqlConnectString4.strConnectString;
+            }
+            else
+            {
+                return SqlConnectString.strConnectString;
+            }
+            
             //return strConn;
+        }
+        #endregion
+
+        #region "# getSQLConnectionStringCSKH"
+        public string getSQLConnectionStringCSKH()
+        {
+            return SqlConnectString2.strConnectString;
+        }
+        public string getSQLConnectionStringCSKH3()
+        {
+            return SqlConnectString3.strConnectString;
         }
         #endregion
 
@@ -351,7 +405,47 @@ namespace DAO
             }
         }
         #endregion
-
+        #region "# ExecuteSQLDataSet #"
+        public DataSet ExecuteSQLDataSetCSKH(string sSQL)
+        {
+            DataSet ds = new DataSet();
+            SqlCommand _sqlCmd = new SqlCommand();
+            try
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _sqlCmd.CommandText = sSQL;
+                _sqlCmd.Connection = _objSqlConn;
+                _objSqlConn.Open();
+                foreach (SqlParameter p in _objSqlParamtter)
+                {
+                    _sqlCmd.Parameters.Add(p);
+                }
+                foreach (SqlParameter p in _objSqlParamtterWhere)
+                {
+                    _sqlCmd.Parameters.Add(p);
+                }
+                SqlDataAdapter da = new SqlDataAdapter(_sqlCmd);
+                da.Fill(ds);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                _LoiNgoaiLe = ex.Message;
+                return null;
+            }
+            finally
+            {
+                _sqlCmd.Dispose();
+                _objSqlParamtter.Clear();
+                _objSqlParamtterWhere.Clear();
+                if (_objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+        #endregion
         #region "# ExecuteSQLNonQuery #"
         public object ExecuteSQLNonQuery(string sSQL)
         {
@@ -557,7 +651,7 @@ namespace DAO
             if (str2.Length > 2)
                 str2 = str2.Substring(0, str2.Length - 2);
 
-            sql += $@"INSERT INTO [{ TenBang }]({str1}) VALUES({str2});SELECT SCOPE_IDENTITY();";
+            sql += $@"INSERT INTO [{TenBang}]({str1}) VALUES({str2});SELECT SCOPE_IDENTITY();";
             return ExecuteSQLScalar(sql);
         }
         #endregion
@@ -684,7 +778,7 @@ namespace DAO
                 if (!useTran)
                     //thư viện Dapper.SimpleCRUD
                     return _objSqlConn.Insert<T>(obj);
-         
+
                 else
                     return _objSqlConnWithTrans.Insert<T>(obj, _objTransaction);
             }
@@ -1082,7 +1176,7 @@ namespace DAO
             catch (Exception ex)
             {
                 LoiNgoaiLe = ex.Message;
-              //  throw ex;
+                //  throw ex;
                 return null;
             }
             finally
@@ -1132,6 +1226,560 @@ namespace DAO
             }
         }
 
+        #endregion
+
+        #region "# CRUD Object CSKH #"
+        public int? InsertCompositeKeyCSKH<T>(T obj) where T : class
+        {
+            string tableName = obj.GetType().Name;
+            try
+            {
+                tableName = obj.GetType().CustomAttributes.Where(x => x.AttributeType.Name == "TableAttribute").SingleOrDefault().ConstructorArguments[0].Value.ToString();
+
+            }
+            catch
+            {
+                tableName = obj.GetType().Name;
+            }
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            string vlclause = "values(";
+            foreach (PropertyInfo item in obj.GetType().GetProperties())
+            {
+                dynamicParameters.Add($"@{item.Name}", item.GetValue(obj));
+                vlclause = vlclause + $"@{item.Name},";
+            }
+            vlclause = $"INSERT INTO {tableName} " + vlclause.Remove(vlclause.Length - 1) + ")";
+
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Execute(vlclause, dynamicParameters);
+                else
+                    return _objSqlConnWithTrans.Execute(vlclause, dynamicParameters, _objTransaction, null, null);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+        public int? InsertEntityCSKH<T>(T obj) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    //thư viện Dapper.SimpleCRUD
+                    return _objSqlConn.Insert<T>(obj);
+
+                else
+                    return _objSqlConnWithTrans.Insert<T>(obj, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+
+        }
+
+        public TKey InsertEntityCSKH<TKey, T>(T obj) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Insert<TKey, T>(obj);
+                else
+                    return _objSqlConnWithTrans.Insert<TKey, T>(obj, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+
+        }
+
+        public int? UpdateEntityCSKH<T>(T obj) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Update<T>(obj);
+                else
+                    return _objSqlConnWithTrans.Update<T>(obj, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+
+        }
+
+        public T GetSingleEntityByIdCSKH<T>(long Id) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Get<T>(Id);
+                else
+                    return _objSqlConnWithTrans.Get<T>(Id, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+
+        }
+        public T GetSingleEntityByIdGuidCSKH<T>(Guid Id) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Get<T>(Id);
+                else
+                    return _objSqlConnWithTrans.Get<T>(Id, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+
+        }
+
+        public T GetSingleEntityByKeyCSKH<T, K>(K UniqueKey) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Get<T>(UniqueKey);
+                else
+                    return _objSqlConnWithTrans.Get<T>(UniqueKey, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+
+        }
+
+        public IEnumerable<T> GetAllCSKH<T>(object whereCondition = null) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.GetList<T>(whereCondition);
+                else
+                    return _objSqlConnWithTrans.GetList<T>(whereCondition, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+        public IEnumerable<T> GetAllByWhereConditionCSKH<T>(string whereCondition, object parameters = null) where T : class  // them ngay 5/1/2019
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.GetList<T>(whereCondition, parameters);
+                else
+                    return _objSqlConnWithTrans.GetList<T>(whereCondition, parameters, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                //throw ex;
+                return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+        public int? DeleteListEntityByWhereConditionCSKH<T>(string whereCondition, object parameters)
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.DeleteList<T>(whereCondition, parameters);
+                else
+                    return _objSqlConnWithTrans.DeleteList<T>(whereCondition, parameters, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+        public int? DeleteEntityCSKH<T>(T obj)
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Delete<T>(obj);
+                else
+                    return _objSqlConnWithTrans.Delete<T>(obj, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+        public int? DeleteEntityByIdCSKH<T>(object Id)
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Delete<T>(Id);
+                else
+                    return _objSqlConnWithTrans.Delete<T>(Id, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+        public int? ExcuteProcCSKH(string procName, object parameters = null)
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Execute(procName, parameters, null, null, CommandType.StoredProcedure);
+                else
+                    return _objSqlConnWithTrans.Execute(procName, parameters, _objTransaction, null, CommandType.StoredProcedure);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+        public IEnumerable<T> QueryProcCSKH<T>(string procName, object parameters = null)
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.Query<T>(procName, parameters, null, true, null, CommandType.StoredProcedure);
+                else
+                    return _objSqlConnWithTrans.Query<T>(procName, parameters, _objTransaction, true, null, CommandType.StoredProcedure);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                //  throw ex;
+                return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+
+
+        public IEnumerable<T> GetMultiPageListCSKH<T>(int pageNumber = 1, int rowsPerPage = 10, string conditions = null, string orderBy = null, object parameters = null)
+        {
+            bool useTran = false;
+            if (_objSqlConnWithTrans == null)
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _objSqlConn.Open();
+            }
+            else
+            {
+                useTran = true;
+            }
+            try
+            {
+                if (!useTran)
+                    return _objSqlConn.GetListPaged<T>(pageNumber, rowsPerPage, conditions, orderBy, parameters);
+                else
+                    return _objSqlConnWithTrans.GetListPaged<T>(pageNumber, rowsPerPage, conditions, orderBy, parameters, _objTransaction);
+            }
+            catch (Exception ex)
+            {
+                LoiNgoaiLe = ex.Message;
+                throw ex;
+                //return null;
+            }
+            finally
+            {
+                if (!useTran && _objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
         #endregion
 
         /// <summary>
@@ -1589,7 +2237,7 @@ namespace DAO
             catch (Exception ex)
             {
                 LoiNgoaiLe = ex.Message;
-               // throw ex;
+                // throw ex;
                 return null;
             }
             finally
@@ -1624,7 +2272,7 @@ namespace DAO
             catch (Exception ex)
             {
                 LoiNgoaiLe = ex.Message;
-            //    throw ex;
+                //    throw ex;
                 return null;
             }
             finally
@@ -1637,5 +2285,209 @@ namespace DAO
             }
         }
         #endregion
+        public DataSet ExecuteSQLDataSetWithParams(string sSQL, DynamicParameters parameters)
+        {
+            DataSet ds = new DataSet();
+            SqlCommand _sqlCmd = new SqlCommand();
+            SqlConnection _objSqlConn = null;
+            try
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionStringCSKH());
+                _sqlCmd.CommandText = sSQL;
+                _sqlCmd.Connection = _objSqlConn;
+
+                _objSqlConn.Open();
+
+                if (parameters != null)
+                {
+                    foreach (var paramName in parameters.ParameterNames)
+                    {
+                        _sqlCmd.Parameters.Add(new SqlParameter(paramName, parameters.Get<object>(paramName) ?? DBNull.Value));
+                    }
+                }
+
+                using (SqlDataAdapter da = new SqlDataAdapter(_sqlCmd))
+                {
+                    da.Fill(ds);
+                }
+
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                _LoiNgoaiLe = ex.Message;
+
+                return null;
+            }
+            finally
+            {
+                if (_sqlCmd != null)
+                {
+                    _sqlCmd.Dispose();
+                }
+
+                if (_objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+
+
+        public DataSet ExecuteSQLDataSetWithParamsBarData(string sSQL, DynamicParameters parameters)
+        {
+            DataSet ds = new DataSet();
+            SqlCommand _sqlCmd = new SqlCommand();
+            SqlConnection _objSqlConn = null;
+            try
+            {
+                _objSqlConn = new SqlConnection(getSQLConnectionString());
+                _sqlCmd.CommandText = sSQL;
+                _sqlCmd.Connection = _objSqlConn;
+
+                _objSqlConn.Open();
+
+                if (parameters != null)
+                {
+                    foreach (var paramName in parameters.ParameterNames)
+                    {
+                        _sqlCmd.Parameters.Add(new SqlParameter(paramName, parameters.Get<object>(paramName) ?? DBNull.Value));
+                    }
+                }
+
+                using (SqlDataAdapter da = new SqlDataAdapter(_sqlCmd))
+                {
+                    da.Fill(ds);
+                }
+
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                _LoiNgoaiLe = ex.Message;
+
+                return null;
+            }
+            finally
+            {
+                if (_sqlCmd != null)
+                {
+                    _sqlCmd.Dispose();
+                }
+
+                if (_objSqlConn != null && _objSqlConn.State != ConnectionState.Closed)
+                {
+                    _objSqlConn.Close();
+                    _objSqlConn.Dispose();
+                }
+            }
+        }
+        public async Task<int> ExecuteAsync(string sql, object param = null)
+        {
+            using (var connection = new SqlConnection(getSQLConnectionString()))
+            {
+                await connection.OpenAsync();
+                return await connection.ExecuteAsync(sql, param);
+            }
+        }
+
+
+        // dungtv add 2024-11-13
+        public IEnumerable<T> ExecQueryData<T>(string T_SQL, object parametter = null, int sttdb = 1)
+        {
+            using (var connection = new SqlConnection(getSQLConnectionString(sttdb)))
+            {
+                try
+                {
+                    connection.Open();
+                    return connection.Query<T>(T_SQL, parametter, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    LoiNgoaiLe = ex.Message;
+                    return null;
+                }
+            }
+        }
+        public int ExecCommand(string sql, object parameters = null, int sttdb = 1)
+        {
+            using (var connection = new SqlConnection(getSQLConnectionString(sttdb)))
+            {
+                try
+                {
+                    connection.Open();
+                    return connection.Execute(sql, parameters, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    LoiNgoaiLe = ex.Message;
+                    return -1;
+                }
+            }
+        }
+
+
+        public T ExecQueryDataFistOrDefault<T>(string T_SQL, object parametter = null, int sttdb = 1)
+        {
+            using (var connection = new SqlConnection(getSQLConnectionString(sttdb)))
+            {
+                try
+                {
+                    connection.Open();
+                    return connection.QueryFirstOrDefault<T>(T_SQL, parametter, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    LoiNgoaiLe = ex.Message;
+                    return default;
+                }
+            }
+        }
+        public async Task<IEnumerable<T>> ExecQueryDataAsync<T>(string T_SQL, object parametter = null, int sttdb = 1)
+        {
+
+            return await WithConnection(async c =>
+            {
+                return await c.QueryAsync<T>(T_SQL, parametter, commandType: CommandType.Text);
+            }, sttdb);
+        }
+
+        public async Task<T> ExecQueryDataFirstOrDefaultAsync<T>(string T_SQL, object parametter = null, int sttdb = 1)
+        {
+            using (var connection = new SqlConnection(getSQLConnectionString(sttdb)))
+            {
+                connection.Open();
+                return await connection.QueryFirstOrDefaultAsync<T>(T_SQL, parametter, commandType: CommandType.Text);
+            }
+        }
+
+        public int ExecQueryNonData(string T_SQL, object parametter = null, int sttdb = 1)
+        {
+            using (var connection = new SqlConnection(getSQLConnectionString(sttdb)))
+            {
+                connection.Open();
+                return connection.Execute(T_SQL, parametter, commandType: CommandType.Text);
+            }
+        }
+
+        public async Task<int> ExecQueryNonDataAsync(string T_SQL, object parametter = null, int sttdb = 1)
+        {
+
+            return await WithConnection(async c =>
+            {
+                return await c.ExecuteAsync(T_SQL, parametter, commandType: CommandType.Text);
+            }, sttdb);
+        }
+
+        public async Task<T> WithConnection<T>(Func<IDbConnection, Task<T>> getData, int sttdb = 1)
+        {
+            using (var connection = new SqlConnection(getSQLConnectionString(sttdb)))
+            {
+                await connection.OpenAsync(); // Asynchronously open a connection to the database
+                return await getData(connection); // Asynchronously execute getData, which has been passed in as a Func<IDBConnection, Task<T>>
+            }
+        }
+
     }
 }

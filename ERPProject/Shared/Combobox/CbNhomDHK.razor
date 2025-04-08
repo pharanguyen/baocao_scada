@@ -1,0 +1,98 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using Syncfusion.Blazor.DropDowns;
+<style>
+    .column-width {
+        width: 75px;
+    }
+</style>
+<SfDropDownList Placeholder="Chọn..." @ref="cb"
+                @bind-Value="@Value" TValue="int"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                TItem="@Nhom_dh_khoi"
+                AllowFiltering="true"
+                FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                CssClass="e-multi-column"
+                ShowClearButton="true" DataSource="Data">
+
+    <DropDownListFieldSettings Text="mo_ta" Value="ms_nhom"></DropDownListFieldSettings>
+    <DropDownListTemplates TItem="@Nhom_dh_khoi">
+        <HeaderTemplate>
+            <table>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên Nhóm</th>
+                </tr>
+            </table>
+        </HeaderTemplate>
+        <ItemTemplate>
+            @if (context != null)
+            {
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="e-text-center column-width">
+                                @((context as Nhom_dh_khoi)?.ms_nhom)
+                            </td>
+                            <td>@((context as Nhom_dh_khoi)?.mo_ta)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+        </ItemTemplate>
+        <ValueTemplate>
+            <span>@((context as Nhom_dh_khoi)?.ms_nhom) - @((context as Nhom_dh_khoi)?.mo_ta)</span>
+        </ValueTemplate>
+    </DropDownListTemplates>
+    <DropDownListEvents TValue="int" TItem="@Nhom_dh_khoi" ValueChange="ValueChange"></DropDownListEvents>
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<int, Nhom_dh_khoi> cb;
+    private List<Nhom_dh_khoi> Data = new List<Nhom_dh_khoi>();
+    [Parameter]
+    public int Index { get; set; }
+    [Parameter]
+    public EventCallback<int[]> OnDataSent { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "400px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int Value { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+
+    [Inject]
+    public Nhom_dhkService NhomDhkService { get; set; }
+
+    private async Task ValueChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, Nhom_dh_khoi> args)
+    {
+        Value = args.Value;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Nhom_dhkService.GetNhomDhkAsync();
+        if (result.isThanhCong)
+        {
+            Data = result.Data;
+        }
+        else
+        {
+            Console.WriteLine("Error fetching data: " + result.ThongBao);
+        }
+    }
+
+    public void SetFocus()
+    {
+        cb.FocusIn();
+    }
+}

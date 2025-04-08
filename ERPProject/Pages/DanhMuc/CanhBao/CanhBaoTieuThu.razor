@@ -1,0 +1,211 @@
+﻿@page "/canhbao_tieuthu"
+@using DAO.Models.DanhMuc.CanhBao
+@using DAO.Services.XuatExcel;
+@using DAO.ViewModel;
+@using ERPProject.Shared.Combobox;
+@inherits CanhBaoTieuThuBase
+@inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
+<style type="text/css">
+    #gdv > div.e-gridcontent > div {
+        max-height: calc(100vh - 185px) !important;
+    }
+
+
+    .scrollable-table {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+
+    .heading-col {
+        background-color: #00676B;
+        color: #fff;
+        text-align: center;
+        border: 1px solid #333;
+    }
+
+    .row-style {
+        border: 1px solid #333;
+        text-align: center;
+    }
+
+    .ml {
+        margin-left: 15px;
+    }
+
+    .e-rowcell.e-attr {
+        position: sticky;
+        top: 0;
+        left: 0;
+        border-right: 0.5px solid #DEE2E6;
+        border-left: 0.5px solid #DEE2E6;
+    }
+
+    .e-columnheader:first-child .e-headercell:nth-child(2) {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+    @@keyframes blink-tieuthu {
+    0%, 100% {
+        background-color: #ffe0b2;
+    }
+    50% {
+        background-color: #e65100;
+    }
+}
+
+.e-grid .e-row.blink-tieuthu .e-rowcell {
+    animation: blink-tieuthu 2s ease-in-out infinite !important;
+    border-left: 4px solid #e65100 !important;
+    font-weight: bold !important;
+}
+
+
+    .e-row:nth-of-type(odd) .e-rowcell.e-attr {
+        background: #F9F9F9;
+    }
+
+    .e-row:nth-of-type(even) .e-rowcell.e-attr {
+        background: white;
+    }
+
+    .e-multiselect {
+        margin-right: 5px;
+    }
+
+    .e-grid .e-summaryrow .e-summarycell {
+        width: 1% !important;
+    }
+
+    .e-grid.sf-grid .e-table .e-summaryrow td:nth-child(2) {
+        width: 80% !important;
+    }
+
+    tfoot > tr td:nth-child(2) {
+        width: 80% !important;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px 0;
+    }
+
+    .col {
+        flex: 1;
+        min-width: 300px;
+        padding-bottom: 5px;
+    }
+
+    .title {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .warning-icon {
+        color: red;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+</style>
+
+<BodyCard>
+    <SfToolbar>
+        <ToolbarItems>
+            <div class="row">
+                <div class="col">
+                    <span class="title">Chọn chi nhánh:</span>
+                    <CbMultiChiNhanh @ref="CbChiNhanh" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"></CbMultiChiNhanh>
+                </div>
+                <div class="col">
+                    <span class="title">Chọn Trạm:</span>
+                    <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%" Data="prcTrams" OnDataSent="ValueChangeHandler1"></CbMultiTram>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="title">Từ ngày</span>
+                    <SfDatePicker TValue="DateTime" @bind-Value="StartDate" Format="dd/MM/yyyy" Width="300px"></SfDatePicker>
+                </div>
+                <div class="col">
+                    <span class="title">Đến ngày</span>
+                    <SfDatePicker TValue="DateTime" @bind-Value="EndDate" Format="dd/MM/yyyy" Width="300px"></SfDatePicker>
+                </div>
+            </div>
+            <div class="col">
+                <ToolbarItem Type="ItemType.Button">
+                    <Template>
+                        <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
+                    </Template>
+                </ToolbarItem>
+                <ToolbarItem Type="ItemType.Separator" />
+                <ToolbarItem Type="ItemType.Button">
+                    <Template>
+                        <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel">Xuất excel</SfButton>
+                    </Template>
+                </ToolbarItem>
+            </div>
+        </ToolbarItems>
+    </SfToolbar>
+
+   @* <SfGrid DataSource="@data"
+            @ref="gdv"
+            AllowPaging="true"
+            EditSettings="@editSettings"
+            Toolbar="@Toolbar"
+            OnActionBegin="OnActionBegin">
+        <!-- ✅ thêm dòng này -->
+
+        <GridEvents RowDataBound="OnRowDataBound" TValue="CanhBaoTieuThuNgay" />
+        <GridPageSettings PageSize="12"></GridPageSettings>
+
+        <GridColumns>
+            <GridColumn HeaderText="" Width="40">
+                <Template Context="item">
+                    @GetCanhBaoIcon((CanhBaoTieuThuNgay)item)
+                </Template>
+            </GridColumn>
+
+            <GridColumn Field="IdTram" HeaderText="Mã Trạm" Width="100" TextAlign="TextAlign.Center" IsPrimaryKey="true" AllowEditing="false" />
+            <GridColumn Field="TenTram" HeaderText="Tên Trạm" Width="200" AllowEditing="false" />
+            <GridColumn Field="MucCanhBao" HeaderText="Mức cảnh báo (m³)" EditType="EditType.NumericEdit" Format="N2" TextAlign="TextAlign.Right" />
+            <GridColumn Field="TyLeCanhBao" HeaderText="Tỷ lệ cảnh báo (%)" EditType="EditType.NumericEdit" Format="N2" TextAlign="TextAlign.Right" />
+            <GridColumn Field="LuuLuongTuNgay" HeaderText="Lưu lượng từ ngày" Width="160" Format="N2" TextAlign="TextAlign.Right" AllowEditing="false" />
+            <GridColumn Field="LuuLuongDenNgay" HeaderText="Lưu lượng đến ngày" Width="160" Format="N2" TextAlign="TextAlign.Right" AllowEditing="false" />
+            <GridColumn Field="TieuThu" HeaderText="Tiêu thụ" Width="140" Format="N2" TextAlign="TextAlign.Right" AllowEditing="false" />
+        </GridColumns>
+    </SfGrid>*@
+    <SfGrid DataSource="@data"
+            @ref="gdv"
+            AllowPaging="true"
+            EditSettings="@editSettings"
+            Toolbar="@Toolbar">
+
+        <GridEvents RowDataBound="@OnRowDataBound"
+                    OnActionBegin="@OnActionBegin"
+                    TValue="CanhBaoTieuThuNgay" />
+
+        <GridPageSettings PageSize="12" />
+
+        <GridColumns>
+            <GridColumn HeaderText="" Width="40">
+                <Template Context="item">
+                    @GetCanhBaoIcon((CanhBaoTieuThuNgay)item)
+                </Template>
+            </GridColumn>
+            <GridColumn Field="IdTram" HeaderText="Mã Trạm" Width="100" TextAlign="TextAlign.Center" IsPrimaryKey="true" AllowEditing="false" />
+            <GridColumn Field="TenTram" HeaderText="Tên Trạm" Width="200" AllowEditing="false" />
+            <GridColumn Field="MucCanhBao" HeaderText="Mức cảnh báo (m³)" EditType="EditType.NumericEdit" Format="N2" TextAlign="TextAlign.Right" />
+            <GridColumn Field="TyLeCanhBao" HeaderText="Tỷ lệ cảnh báo (%)" EditType="EditType.NumericEdit" Format="N2" TextAlign="TextAlign.Right" />
+            <GridColumn Field="LuuLuongTuNgay" HeaderText="Lưu lượng từ ngày" Width="160" Format="N2" TextAlign="TextAlign.Right" AllowEditing="false" />
+            <GridColumn Field="LuuLuongDenNgay" HeaderText="Lưu lượng đến ngày" Width="160" Format="N2" TextAlign="TextAlign.Right" AllowEditing="false" />
+            <GridColumn Field="TieuThu" HeaderText="Tiêu thụ" Width="140" Format="N2" TextAlign="TextAlign.Right" AllowEditing="false" />
+        </GridColumns>
+    </SfGrid>
+
+</BodyCard>
+<LoadingPanel @ref="AppData.loadingPanel" />
+

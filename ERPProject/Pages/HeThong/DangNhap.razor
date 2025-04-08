@@ -2,10 +2,12 @@
 @layout LoginLayout
 @using DAO.Services.PhanQuyen;
 @using System.Security.Claims;
+@using Microsoft.AspNetCore.WebUtilities;
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IJSRuntime jsRunTime
+@inject NavigationManager UriHelper
 
 
 <link href="/assets/css/login.css" rel="stylesheet" />
@@ -65,8 +67,13 @@
     private string LoginMesssage { get; set; }
     private bool isDaDangNhap { get; set; } = false;
     private bool isTuDongDangNhap = false;
+    private string TK;
+    private string MK;
+
+
     [QueryStringParameter]
     public string url { get; set; }
+    public string key { get; set; }
     [Inject]
     AuthenticationStateProvider authenticationState { get; set; }
 
@@ -79,6 +86,40 @@
             await jsRunTime.InvokeVoidAsync("KhoiTaoDangNhap");
         }
     }
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("key", out var param))
+        {
+            var keyParts =  param.First();
+            var keyPartsArray = keyParts.Split("_");
+
+            if (keyPartsArray.Length == 2)
+            {
+                var TK = keyPartsArray[0];
+                var MK = keyPartsArray[1];
+                objModel.tendangnhap = TK;
+                objModel.matkhau = MK;
+                
+                Console.WriteLine($"Username (TK): {TK}");
+                Console.WriteLine($"Password (MK): {MK}");
+            }
+        }
+        Console.WriteLine(key);
+
+        Task.Run(() =>
+        {
+            InvokeAsync(async () =>
+            {
+                
+                await ValidateUser();   
+            });
+        });
+        
+        base.OnInitialized();
+    }
+    
     public override Task SetParametersAsync(ParameterView parameters)
     {
         this.SetParametersFromQueryString(NavigationManager);
@@ -90,6 +131,7 @@
         var rsModel = new DAO.Models.CommonModels.ResultModel<DAO.Models.PhanQuyen.ds_thanhvien>();
         //lay ds_thanhvien theo user, mk đăng nhập
         await Task.Run(() => { rsModel = ds_thanhvienService.GetByUserName(objModel.tendangnhap, objModel.matkhau); });
+        
         if (rsModel.isThanhCong)
         {
             ns = rsModel.Data;
@@ -108,6 +150,7 @@
             var _token = $"{ns.thanhvien_id}@MS@{ns.tendangnhap}@MS@{ns.matkhau}@MS@{isTuDongDangNhap}@MS@{DateTime.UtcNow.AddHours(7).Ticks}";
             await localStorage.SetItemAsync("Ten", ns.thanhvien_name);
             await localStorage.SetItemAsync("TenDangNhap", ns.tendangnhap);
+            await localStorage.SetItemAsync("MatKhau", ns.matkhau);
             await localStorage.SetItemAsync("Token", MsUtils.Encryption.EncryptString(_token));
             await authenticationState.GetAuthenticationStateAsync();
             if (url != null) NavigationManager.NavigateTo(System.Web.HttpUtility.UrlDecode(url));
@@ -120,7 +163,7 @@
             {
                 LoginMesssage = null;
                 StateHasChanged();
-                await Task.Delay(100);
+                await Task.Delay(10);
             }
 
             LoginMesssage = "Thông tin đăng nhập không chính xác !";

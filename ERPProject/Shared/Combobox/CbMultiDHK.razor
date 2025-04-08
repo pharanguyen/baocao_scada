@@ -1,0 +1,171 @@
+﻿@*@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using MsUtils;
+
+<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="DM_Dhk" Placeholder="Chọn đồng hồ khối" Mode="VisualMode.CheckBox" @bind-Value="Value" DataSource="@Data"
+               AllowFiltering="true"
+               ShowSelectAll="@selectAll"
+               Width="@Width"
+               PopupWidth="@PopupWidth">
+    <MultiSelectEvents TItem="DM_Dhk" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>
+    <MultiSelectFieldSettings Text="ten_dhk" Value="ms_dhk"></MultiSelectFieldSettings>
+</SfMultiSelect>
+
+@code {
+    public bool selectAll { get; set; } = true;
+    //SfMultiSelect<int[], DM_Dhk> MultiSelectObj;
+    SfMultiSelect<int[], DM_Dhk> MultiSelectObj;
+    private List<DM_Dhk> Data = new List<DM_Dhk>();
+
+    [Parameter]
+    public EventCallback<int[]> OnDataSent { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int[] Value { get; set; } = Array.Empty<int>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (GlobalValue.ms_chinhanh != null)
+            {
+                var result = await DmDhkService.GetDhkAsync();
+                if (result.isThanhCong)
+                {
+                    Data = result.Data;
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {result.ThongBao}");
+                }
+            }
+            else
+            {
+                var result = await DmDhkService.GetDhkAsync();
+                if (result.isThanhCong)
+                {
+                    Data = result.Data;
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {result.ThongBao}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error initializing data: {ex.Message}");
+        }
+    }
+
+    public async Task ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
+    {
+        if (args.Value != null)
+        {
+            Value = args.Value;
+            await SendDataToParent();
+        }
+    }
+
+    public async Task SendDataToParent()
+    {
+        if (OnDataSent.HasDelegate)
+        {
+            await OnDataSent.InvokeAsync(Value);
+        }
+    }
+}
+*@
+@using System.Collections.ObjectModel
+@using DAO.Services.DanhMuc
+@using DAO.Models.DanhMuc
+@using MsUtils
+
+<SfDropDownList @ref="DropDownObj"
+                TValue="int"
+                TItem="DM_Dhk"
+                Placeholder="Chọn đồng hồ khối"
+                DataSource="@Data"
+                AllowFiltering="true"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                @bind-Value="SelectedValue"
+                Change="ValueChangeHandler">
+
+    <DropDownListFieldSettings Text="ten_dhk" Value="ms_dhk" />
+</SfDropDownList>
+
+@code {
+    // Không cần selectAll trong DropDownList (chỉ MultiSelect mới dùng)
+    SfDropDownList<int, DM_Dhk> DropDownObj;
+    private List<DM_Dhk> Data = new();
+
+    // Truyền ra ngoài vẫn là mảng int[] để tương thích với các chỗ gọi cũ
+    [Parameter]
+    public EventCallback<int[]> OnDataSent { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int[] Value { get; set; } = Array.Empty<int>();
+
+    private int SelectedValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await DmDhkService.GetDhkAsync();
+            if (result.isThanhCong)
+            {
+                Data = result.Data;
+
+                if (Value.Length > 0 && Data.Any(x => (int)x.ms_dhk == Value[0]))
+                {
+                    SelectedValue = Value[0];
+                }
+                else if (Data.Any())
+                {
+                    SelectedValue = (int)Data.First().ms_dhk;
+                    Value = new[] { SelectedValue };
+                    await SendDataToParent();
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error: {result.ThongBao}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error initializing data: {ex.Message}");
+        }
+    }
+
+    public async Task ValueChangeHandler(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DM_Dhk> args)
+    {
+        SelectedValue = args.Value;
+        Value = new[] { SelectedValue };
+        await SendDataToParent();
+    }
+
+
+    public async Task SendDataToParent()
+    {
+        if (OnDataSent.HasDelegate)
+        {
+            await OnDataSent.InvokeAsync(Value);
+        }
+    }
+}

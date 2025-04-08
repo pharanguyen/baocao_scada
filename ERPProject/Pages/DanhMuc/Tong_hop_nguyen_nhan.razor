@@ -1,0 +1,127 @@
+﻿@page "/su-co-scada"
+@using DAO.Models.DanhMuc.SuCoOngVo
+@using ERPProject.Shared.Combobox
+@inherits Tong_hop_nguyen_nhanBase
+
+<div class="card m-3 p-3">
+    <h5>Thông tin sự cố SCADA</h5>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Đồng hồ khối</label>
+            <CbMultiDHK @ref="CbDhk"
+                        Width="100%"
+                        PopupWidth="300px"
+                        OnDataSent="ValueChangeHandlerDhk" />          
+        </div>
+        <div class="col-md-4">
+            <label>Tên TQL</label>
+            <input class="form-control" @bind="TenTQL" />
+        </div>
+        <div class="col-md-4">
+            <label>Thông tin sự cố</label>
+            <input class="form-control" @bind="ThongTinSuCo" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Ngày xảy ra</label>
+            <SfDatePicker @bind-Value="NgayXayRa" Format="dd/MM/yyyy" />
+        </div>
+        <div class="col-md-4">
+            <label>Ngày kiểm tra</label>
+            <SfDatePicker @bind-Value="NgayKiemTra" Format="dd/MM/yyyy" />
+        </div>
+        <div class="col-md-4">
+            <label>Ngày hoàn thành</label>
+            <SfDatePicker @bind-Value="NgayHoanThanh" Format="dd/MM/yyyy" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Xử lý QL địa bàn</label>
+            <input class="form-control" @bind="XuLyQLDiaBan" />
+        </div>
+        <div class="col-md-4">
+            <label>Xử lý CNTT</label>
+            <input class="form-control" @bind="XuLyCNTT" />
+        </div>
+        <div class="col-md-4">
+            <label>Xử lý XNDH</label>
+            <input class="form-control" @bind="XuLyXNDH" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Kết quả</label>
+            <input class="form-control" @bind="KetQua" />
+        </div>
+        <div class="col-md-4">
+            <label>Nguyên nhân</label>
+            <input class="form-control" @bind="NguyenNhan" />
+        </div>
+        <div class="col-md-4">
+            <label>Chỉ số ĐH</label>
+            <input class="form-control" @bind="ChiSo_DH" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Chỉ số HT</label>
+            <input class="form-control" @bind="ChiSo_HT" />
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <SfButton CssClass="e-primary" @onclick="OnSave">Lưu</SfButton>
+        <SfButton CssClass="e-danger ml-2" @onclick="ClearFields">Hủy</SfButton>
+    </div>
+</div>
+
+<div class="card m-3 p-3">
+    <div class="row">
+        <div class="col-md-3">
+            <label>Từ ngày</label>
+            <SfDatePicker @bind-Value="TuNgay" Format="dd/MM/yyyy" />
+        </div>
+        <div class="col-md-3">
+            <label>Đến ngày</label>
+            <SfDatePicker @bind-Value="DenNgay" Format="dd/MM/yyyy" />
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+            <SfButton CssClass="e-success" IconCss="e-icons e-search" @onclick="LoadData">Xem dữ liệu</SfButton>
+            <SfButton CssClass="e-info ml-2" IconCss="e-icons e-export-excel" @onclick="onXuatExcel">Xuất Excel</SfButton>
+        </div>
+    </div>
+</div>
+
+<SfGrid @ref="gdv" DataSource="@listSuCo" AllowPaging="true" PageSettings="@(new() { PageSize = 10 })" AllowExcelExport="true">
+    <GridColumns>
+        <GridColumn Field="Id" HeaderText="ID" Width="80" TextAlign="TextAlign.Center" />
+        <GridColumn Field="TenDHK" HeaderText="Đồng hồ khối" />
+        <GridColumn Field="TenTQL" HeaderText="TQL" />
+        <GridColumn Field="ThongTinSuCo" HeaderText="Thông tin sự cố" />
+        <GridColumn Field="NgayXayRa" HeaderText="Ngày xảy ra" Format="dd/MM/yyyy" />
+        <GridColumn Field="NgayKiemTra" HeaderText="Ngày kiểm tra" Format="dd/MM/yyyy" />
+        <GridColumn HeaderText="Đơn vị Khắc phục" TextAlign="TextAlign.Center">
+            <GridColumns>
+                <GridColumn Field="XuLy_QLDiaBan" HeaderText="QL địa bàn" />
+                <GridColumn Field="XuLy_CNTT" HeaderText="CNTT" />
+                <GridColumn Field="XuLy_XNDH" HeaderText="XNDH" />
+            </GridColumns>
+        </GridColumn>
+        <GridColumn Field="NgayHoanThanh" HeaderText="Hoàn thành" Format="dd/MM/yyyy" />
+        <GridColumn Field="KetQua" HeaderText="Kết quả" />
+        <GridColumn Field="NguyenNhan" HeaderText="Nguyên nhân" />
+        <GridColumn HeaderText="Dữ liệu sau khắc phục" TextAlign="TextAlign.Center">
+            <GridColumns>
+                <GridColumn Field="ChiSo_DH" HeaderText="Chỉ số ĐH" />
+                <GridColumn Field="ChiSo_HT" HeaderText="Chỉ số HT" />
+            </GridColumns>
+        </GridColumn>
+        <GridColumn HeaderText="Chức năng" Width="150">
+            <Template Context="data">
+                @{
+                    var item = (SuCoScadaViewModel)data;
+                }
+                <SfButton CssClass="e-flat e-primary" @onclick="() => onCapNhat(item.Id)">Sửa</SfButton>
+                <SfButton CssClass="e-flat e-danger ml-2" @onclick="() => onXoa(item.Id)">Xóa</SfButton>
+            </Template>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>

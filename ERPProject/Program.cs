@@ -8,6 +8,7 @@ using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Popups;
 using ERP.Libs;
 using Microsoft.AspNetCore.Components.Authorization;
+using DAO.Services.DanhMuc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,11 +22,19 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<ToastService>(); 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AppDataScoped>();
+builder.Services.AddScoped<Nhom_dhkService>();
+
 builder.Services.AddScoped<SfDialogService>();
+//builder.Services.AddScoped<NhomDhkService>();
+
 builder.Services.AddTransient<AppUser>();
 
 
 DAO.SqlConnectString.init(builder.Configuration.GetSection("ConnectionStrings")[builder.Configuration.GetSection("ConnectionStrings")["Type"]]);
+DAO.SqlConnectString2.init(builder.Configuration.GetSection("ConnectionStrings2")[builder.Configuration.GetSection("ConnectionStrings2")["Type"]]);
+DAO.SqlConnectString3.init(builder.Configuration.GetSection("ConnectionStrings3")[builder.Configuration.GetSection("ConnectionStrings3")["Type"]]);
+DAO.SqlConnectString4.init(builder.Configuration.GetSection("ConnectionStrings4")[builder.Configuration.GetSection("ConnectionStrings4")["Type"]]);
+
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(builder.Configuration.GetSection("SyncfusionConfig")["LicenseKey"]);
 var app = builder.Build();
 

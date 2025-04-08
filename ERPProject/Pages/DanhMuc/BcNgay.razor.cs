@@ -102,13 +102,22 @@ namespace ERPProject.Pages.DanhMuc
         }
         protected async void onTaiLai()
         {
-           // ListSum = new List<ChiTietViewModel>();
-
-            AppData.loadingPanel.show();
+            // ListSum = new List<ChiTietViewModel>();
+         
+            
+           
             int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
-            int[] Id_Tram = CbTram.Value ?? new int[0];
-            Id_ThongSo = CbThongSo.Value ?? new int[0];
+            if (Id_ChiNhanh == null || Id_ChiNhanh.Count() == 0)
+            {
+               // 
+                toastService.ShowDanger("Vui Long chọn chi nhánh");
+                return ;
+            }
 
+            // int[] Id_ChiNhanh = CbChiNhanh.Value ?? new int[0];
+            int[] Id_Tram = CbTram.Value ?? new int[0];
+             Id_ThongSo = CbThongSo.Value ?? new int[0];
+            AppData.loadingPanel.show();
             var rsModel = new ResultModel<List<prc_Nhat_Ky_Ngay>>();
             await Task.Run(() => { rsModel = NhatKyNgayService.Get_prc_Nhat_Ky_Ngay(string.Join(',', Id_ChiNhanh) , string.Join(',', Id_Tram), string.Join(',', Id_ThongSo)); });
             if (rsModel.isThanhCong)
@@ -116,23 +125,14 @@ namespace ERPProject.Pages.DanhMuc
                 ListNhatKyNgay = rsModel.Data;
                 if (ListNhatKyNgay != null)
                 {
-                    if(CbThoiGian.Value == 1)
+                    if (CbThoiGian.Value == 2)
                     {
-                        var listNK = ListNhatKyNgay.GroupBy(x => x.Thoi_Gian).OrderBy(group => group.Key).ToList();
-                        data = new List<BaoCaoNgayViewModel>();
-                        var i = 0;
-                        foreach (var item in listNK)
-                        {
-                            i++;
-                            var thongsotong = new BaoCaoNgayViewModel();
-                            thongsotong.TT = i;
-                            thongsotong.ThoiGian = item.Key;
-                            data.Add(thongsotong);
-                        }
-                    }
-                    if(CbThoiGian.Value == 2)
-                    {
-                        var listNK = ListNhatKyNgay.Where(x => x.Thoi_Gian.Minute == 0).GroupBy(x => x.Thoi_Gian).OrderByDescending(group => group.Key).ToList();
+                        var listNK = ListNhatKyNgay
+                            .Where(x => x.Thoi_Gian.Minute == 0)
+                            .GroupBy(x => x.Thoi_Gian)
+                            .OrderBy(group => group.Key)
+                            .ToList();
+
                         data = new List<BaoCaoNgayViewModel>();
                         var i = 0;
                         foreach (var item in listNK)
@@ -147,7 +147,7 @@ namespace ERPProject.Pages.DanhMuc
                     if (CbThoiGian.Value == 3)
                     {
                         var listNK = ListNhatKyNgay
-                            .Where(x => x.Thoi_Gian.Minute == 0)
+                            .Where(x => x.Thoi_Gian.Minute % 5 == 0)
                             .GroupBy(x => x.Thoi_Gian)
                             .OrderByDescending(group => group.Key)
                             .ToList();
@@ -155,8 +155,9 @@ namespace ERPProject.Pages.DanhMuc
                         data = new List<BaoCaoNgayViewModel>();
                         var i = 0;
 
-                        // Sắp xếp danh sách listNK theo thời gian giảm dần và chọn phần tử đầu tiên
-                        var latestThoiGian = listNK.OrderByDescending(item => item.Key).FirstOrDefault();
+                        // Get the latest (last) element from the listNK that is before the current time
+                        var currentTime = DateTime.Now;
+                        var latestThoiGian = listNK.FirstOrDefault(item => item.Key <= currentTime);
 
                         if (latestThoiGian != null)
                         {
@@ -166,6 +167,28 @@ namespace ERPProject.Pages.DanhMuc
                             data.Add(thongsotong);
                         }
                     }
+
+
+                    else if (CbThoiGian.Value == 1)
+                    {
+                        var listNK = ListNhatKyNgay
+                            .Where(x => x.Thoi_Gian.Minute % 5 == 0)
+                            .GroupBy(x => x.Thoi_Gian)
+                            .OrderBy(group => group.Key)
+                            .ToList();
+
+                        data = new List<BaoCaoNgayViewModel>();
+                        var i = 0;
+                        foreach (var item in listNK)
+                        {
+                            i++;
+                            var thongsotong = new BaoCaoNgayViewModel();
+                            thongsotong.TT = i;
+                            thongsotong.ThoiGian = item.Key;
+                            data.Add(thongsotong);
+                        }
+                    }
+
 
                 }
                 if (ListNhatKyNgay.Count == 0)
@@ -184,10 +207,12 @@ namespace ERPProject.Pages.DanhMuc
             {
                 ListSum.Clear();
             }
+
            
            // gdv.Refresh();
             StateHasChanged();
         }
+
 
         public void PaginationData(PagerItemClickEventArgs args)
         {

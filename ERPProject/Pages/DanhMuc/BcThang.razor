@@ -56,12 +56,40 @@
     .e-multiselect {
         margin-right: 5px;
     }
+
+    .e-grid .e-summaryrow .e-summarycell {
+        width: 1% !important;
+    }
+
+    .e-grid.sf-grid .e-table .e-summaryrow td:nth-child(2) {
+        width: 80% !important;
+    }
+    tfoot > tr td:nth-child(2){
+        width: 80% !important;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px 0;
+    }
+
+    .col {
+        flex: 1; /* Mỗi cột sẽ chiếm đầy đủ không gian có thể */
+        min-width: 300px; /* Đảm bảo rằng nó không nhỏ hơn 300px */
+        padding-bottom: 5px;
+    }
+
+    .title {
+        display: block;
+        margin-bottom: 5px;
+    }
 </style>
 
 <BodyCard>
     <SfToolbar>
         <ToolbarItems>
-            <ToolbarItem Type="ItemType.Button">
+           @* <ToolbarItem Type="ItemType.Button">
                 <Template>
                     <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
                 </Template>
@@ -73,14 +101,60 @@
                 <Template>
                     <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
                 </Template>
-            </ToolbarItem>
-            <CbMultiChiNhanh @ref= "CbChiNhanh" Width="300px"  PopupWidth="100%" OnDataSent="ValueChangeHandler"> </CbMultiChiNhanh>
-            <CbMultiTram @ref=" CbTram" Width="300px" PopupWidth="100%" Data="prcTrams" OnDataSent="ValueChangeHandler1"></CbMultiTram>
-            <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%" Data1="prcThongSos"></CbMultiThongSo>
+            </ToolbarItem>*@
+            <div class="row">
+                <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Chọn chi nhánh:</span>
+                    <CbMultiChiNhanh @ref="CbChiNhanh" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"></CbMultiChiNhanh>
+                </div>
+                <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Chọn Trạm:</span>
+                    <CbMultiTram @ref="CbTram" Width="300px" PopupWidth="100%" Data="prcTrams" OnDataSent="ValueChangeHandler1"></CbMultiTram>
+                </div>
+                <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Chọn thông số:</span>
+                    <CbMultiThongSo @ref="CbThongSo" Width="300px" PopupWidth="100%" Data1="prcThongSos"></CbMultiThongSo>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="padding-bottom: 10px;">
+
+                    <span class="title">Từ ngày</span>
+                        <SfDatePicker TValue="DateTime" @bind-Value="StartDate" Format="dd/MM/yyyy" Width="300px"></SfDatePicker>
+
+                    </div>
+
+                     <div class="col" style="padding-bottom: 10px;">
+                    <span class="title">Đến ngày</span>
+                        <SfDatePicker TValue="DateTime" @bind-Value="EndDate" Format="dd/MM/yyyy" Width="300px"></SfDatePicker>
+                        
+                    </div>
+                <div class="col" style="padding-bottom: 10px;">
+
+                    <span class="title">Chọn thời gian</span>
+                    <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="300px" Value="Index"></CbTime>
+
+                </div>
+                </div>
+
+                <div class="col">
+                    <ToolbarItem Type="ItemType.Button">
+                        <Template>
+                            <SfButton CssClass="e-flat" IconCss="icon-loop3" @onclick="onTaiLai">Xem dữ liệu</SfButton>
+                        </Template>
+                    </ToolbarItem>
+                    <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                    <ToolbarItem Type="ItemType.Button">
+                        <Template>
+                            <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
+                        </Template>
+                    </ToolbarItem>
+                </div>
+           
 
 
         </ToolbarItems>
-        <div class="d-flex align-items-center">
+       @* <div class="d-flex align-items-center">
             <div class="ml mt-2 mb-1">
                 <span>Từ ngày</span>
                 <SfDatePicker TValue="DateTime" @bind-Value="StartDate" Format="dd/MM/yyyy" Width="200px"></SfDatePicker>
@@ -93,13 +167,14 @@
                 <CbTime @ref="CbThoiGian" PopupWidth="100%" Width="220px" Value="Index"></CbTime>
             </div>
         </div>
-
+*@
     </SfToolbar>
     
-    <SfGrid DataSource="@data" AllowResizing="true" Width="100%" Height="500">
+    <SfGrid DataSource="@data" AllowResizing="false"Width="1200" Height="500">
         <GridColumns>
-            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="30"></GridColumn>
-            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="80" CustomAttributes=@(new Dictionary<string,object>() {{ "class", "e-attr" }} )></GridColumn>
+            <GridColumn Field="TT" TextAlign="TextAlign.Center" HeaderText="TT" Width="50" Freeze="FreezeDirection.Left"></GridColumn>
+            <GridColumn Field="ThoiGian" Format="dd/MM/yyyy" TextAlign="TextAlign.Center" HeaderText="Ngày" Width="120" CustomAttributes=@(new Dictionary<string, object>() { { "class", "e-attr" } })></GridColumn>
+            <GridColumn Field="ThoiGian" Format="HH:mm:ss" TextAlign="TextAlign.Center" HeaderText="Thời gian" Width="120" CustomAttributes=@(new Dictionary<string, object>() { { "class", "e-attr" } })></GridColumn>
             @if (ListNhatKyThang != null)
             {
                 var listTram = ListNhatKyThang.GroupBy(x => x.TenTram).Distinct();
@@ -119,58 +194,324 @@
                                 <GridColumn HeaderText="@item.TenThongSo" TextAlign="TextAlign.Center" Width="150">
                                     <Template>
                                         @{
+                                            string tenTramThongSo = list.Key + item.TenThongSo;
+                                            int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
                                             var cx = context as BaoCaoThangViewModel;
                                             var gt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
                                             if (gt != null)
                                             {
                                                 <div>@gt.Gia_Tri</div>
+
+                                                decimal giaTri = decimal.Parse(@gt.Gia_Tri); //decimal.Parse(item.Gia_Tri)
+
+                                                if (index >= 0)
+                                                {
+                                                    ListSum[index].TongGiaTriThongSo += giaTri;
+                                                    ListSum[index].CountGiaTriThongSo++;
+                                                    ListSum[index].AvrGiaTriThongSo = Math.Round(ListSum[index].TongGiaTriThongSo / ListSum[index].CountGiaTriThongSo, 1);
+
+                                                    if (ListSum[index].MinGiaTriThongSo > giaTri)
+                                                    {
+                                                        ListSum[index].MinGiaTriThongSo = giaTri;
+                                                    }
+                                                    if (ListSum[index].MaxGiaTriThongSo < giaTri)
+                                                    {
+                                                        ListSum[index].MaxGiaTriThongSo = giaTri;
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    ListSum.Add(new ChiTietViewModel
+                                            {
+                                                TenThongSo = tenTramThongSo,
+                                                TongGiaTriThongSo = giaTri,
+                                                MinGiaTriThongSo = giaTri,
+                                                MaxGiaTriThongSo = giaTri,
+                                                AvrGiaTriThongSo = giaTri,
+                                            });
+                                                }
                                             }
                                             else
                                             {
                                                 <div>--</div>
                                             }
+
                                         }
                                     </Template>
                                 </GridColumn>
-                                @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3"
-                               || item.TenThongSo == "TỔNG LƯU LƯỢNG 4 ||" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
+                                @if (item.TenThongSo == "TỔNG LƯU LƯỢNG 1" || item.TenThongSo == "TỔNG LƯU LƯỢNG 2" || item.TenThongSo == "TỔNG LƯU LƯỢNG 3" || item.TenThongSo == "TỔNG LƯU LƯỢNG 4" || item.TenThongSo == "TỔNG LƯU LƯỢNG 5" || item.TenThongSo == "ÁP LỰC 2"
                                )
                                 {
                                     <GridColumn HeaderText="Tiêu thụ" TextAlign="TextAlign.Center" Width="150">
                                         <Template>
                                             @{
+                                                string tenTramTieuThu = list.Key + item.TenThongSo + "Tiêu thụ";
+                                                string tenTramThongSo = list.Key + item.TenThongSo;
+                                                int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
                                                 var cx = context as BaoCaoThangViewModel;
-                                                var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
-                                                var fiveMinutesLaterGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(0) && x.Id_ThongSo == item.Id_ThongSo);
-                                                var fiveMinutesBeforeGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
 
-                                                if (currentGt != null && fiveMinutesLaterGt != null && fiveMinutesBeforeGt != null)
+                                                if (CbThoiGian.Value == 1)
                                                 {
-                                                    decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
-                                                    decimal fiveMinutesLaterGtValue = decimal.Parse(fiveMinutesLaterGt.Gia_Tri);
-                                                    decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
-                                                    decimal difference = (fiveMinutesLaterGtValue) - (fiveMinutesBeforeGtValue);
-                                                    decimal absvalue = Math.Abs(difference);
-                                                    <div>@absvalue</div>
-                                                }
-                                                else
+                                                    var currentGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian && x.Id_ThongSo == item.Id_ThongSo);
+                                                    var fiveMinutesBeforeGt = list.FirstOrDefault(x => x.Thoi_Gian == cx.ThoiGian.AddMinutes(-5) && x.Id_ThongSo == item.Id_ThongSo);
+
+                                                    if (currentGt != null && fiveMinutesBeforeGt != null)
+                                                    {
+                                                        decimal currentGtValue = decimal.Parse(currentGt.Gia_Tri);
+                                                        decimal fiveMinutesBeforeGtValue = decimal.Parse(fiveMinutesBeforeGt.Gia_Tri);
+                                                        decimal difference = currentGtValue - fiveMinutesBeforeGtValue;
+
+                                                        <div>@difference</div>
+
+                                                        if (index >= 0)
+                                                        {
+                                                            ListSum[index].TongGiaTriTieuThu += difference;
+                                                            ListSum[index].CountGiaTriTieuThu++;
+                                                            ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+
+                                                            if (ListSum[index].MinGiaTriTieuThu > difference)
+                                                            {
+                                                                ListSum[index].MinGiaTriTieuThu = difference;
+                                                            }
+                                                            if (ListSum[index].MaxGiaTriTieuThu < difference)
+                                                            {
+                                                                ListSum[index].MaxGiaTriTieuThu = difference;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ListSum.Add(new ChiTietViewModel
                                                 {
-                                                    <div>--</div>
+                                                    TenThongSo = tenTramTieuThu,
+                                                    TongGiaTriTieuThu = difference,
+                                                    MinGiaTriTieuThu = difference,
+                                                    MaxGiaTriTieuThu = difference,
+                                                    AvrGiaTriTieuThu = difference,
+                                                });
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div>--</div>
+                                                    }
                                                 }
+                                                if (CbThoiGian.Value == 2)
+                                                {
+                                                    var startDate = StartDate.Date;  // Assuming StartDate is a DateTime property bound to your date picker
+
+                                                    if (cx.ThoiGian.Date == startDate && cx.ThoiGian.Hour == 0 && cx.ThoiGian.Minute == 0)
+                                                    {
+                                                        <div>--</div>
+                                                        // Display "--" for the first hour of the start date
+                                                    }
+                                                    else
+                                                    {
+                                                        var currentHourGt = list.FirstOrDefault(x => x.Thoi_Gian.Date == cx.ThoiGian.Date && x.Thoi_Gian.Hour == cx.ThoiGian.Hour && x.Thoi_Gian.Minute == 0 && x.Id_ThongSo == item.Id_ThongSo);
+                                                        var previousHourGt = list.FirstOrDefault(x => x.Thoi_Gian.Date == cx.ThoiGian.AddHours(-1).Date && x.Thoi_Gian.Hour == cx.ThoiGian.AddHours(-1).Hour && x.Thoi_Gian.Minute == 0 && x.Id_ThongSo == item.Id_ThongSo);
+
+                                                        if (currentHourGt != null && previousHourGt != null)
+                                                        {
+                                                            decimal currentHourGtValue = decimal.Parse(currentHourGt.Gia_Tri);
+                                                            decimal previousHourGtValue = decimal.Parse(previousHourGt.Gia_Tri);
+                                                            decimal difference = currentHourGtValue - previousHourGtValue;
+
+                                                            <div>@difference</div>
+
+                                                            if (index >= 0)
+                                                            {
+                                                                ListSum[index].TongGiaTriTieuThu += difference;
+                                                                ListSum[index].CountGiaTriTieuThu++;
+                                                                ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+
+                                                                if (ListSum[index].MinGiaTriTieuThu > difference)
+                                                                {
+                                                                    ListSum[index].MinGiaTriTieuThu = difference;
+                                                                }
+                                                                if (ListSum[index].MaxGiaTriTieuThu < difference)
+                                                                {
+                                                                    ListSum[index].MaxGiaTriTieuThu = difference;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                ListSum.Add(new ChiTietViewModel
+                                                    {
+                                                        TenThongSo = tenTramTieuThu,
+                                                        TongGiaTriTieuThu = difference,
+                                                        MinGiaTriTieuThu = difference,
+                                                        MaxGiaTriTieuThu = difference,
+                                                        AvrGiaTriTieuThu = difference,
+                                                    });
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div>--</div>
+                                                        }
+                                                    }
+                                                }
+
+
+                                                if (CbThoiGian.Value == 3)
+                                                {
+                                                    var startDate = StartDate.Date;  // Assuming StartDate is a DateTime property bound to your date picker
+
+                                                    if (cx.ThoiGian.Date == startDate && cx.ThoiGian.Hour == 0 && cx.ThoiGian.Minute == 0)
+                                                    {
+                                                        <div>--</div>
+                                                        // Display "--" for the first hour of the start date
+                                                    }
+                                                    else
+                                                    {
+                                                        var currentHourGt = list.FirstOrDefault(x => x.Thoi_Gian.Date == cx.ThoiGian.Date && x.Thoi_Gian.Hour == 23 && x.Thoi_Gian.Minute == 55 && x.Id_ThongSo == item.Id_ThongSo);
+                                                        var previousHourGt = list.FirstOrDefault(x => x.Thoi_Gian.Date == cx.ThoiGian.AddDays(-1).Date && x.Thoi_Gian.Hour == 23 && x.Thoi_Gian.Minute == 55 && x.Id_ThongSo == item.Id_ThongSo);
+
+                                                        if (currentHourGt != null && previousHourGt != null)
+                                                        {
+                                                            decimal currentHourGtValue = decimal.Parse(currentHourGt.Gia_Tri);
+                                                            decimal previousHourGtValue = decimal.Parse(previousHourGt.Gia_Tri);
+                                                            decimal difference = currentHourGtValue - previousHourGtValue;
+
+                                                            <div>@difference</div>
+
+                                                            if (index >= 0)
+                                                            {
+                                                                ListSum[index].TongGiaTriTieuThu += difference;
+                                                                ListSum[index].CountGiaTriTieuThu++;
+                                                                ListSum[index].AvrGiaTriTieuThu = Math.Round(ListSum[index].TongGiaTriTieuThu / ListSum[index].CountGiaTriTieuThu, 1);
+
+                                                                if (ListSum[index].MinGiaTriTieuThu > difference)
+                                                                {
+                                                                    ListSum[index].MinGiaTriTieuThu = difference;
+                                                                }
+                                                                if (ListSum[index].MaxGiaTriTieuThu < difference)
+                                                                {
+                                                                    ListSum[index].MaxGiaTriTieuThu = difference;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                ListSum.Add(new ChiTietViewModel
+                                                    {
+                                                        TenThongSo = tenTramTieuThu,
+                                                        TongGiaTriTieuThu = difference,
+                                                        MinGiaTriTieuThu = difference,
+                                                        MaxGiaTriTieuThu = difference,
+                                                        AvrGiaTriTieuThu = difference,
+                                                    });
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div>--</div>
+                                                        }
+                                                    }
+                                                }
+
+
+
+
                                             }
                                         </Template>
                                     </GridColumn>
 
+
+                                }
+                                else
+                                {
+                                    string tenTramTieuThu = list.Key + item.TenThongSo + "Tiêu thụ";
+                                    string tenTramThongSo = list.Key + item.TenThongSo;
+                                    int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
+                                    if (index >= 0)
+                                    {
+                                        ListSum[index].MaxGiaTriTieuThu = -1;
+                                        ListSum[index].MinGiaTriTieuThu = -1;
+                                        ListSum[index].AvrGiaTriTieuThu = -1;
+
+                                    }
                                 }
                             }
+
+
 
                         </GridColumns>
                     </GridColumn>
                 }
             }
         </GridColumns>
-    </SfGrid>
+        <GridAggregates>
+            <GridAggregate>
+                <GridAggregateColumns>
+                    <GridAggregateColumn Field="TT" Type="AggregateType.Custom">
+                        <FooterTemplate>
+                            @{
+                                //var listTram = ListNhatKyNgay.GroupBy(x => x.TenTram).Distinct();
+                                //foreach (var item in items)
+                                //{
+                                //    string tenTramThongSo = list.Key + item.TenThongSo;
+                                //    int index = ListSum.FindIndex(x => x.TenThongSo == tenTramThongSo);
+                                //}
 
+
+                                <table class="table">
+                                    <tr>
+                                        <td style="width: 280px; min-width: 280px"> TB </td>
+                                        @foreach (var item in ListSum)
+                                        {
+                                            <td style="width: 150px; min-width: 150px;">@item.AvrGiaTriThongSo</td>
+                                            @if (item.AvrGiaTriTieuThu != -1)
+                                            {
+                                                <td style="width: 150px; min-width: 150px;text-align:center">@item.AvrGiaTriTieuThu</td>
+                                            }
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 280px; min-width: 280px "> TT </td>
+                                        @foreach (var item in ListSum)
+                                        {
+                                            <td style="width: 150px; min-width: 150px;">@item.MinGiaTriThongSo</td>
+                                            @if (item.MinGiaTriTieuThu != -1)
+                                            {
+                                                <td style="width: 150px; min-width: 150px;text-align:center;">@item.MinGiaTriTieuThu</td>
+                                            }
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 280px; min-width: 280px"> TĐ </td>
+                                        @foreach (var item in ListSum)
+                                        {
+                                            <td style="width: 150px; min-width: 150px;">@item.MaxGiaTriThongSo</td>
+                                            @if (item.MaxGiaTriTieuThu != -1)
+                                            {
+                                                <td style="width: 150px; min-width: 150px;text-align:center;">@item.MaxGiaTriTieuThu</td>
+                                            }
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td> Tổng </td>
+                                        @foreach (var item in ListSum)
+                                        {
+                                            <td style="width: 150px; min-width: 150px">_</td>
+                                            @if (item.TongGiaTriTieuThu > 0)
+                                            {
+                                                <td style="width: 150px; min-width: 150px;text-align:center">@item.TongGiaTriTieuThu</td>
+                                            }
+                                        }
+                                    </tr>
+                                </table>
+                                ListSum = new List<ChiTietViewModel>();
+                            }
+
+                        </FooterTemplate>
+                    </GridAggregateColumn>
+                </GridAggregateColumns>
+            </GridAggregate>
+        </GridAggregates>
+
+
+
+    </SfGrid>
 </BodyCard>
 @code
 {

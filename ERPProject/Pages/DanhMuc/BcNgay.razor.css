@@ -1,0 +1,6 @@
+﻿body {
+}
+
+::deep .e-grid .e-altrow {
+    background-color: red !important;
+}

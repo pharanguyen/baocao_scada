@@ -1,0 +1,186 @@
+﻿@page "/Tra_cuu_dhk"
+@using DAO.Models.DanhMuc
+
+<style>
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .form-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        flex: 1 1 calc(33.333% - 15px);
+        min-width: 200px;
+    }
+
+    .form-label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .data-table th, .data-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .data-table th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="main-container">
+    <h2>Tra cứu thông tin đồng hồ khối</h2>
+
+    <div class="form-container">
+        <div class="form-group">
+            <label class="form-label">Chi nhánh</label>
+            <select class="form-control" @bind="Branch">
+                <option value="">Tất cả</option>
+                @foreach (var branch in BranchList)
+                {
+                    <option value="@branch">@branch</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tên đồng hồ</label>
+            <input class="form-control" type="text" @bind="DeviceName" placeholder="Nhập tên đồng hồ" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tình trạng hoạt động</label>
+            <select class="form-control" @bind="Status">
+                <option value="">Tất cả</option>
+                <option value="Đang hoạt động">Đang hoạt động</option>
+                <option value="Không hoạt động">Không hoạt động</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" @onclick="Search">Tìm kiếm</button>
+        <button class="btn btn-secondary" @onclick="ResetFilters">Làm mới</button>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên đồng hồ</th>
+                <th>Cỡ đồng hồ</th>
+                <th>Seri</th>
+                <th>Địa chỉ</th>
+                <th>Lưu lượng tức thời</th>
+                <th>Chỉ số tích lũy</th>
+                <th>Áp lực hiện tại</th>
+                <th>Tình trạng</th>
+                <th>Lịch sử sửa chữa</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var device in FilteredDevices)
+            {
+                <tr>
+                    <td>@device.STT</td>
+                    <td>@device.DeviceName</td>
+                    <td>@device.Size</td>
+                    <td>@device.Serial</td>
+                    <td>@device.Address</td>
+                    <td>@device.InstantFlow</td>
+                    <td>@device.AccumulatedIndex</td>
+                    <td>@device.CurrentPressure</td>
+                    <td>@device.Status</td>
+                    <td>@device.RepairHistory</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private string Branch { get; set; }
+    private string DeviceName { get; set; }
+    private string Status { get; set; }
+
+    private List<string> BranchList { get; set; } = new List<string>
+    {
+        "Chi nhánh A",
+        "Chi nhánh B",
+        "Chi nhánh C"
+    };
+
+    private List<DeviceData> DeviceList { get; set; } = new List<DeviceData>
+    {
+        new DeviceData { STT = 1, DeviceName = "ĐH1", Size = "DN25", Serial = "12345", Address = "Địa chỉ 1", InstantFlow = "10 m³/h", AccumulatedIndex = "1000 m³", CurrentPressure = "2 bar", Status = "Đang hoạt động", RepairHistory = "Lịch sử 1" },
+        new DeviceData { STT = 2, DeviceName = "ĐH2", Size = "DN50", Serial = "67890", Address = "Địa chỉ 2", InstantFlow = "20 m³/h", AccumulatedIndex = "2000 m³", CurrentPressure = "3 bar", Status = "Không hoạt động", RepairHistory = "Lịch sử 2" }
+    };
+
+    private List<DeviceData> FilteredDevices { get; set; }
+
+    protected override void OnInitialized()
+    {
+        FilteredDevices = DeviceList;
+    }
+
+    private void Search()
+    {
+        FilteredDevices = DeviceList.Where(d =>
+            (string.IsNullOrEmpty(Branch) || d.Branch == Branch) &&
+            (string.IsNullOrEmpty(DeviceName) || d.DeviceName.Contains(DeviceName, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(Status) || d.Status == Status)).ToList();
+    }
+
+    private void ResetFilters()
+    {
+        Branch = string.Empty;
+        DeviceName = string.Empty;
+        Status = string.Empty;
+        FilteredDevices = DeviceList;
+    }
+
+    public class DeviceData
+    {
+        public int STT { get; set; }
+        public string DeviceName { get; set; }
+        public string Branch { get; set; }
+        public string Size { get; set; }
+        public string Serial { get; set; }
+        public string Address { get; set; }
+        public string InstantFlow { get; set; }
+        public string AccumulatedIndex { get; set; }
+        public string CurrentPressure { get; set; }
+        public string Status { get; set; }
+        public string RepairHistory { get; set; }
+    }
+}

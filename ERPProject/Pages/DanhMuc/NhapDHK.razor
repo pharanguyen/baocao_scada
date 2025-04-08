@@ -1,0 +1,140 @@
+﻿@page "/nhap-chiso-dhk"
+@using DAO.Models.DanhMuc
+@using DAO.Services.XuatExcel;
+@using DAO.ViewModel;
+@using ERPProject.Shared.Combobox;
+@inherits NhomDHKComponentBase
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
+
+<h3 class="text-center">NHẬP CHỈ SỐ ĐỒNG HỒ KHỐI</h3>
+
+<div class="container-fluid">
+    <!-- Filter Controls -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <span class="title">Chọn Nhóm:</span>
+            <CbNhomDHK @ref="CbNhomDhk" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"></CbNhomDHK>
+        </div>
+        <div class="col-md-2">
+            <label>Tháng:</label>
+            <input type="text" class="form-control" @bind="Thang" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Năm:</label>
+            <input type="text" class="form-control" @bind="Nam" readonly />
+        </div>
+        <div class="col-md-2">
+            <label>Giờ:</label>
+            <select @bind="SelectedGio" class="form-control">
+                @foreach (var gio in Gios)
+                {
+                    <option value="@gio">@gio</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label>Sắp xếp:</label>
+            <select @bind="SortOption" class="form-control">
+                <option value="asc">A -> Z</option>
+                <option value="desc">Z -> A</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Multi-select for DHK -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <span class="title">Chọn DHK:</span>
+            <CbMultiDHK @ref="CbMultiDHK" Width="300px" PopupWidth="100%" OnDataSent="ValueChangeHandler"></CbMultiDHK>
+            <!-- Placeholder for DHK multi-select -->
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <button class="btn btn-primary w-100" @onclick="LoadData">Tính toán dữ liệu hiện tại</button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-success w-100" @onclick="SaveToBAR">Lưu sang BAR</button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-secondary w-100" @onclick="ExportToExcel">Xuất Excel</button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-danger w-100" @onclick="CloseForm">Trở lại</button>
+        </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive" style="height: calc(100vh - 350px); overflow-y: auto;">
+                <table class="table table-striped table-bordered">
+                    <thead class="custom-header">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên ĐHK</th>
+                            <th>Ngày đọc</th>
+                            <th>Nhóm ĐHK</th>
+                            <th>Loại ĐHK</th>
+                            <th>Chỉ số cũ 1</th>
+                            <th>Chỉ số mới 1</th>
+                            <th>Số tiêu thụ 1</th>
+                            <th>Ngày đọc cũ 2</th>
+                            <th>Ngày đọc mới 2</th>
+                            <th>MS ĐHK</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (DhkData.Any())
+                        {
+                            @foreach (var item in DhkData)
+                            {
+                                <tr>
+                                    <td>@item.STT</td>
+                                    <td>@item.TenDHK</td>
+                                    <td>@item.NgayDoc</td>
+                                    <td>@item.NhomDHK</td>
+                                    <td>@item.LoaiDHK</td>
+                                    <td>@item.ChiSoCu1</td>
+                                    <td>@item.ChiSoMoi1</td>
+                                    <td>@item.SoTieuThu1</td>
+                                    <td>@item.NgayDocCu2</td>
+                                    <td>@item.NgayDocMoi2</td>
+                                    <td>@item.MSDHK</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="11" class="text-center">Không có dữ liệu</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-header th {
+        background-color: #005f5f;
+        color: white;
+        text-align: center;
+    }
+
+        .custom-header th:hover {
+            background-color: #007f7f;
+        }
+</style>
+
+@code {
+    
+
+    
+}

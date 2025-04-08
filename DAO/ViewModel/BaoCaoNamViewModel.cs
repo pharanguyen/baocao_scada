@@ -18,4 +18,5 @@ namespace DAO.ViewModel
         public int Total { get; set; }
         public ResultModel<List<prc_Nhat_Ky_Nam>> NhatKy { get; set; }
     }
+
 }

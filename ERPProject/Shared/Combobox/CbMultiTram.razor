@@ -1,4 +1,75 @@
-﻿@using System.Collections.ObjectModel;
+﻿@*@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using MsUtils;
+
+<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="prcTram" Placeholder="Chọn trạm"
+               Mode="VisualMode.CheckBox" @bind-Value="Value" DataSource="@DataWithDisplayText"
+               AllowFiltering="true" ShowSelectAll="@selectAll"
+               Width="@Width" PopupWidth="@PopupWidth">
+    <MultiSelectEvents TItem="prcTram" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>
+    <MultiSelectFieldSettings Text="DisplayText" Value="Id"></MultiSelectFieldSettings>
+</SfMultiSelect>
+
+@code {
+    public bool selectAll { get; set; } = true;
+    SfMultiSelect<int[], prcTram> MultiSelectObj;
+
+    [Parameter]
+    public List<prcTram> Data { get; set; } = new List<prcTram>();
+
+    [Parameter]
+    public EventCallback<int[]> OnDataSent { get; set; }
+    [Parameter]
+    public int[] selectedTram { get; set; }
+
+    [Parameter]
+    public string PopupWidth { get; set; } = "200px";
+
+    [Parameter]
+    public string Width { get; set; } = "100px";
+
+    [Parameter]
+    public int[] Value { get; set; } = new int[] { };
+
+    protected override void OnInitialized()
+    {
+        if (Data == null || Data.Count == 0)
+        {
+            Data = DmTramService.GetToComBobyIdTram(GlobalValue.ms_chinhanh).Data ?? new List<prcTram>();
+
+            // Add DisplayText property directly to the Data list
+            foreach (var item in Data)
+            {
+                item.DisplayText = $"{item.Id} - {item.Ten}";
+            }
+        }
+    }
+
+    public async Task ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
+    {
+        if (args.Value != null)
+        {
+            Value = args.Value;
+            selectedTram = Value;
+            await SendDataToParent();
+        }
+    }
+    public List<prcTram> DataWithDisplayText => Data.Select(x => new prcTram
+        {
+            Id = x.Id,
+            Ten = x.Ten,
+            DisplayText = $"{x.Id} - {x.Ten}" // Combines ID and Name
+        }).ToList();
+
+    public async Task SendDataToParent()
+    {
+        await OnDataSent.InvokeAsync(selectedTram);
+        StateHasChanged();
+    }
+}*@
+
+@using System.Collections.ObjectModel;
 @using DAO.Services.DanhMuc;
 @using DAO.Models.DanhMuc;
 @using MsUtils;
@@ -38,8 +109,8 @@
         //    Data = DmTramService.GetToComBobyIdTram(GlobalValue.ms_chinhanh).Data;
         //}
         //else
-        //{   
-           
+        //{
+
         //    Data = DmTramService.GetToComBobyIdTramAll().Data;
         //}
     }
@@ -55,9 +126,10 @@
         }
     }
     public async Task SendDataToParent()
-    {        
+    {
         await OnDataSent.InvokeAsync(selectedTram);
-        
+
         StateHasChanged();
     }
+
 }

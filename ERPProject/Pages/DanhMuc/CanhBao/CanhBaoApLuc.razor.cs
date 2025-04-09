@@ -109,16 +109,33 @@ namespace ERPProject.Pages.DanhMuc.CanhBao
             }
         }
 
+        //protected RenderFragment GetCanhBaoIcon(CanhBaoApLucViewModel item)
+        //{
+        //    return builder =>
+        //    {
+        //        bool isCanhBao = item.GiaTri < item.ApLucMin || item.GiaTri > item.ApLucMax;
+        //        if (isCanhBao)
+        //        {
+        //            builder.OpenElement(0, "span");
+        //            builder.AddAttribute(1, "class", "warning-icon");
+        //            builder.AddContent(2, "\u26A0");
+        //            builder.CloseElement();
+        //        }
+        //    };
+        //}
         protected RenderFragment GetCanhBaoIcon(CanhBaoApLucViewModel item)
         {
             return builder =>
             {
-                bool isCanhBao = item.GiaTri < item.ApLucMin || item.GiaTri > item.ApLucMax;
+                bool isCanhBao = item.GiaTriSo.HasValue &&
+                                 ((item.ApLucMin.HasValue && item.GiaTriSo.Value < item.ApLucMin.Value) ||
+                                  (item.ApLucMax.HasValue && item.GiaTriSo.Value > item.ApLucMax.Value));
+
                 if (isCanhBao)
                 {
                     builder.OpenElement(0, "span");
                     builder.AddAttribute(1, "class", "warning-icon");
-                    builder.AddContent(2, "\u26A0");
+                    builder.AddContent(2, "\u26A0"); // Cảnh báo
                     builder.CloseElement();
                 }
             };
@@ -126,17 +143,20 @@ namespace ERPProject.Pages.DanhMuc.CanhBao
 
         protected string GetGiaTriStyle(CanhBaoApLucViewModel item)
         {
-            return (item.GiaTri < item.ApLucMin || item.GiaTri > item.ApLucMax) ? "red" : "black";
+            return (item.GiaTriSo.HasValue &&
+                    ((item.ApLucMin.HasValue && item.GiaTriSo.Value < item.ApLucMin.Value) ||
+                     (item.ApLucMax.HasValue && item.GiaTriSo.Value > item.ApLucMax.Value)))
+                ? "red"
+                : "black";
         }
 
         protected void OnRowDataBound(RowDataBoundEventArgs<CanhBaoApLucViewModel> args)
         {
             var item = args.Data;
-            if (item == null) return;
+            if (item == null || !item.GiaTriSo.HasValue) return;
 
-            // Nếu không có cảnh báo → không làm gì
-            bool isMin = item.ApLucMin.HasValue && item.GiaTri < item.ApLucMin.Value;
-            bool isMax = item.ApLucMax.HasValue && item.GiaTri > item.ApLucMax.Value;
+            bool isMin = item.ApLucMin.HasValue && item.GiaTriSo.Value < item.ApLucMin.Value;
+            bool isMax = item.ApLucMax.HasValue && item.GiaTriSo.Value > item.ApLucMax.Value;
 
             if (isMin)
                 args.Row.AddClass(new[] { "blink-min" });
@@ -144,6 +164,8 @@ namespace ERPProject.Pages.DanhMuc.CanhBao
             if (isMax)
                 args.Row.AddClass(new[] { "blink-max" });
         }
+
+
 
 
 
@@ -181,12 +203,25 @@ namespace ERPProject.Pages.DanhMuc.CanhBao
 
             try
             {
-                var selectedTramIds = new List<int> { 336, 380, 382, 383, 455, 484 };
+                var selectedTramIds = new List<int>
+        {
+            336, 380, 382, 383, 455, 484,
+            2, 3, 4, 5, 6, 18,
+            387, 38, 215, 416, 716, 463, 570, 178, 337, 360, 385, 357,
+            439, 474, 106, 104, 388, 418, 468, 151, 96, 231, 399, 82,
+            467, 252, 404, 436, 393, 245, 343, 427, 443, 479, 274, 406,
+            424, 31, 348, 401, 112, 210, 455, 68, 211, 227, 472, 175,
+            390, 392, 473, 191, 241, 375, 407, 408, 442, 47, 181, 281,
+            364, 449, 44, 262, 371, 403, 405, 446, 471, 423, 425, 441,
+            475, 134, 152, 243, 329, 379
+        };
+
                 var duLieu = canh_bao_ap_luc_tramService.GetCanhBaoApLuc(StartDate, EndDate, selectedTramIds);
 
                 data = duLieu
+                    .Where(x => !string.IsNullOrWhiteSpace(x.GiaTri)) // ✅ Tránh lỗi nếu null hoặc chuỗi trống
                     .GroupBy(x => x.Id_Tram)
-                    .Select(g => g.OrderByDescending(x => x.ThoiGian).First())
+                    .Select(g => g.OrderByDescending(x => x.NgayThangNam).ThenByDescending(x => x.GioPhutGiay).First())
                     .ToList();
 
                 StateHasChanged();

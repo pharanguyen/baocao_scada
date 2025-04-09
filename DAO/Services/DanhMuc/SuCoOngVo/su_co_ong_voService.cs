@@ -11,7 +11,7 @@ namespace DAO.Services.BaoCao
 {
     public class SuCoOngVoService
     {
-        public static List<SuCo_OngVo> GetBaoCaoOngVo(DateTime tuNgay, DateTime denNgay, List<int> idChiNhanh, List<int> idDHK )
+        public static List<SuCo_OngVo> GetBaoCaoOngVo(DateTime tuNgay, DateTime denNgay, List<int> idChiNhanh, List<int> idDHK)
         {
             var db = new SqlHelper();
 
@@ -31,9 +31,12 @@ SELECT
     sc.TieuThu07_Sau,
     sc.GhiChu,
     sc.CreatedAt,
-    dhk.Tendongho AS ten_dhk  -- 👈 JOIN để lấy tên DHK
-FROM SuCoOngVo sc
-LEFT JOIN [dbo].[Dm_dhk] dhk ON sc.IdDHK = dhk.Id_dongho
+    d.ten_dhk
+FROM [SuCoOngVo] sc
+LEFT JOIN [baocao_scada_db].[dbo].[ThongSo_Tram] t 
+    ON sc.IdChiNhanh = t.Id_ChiNhanh AND sc.IdDHK = t.ms_dhk
+LEFT JOIN [baocao_scada_db].[dbo].[dh_khoi] d 
+    ON t.ms_dhk = d.ms_dhk
 WHERE sc.NgayBaoCao BETWEEN @TuNgay AND @DenNgay
     AND sc.IdChiNhanh IN @IdChiNhanh";
 
@@ -45,8 +48,8 @@ WHERE sc.NgayBaoCao BETWEEN @TuNgay AND @DenNgay
             sql += " ORDER BY sc.NgayBaoCao DESC";
 
             var parameters = new DynamicParameters();
-            parameters.Add("@TuNgay", tuNgay.Date);
-            parameters.Add("@DenNgay", denNgay.Date);
+            parameters.Add("@TuNgay", tuNgay);
+            parameters.Add("@DenNgay", denNgay);
             parameters.Add("@IdChiNhanh", idChiNhanh);
 
             if (idDHK != null && idDHK.Any())
@@ -54,14 +57,12 @@ WHERE sc.NgayBaoCao BETWEEN @TuNgay AND @DenNgay
                 parameters.Add("@IdDHK", idDHK);
             }
 
-            return db.ExecQueryData<SuCo_OngVo>(sql, parameters, 2)?.ToList() ?? new();
+            return db.ExecQueryData<SuCo_OngVo>(sql, parameters, 1)?.ToList() ?? new();
         }
-
 
         public static bool Insert(SuCo_OngVo item)
         {
             var db = new SqlHelper();
-
             string sql = @"
 INSERT INTO SuCoOngVo (
     NgayBaoCao, IdChiNhanh, IdDHK,
@@ -79,7 +80,7 @@ VALUES (
     @TieuThu07_Truoc, @TieuThu07_Sau,
     @GhiChu, GETDATE()
 )";
-            return db.ExecQueryNonData(sql, item, 2) > 0;
+            return db.ExecQueryNonData(sql, item, 1) > 0;
         }
 
         public static bool Update(SuCo_OngVo item)
@@ -102,7 +103,7 @@ UPDATE SuCoOngVo SET
     GhiChu = @GhiChu
 WHERE Id = @Id
 ";
-            return db.ExecQueryNonData(sql, item, 2) > 0;
+            return db.ExecQueryNonData(sql, item, 1) > 0;
         }
 
         public static bool Delete(int id)
@@ -111,7 +112,8 @@ WHERE Id = @Id
 
             string sql = "DELETE FROM SuCoOngVo WHERE Id = @Id";
 
-            return db.ExecQueryNonData(sql, new { Id = id }, 2) > 0;
+            return db.ExecQueryNonData(sql, new { Id = id }, 1) > 0;
         }
     }
+
 }

@@ -12,8 +12,14 @@
 
     <div class="row g-3">
         <div class="col-md-3">
+            <label>Chi nhánh</label>
+            <CbChiNhanh @ref="CbChiNhanhNhap" Width="100%" ValueChanged="OnChiNhanhNhapChanged" />
+           
+        </div>
+
+        <div class="col-md-3">
             <label>Đồng hồ khối</label>
-            <CbMultiDHK @ref="CbDhk" Width="100%" PopupWidth="300px" OnDataSent="ValueChangeHandlerDhk" />
+            <DhkCombo @ref="CbDhk" Width="100%" PopupWidth="300px" @bind-Value="SelectedDhk" DataSource="listDhkTheoChiNhanhNhap" />
         </div>
 
         <div class="col-md-3">
@@ -72,12 +78,12 @@
     <div class="row g-3">
         <div class="col-md-3">
             <label>Chi nhánh</label>
-            <CbChiNhanh @ref="CbChiNhanh" Width="100%" />
+            <CbChiNhanh @ref="CbChiNhanhLoc" Width="100%" ValueChanged="OnChiNhanhLocChanged" />
         </div>
 
         <div class="col-md-3">
             <label>Đồng hồ khối</label>
-            <CbTram @ref="CbTram" Width="100%" />
+            <CbMultiDHK @ref="CbDhkMulti" Width="100%" PopupWidth="300px" Value="@SelectedDhkList" OnDataSent="ValueChangeHandlerDhk" DataSource="listDhkTheoChiNhanhLoc" />
         </div>
 
         <div class="col-md-3">
@@ -98,7 +104,7 @@
 </div>
 
 <div class="card m-2 p-3">
-    <SfGrid @ref="gdv" DataSource="@listThongSoTram" AllowPaging="true" AllowExcelExport="true" PageSettings="@(new() { PageSize = 10 })">
+    <SfGrid @ref="gdv" DataSource="@listThongSoTramLoc" AllowPaging="true" AllowExcelExport="true" PageSettings="@(new() { PageSize = 10 })">
         <GridColumns>
             <GridColumn Field="Id" HeaderText="ID" Width="80" TextAlign="TextAlign.Center" />
             <GridColumn Field="ten_dhk" HeaderText="Tên DHK" Width="80" TextAlign="TextAlign.Center" />
@@ -113,7 +119,6 @@
                 </GridColumns>
             </GridColumn>
 
-            <!-- NHÓM 2: TIÊU THỤ HÀNG NGÀY -->
             <GridColumn HeaderText="TIÊU THỤ HÀNG NGÀY( 0H-7H )" TextAlign="TextAlign.Center">
                 <GridColumns>
                     <GridColumn Field="TieuThu07_Truoc" HeaderText="Trước sửa" Width="120" />

@@ -9,16 +9,24 @@ namespace DAO.Models.DanhMuc.CanhBao
     public class CanhBaoApLucViewModel
     {
         public int Id { get; set; }
-        public int Id_Tram { get; set; }
-        public string TenTram { get; set; }
-        public float GiaTri { get; set; }
-
         public DateTime NgayThangNam { get; set; }
         public TimeSpan GioPhutGiay { get; set; }
+        public int Id_Tram { get; set; }
+        public string TenTram { get; set; }
 
-        public DateTime ThoiGian => NgayThangNam.Add(GioPhutGiay); // ✅ Gộp để hiển thị
+        // ✅ Đổi từ kiểu double sang string để tránh lỗi parse khi dữ liệu là "MTH"
+        public string GiaTri { get; set; }
 
-        public float? ApLucMin { get; set; } // Cấu hình cảnh báo
-        public float? ApLucMax { get; set; }
+        public double? ApLucMin { get; set; }
+        public double? ApLucMax { get; set; }
+
+        // 👉 Nếu bạn vẫn cần dùng giá trị số để cảnh báo
+        public double? GiaTriSo
+        {
+            get
+            {
+                return double.TryParse(GiaTri, out var val) ? val : null;
+            }
+        }
     }
 }

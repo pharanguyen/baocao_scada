@@ -1,22 +1,26 @@
-﻿@*@using System.Collections.ObjectModel;
-@using DAO.Services.DanhMuc;
-@using DAO.Models.DanhMuc;
-@using MsUtils;
+﻿@using System.Collections.ObjectModel
+@using DAO.Services.DanhMuc
+@using DAO.Models.DanhMuc
+@using Microsoft.AspNetCore.Components
 
-<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="DM_Dhk" Placeholder="Chọn đồng hồ khối" Mode="VisualMode.CheckBox" @bind-Value="Value" DataSource="@Data"
+<SfMultiSelect @ref="MultiSelectObj" TValue="int[]" TItem="DM_Dhk" Placeholder="Chọn đồng hồ khối"
+               Mode="VisualMode.CheckBox"
+               @bind-Value="Value"
+               DataSource="@Data"
                AllowFiltering="true"
-               ShowSelectAll="@selectAll"
+               ShowSelectAll="true"
                Width="@Width"
                PopupWidth="@PopupWidth">
-    <MultiSelectEvents TItem="DM_Dhk" TValue="int[]" ValueChange="@ValueChangeHandler"></MultiSelectEvents>
-    <MultiSelectFieldSettings Text="ten_dhk" Value="ms_dhk"></MultiSelectFieldSettings>
+
+    <MultiSelectEvents TItem="DM_Dhk" TValue="int[]" ValueChange="ValueChangeHandler" />
+    <MultiSelectFieldSettings Text="ten_dhk" Value="ms_dhk" />
 </SfMultiSelect>
 
 @code {
-    public bool selectAll { get; set; } = true;
-    //SfMultiSelect<int[], DM_Dhk> MultiSelectObj;
     SfMultiSelect<int[], DM_Dhk> MultiSelectObj;
-    private List<DM_Dhk> Data = new List<DM_Dhk>();
+
+    [Parameter]
+    public int[] Value { get; set; } = Array.Empty<int>();
 
     [Parameter]
     public EventCallback<int[]> OnDataSent { get; set; }
@@ -28,62 +32,30 @@
     public string Width { get; set; } = "100px";
 
     [Parameter]
-    public int[] Value { get; set; } = Array.Empty<int>();
+    public List<DM_Dhk> DataSource { get; set; } = new(); // ✅ nhận từ cha
 
-    protected override async Task OnInitializedAsync()
+    private List<DM_Dhk> Data = new();
+
+    protected override void OnParametersSet()
     {
-        try
+        if (DataSource != null && DataSource.Any())
         {
-            if (GlobalValue.ms_chinhanh != null)
-            {
-                var result = await DmDhkService.GetDhkAsync();
-                if (result.isThanhCong)
-                {
-                    Data = result.Data;
-                }
-                else
-                {
-                    Console.WriteLine($"Error: {result.ThongBao}");
-                }
-            }
-            else
-            {
-                var result = await DmDhkService.GetDhkAsync();
-                if (result.isThanhCong)
-                {
-                    Data = result.Data;
-                }
-                else
-                {
-                    Console.WriteLine($"Error: {result.ThongBao}");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error initializing data: {ex.Message}");
+            Data = DataSource;
         }
     }
 
     public async Task ValueChangeHandler(MultiSelectChangeEventArgs<int[]> args)
     {
-        if (args.Value != null)
-        {
-            Value = args.Value;
-            await SendDataToParent();
-        }
-    }
-
-    public async Task SendDataToParent()
-    {
+        Value = args.Value;
         if (OnDataSent.HasDelegate)
         {
             await OnDataSent.InvokeAsync(Value);
         }
     }
 }
-*@
-@using System.Collections.ObjectModel
+
+
+@*@using System.Collections.ObjectModel
 @using DAO.Services.DanhMuc
 @using DAO.Models.DanhMuc
 @using MsUtils
@@ -168,4 +140,4 @@
             await OnDataSent.InvokeAsync(Value);
         }
     }
-}
+}*@

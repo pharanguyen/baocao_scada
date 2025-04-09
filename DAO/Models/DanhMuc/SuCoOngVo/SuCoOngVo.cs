@@ -14,10 +14,10 @@ namespace DAO.Models.DanhMuc.SuCoOngVo
             public DateTime NgayBaoCao { get; set; }
             public int IdChiNhanh { get; set; }
             public int IdDHK { get; set; }
-        public string ten_dhk { get; set; }  // 🔥 dùng để hiển thị trên Grid
+             public string ten_dhk { get; set; }  // 🔥 dùng để hiển thị trên Grid
 
 
-        public DateTime? NgayTimKiem { get; set; }
+             public DateTime? NgayTimKiem { get; set; }
             public DateTime? NgaySuaChua { get; set; }
 
             public string SoDiemVo { get; set; }

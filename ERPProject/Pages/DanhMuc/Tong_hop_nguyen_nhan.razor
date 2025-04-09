@@ -1,27 +1,33 @@
 ﻿@page "/su-co-scada"
 @using DAO.Models.DanhMuc.SuCoOngVo
 @using ERPProject.Shared.Combobox
+@using Syncfusion.Blazor.Charts;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Layouts;
+@using Syncfusion.Blazor.DropDowns;
 @inherits Tong_hop_nguyen_nhanBase
 
 <div class="card m-3 p-3">
     <h5>Thông tin sự cố SCADA</h5>
     <div class="row">
         <div class="col-md-4">
+            <label>Chi nhánh</label>
+            <CbChiNhanh @ref="CbChiNhanhNhap" Width="100%" ValueChanged="OnChiNhanhNhapChanged" />
+
+        </div>
+        <div class="col-md-4">
             <label>Đồng hồ khối</label>
-            <CbMultiDHK @ref="CbDhk"
-                        Width="100%"
-                        PopupWidth="300px"
-                        OnDataSent="ValueChangeHandlerDhk" />          
+            <DhkCombo @ref="CbDhk" Width="100%" PopupWidth="300px" @bind-Value="SelectedDhk" DataSource="listDhkTheoChiNhanhNhap" />
         </div>
         <div class="col-md-4">
             <label>Tên TQL</label>
             <input class="form-control" @bind="TenTQL" />
         </div>
+
         <div class="col-md-4">
             <label>Thông tin sự cố</label>
             <input class="form-control" @bind="ThongTinSuCo" />
         </div>
-
         <div class="col-md-4">
             <label>Ngày xảy ra</label>
             <SfDatePicker @bind-Value="NgayXayRa" Format="dd/MM/yyyy" />
@@ -60,7 +66,6 @@
             <label>Chỉ số ĐH</label>
             <input class="form-control" @bind="ChiSo_DH" />
         </div>
-
         <div class="col-md-4">
             <label>Chỉ số HT</label>
             <input class="form-control" @bind="ChiSo_HT" />
@@ -76,6 +81,15 @@
 <div class="card m-3 p-3">
     <div class="row">
         <div class="col-md-3">
+            <label>Chi nhánh lọc</label>
+            <CbChiNhanh @ref="CbChiNhanhLoc" Width="100%" ValueChanged="OnChiNhanhLocChanged" />
+
+        </div>
+        <div class="col-md-3">
+            <label>Đồng hồ khối lọc</label>
+            <CbMultiDHK @ref="CbDhkMulti" Width="100%" PopupWidth="300px" Value="@SelectedDhkList" OnDataSent="ValueChangeHandlerDhk" DataSource="listDhkTheoChiNhanhLoc" />
+        </div>
+        <div class="col-md-3">
             <label>Từ ngày</label>
             <SfDatePicker @bind-Value="TuNgay" Format="dd/MM/yyyy" />
         </div>
@@ -83,17 +97,17 @@
             <label>Đến ngày</label>
             <SfDatePicker @bind-Value="DenNgay" Format="dd/MM/yyyy" />
         </div>
-        <div class="col-md-6 d-flex align-items-end">
+        <div class="col-md-12 d-flex justify-content-end mt-2">
             <SfButton CssClass="e-success" IconCss="e-icons e-search" @onclick="LoadData">Xem dữ liệu</SfButton>
             <SfButton CssClass="e-info ml-2" IconCss="e-icons e-export-excel" @onclick="onXuatExcel">Xuất Excel</SfButton>
         </div>
     </div>
 </div>
 
-<SfGrid @ref="gdv" DataSource="@listSuCo" AllowPaging="true" PageSettings="@(new() { PageSize = 10 })" AllowExcelExport="true">
+<SfGrid @ref="gdv" DataSource="@listThongSoTramLoc" AllowPaging="true" PageSettings="@(new() { PageSize = 10 })" AllowExcelExport="true">
     <GridColumns>
         <GridColumn Field="Id" HeaderText="ID" Width="80" TextAlign="TextAlign.Center" />
-        <GridColumn Field="TenDHK" HeaderText="Đồng hồ khối" />
+        <GridColumn Field="ten_dhk" HeaderText="Đồng hồ khối" />
         <GridColumn Field="TenTQL" HeaderText="TQL" />
         <GridColumn Field="ThongTinSuCo" HeaderText="Thông tin sự cố" />
         <GridColumn Field="NgayXayRa" HeaderText="Ngày xảy ra" Format="dd/MM/yyyy" />

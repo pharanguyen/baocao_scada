@@ -10,8 +10,8 @@ namespace DAO.Models.DanhMuc.CanhBao
     {
         public int Id { get; set; }
         public int Id_Tram { get; set; }
-        public float? ApLucMin { get; set; }
-        public float? ApLucMax { get; set; }
+        public double? ApLucMin { get; set; }
+        public double? ApLucMax { get; set; }
         public DateTime NgayCapNhat { get; set; }
     }
 }

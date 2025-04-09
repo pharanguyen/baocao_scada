@@ -1,0 +1,75 @@
+﻿@using System.Collections.ObjectModel;
+@using DAO.Services.DanhMuc;
+@using DAO.Models.DanhMuc;
+@using Syncfusion.Blazor.DropDowns;
+
+<style>
+    .column-width {
+        width: 75px;
+    }
+</style>
+
+<SfDropDownList Placeholder="Chọn đồng hồ khối..." @ref="cb"
+                @bind-Value="@Value" TValue="decimal?"
+                Width="@Width"
+                PopupWidth="@PopupWidth"
+                TItem="DM_Dhk"
+                AllowFiltering="true"
+                FilterType="@Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                CssClass="e-multi-column"
+                ShowClearButton="true"
+                DataSource="@Data">
+
+    <DropDownListFieldSettings Text="ten_dhk" Value="ms_dhk" />
+
+    <DropDownListTemplates TItem="DM_Dhk">
+        <HeaderTemplate>
+            <table>
+                <tr>
+                    <th class="column-width">Mã DHK</th>
+                    <th>Tên DHK</th>
+                </tr>
+            </table>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <table>
+                <tr>
+                    <td class="column-width">@context.ms_dhk</td>
+                    <td>@context.ten_dhk</td>
+                </tr>
+            </table>
+        </ItemTemplate>
+        <ValueTemplate>
+            <span>@context.ms_dhk - @context.ten_dhk</span>
+        </ValueTemplate>
+    </DropDownListTemplates>
+
+    <DropDownListEvents TValue="decimal?" TItem="DM_Dhk" ValueChange="ValueChange" />
+</SfDropDownList>
+
+@code {
+    private SfDropDownList<decimal?, DM_Dhk> cb;
+    private List<DM_Dhk> Data = new();
+
+    [Parameter] public decimal? Value { get; set; }
+    [Parameter] public EventCallback<decimal?> ValueChanged { get; set; }
+    [Parameter] public List<DM_Dhk> DataSource { get; set; } = new();
+    [Parameter] public string Width { get; set; } = "200px";
+    [Parameter] public string PopupWidth { get; set; } = "400px";
+
+    protected override void OnParametersSet()
+    {
+        if (DataSource != null && DataSource.Any())
+        {
+            Data = DataSource;
+        }
+    }
+
+    private void ValueChange(ChangeEventArgs<decimal?, DM_Dhk> args)
+    {
+        Value = args.Value;
+        ValueChanged.InvokeAsync(Value);
+    }
+
+    public void SetFocus() => cb.FocusIn();
+}

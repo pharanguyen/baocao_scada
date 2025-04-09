@@ -9,7 +9,7 @@ namespace DAO.Models.DanhMuc
     public class DM_Dhk
     {
         
-            public decimal ms_dhk { get; set; } // [ms_dhk]
+            public int ms_dhk { get; set; } // [ms_dhk]
             public decimal? ms_dh { get; set; } // [ms_dh]
             public decimal? ms_tdhk { get; set; } // [ms_tdhk]
             public decimal ms_tk { get; set; } // [ms_tk]

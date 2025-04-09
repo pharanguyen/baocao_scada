@@ -275,6 +275,39 @@ namespace ERPProject.Pages.DanhMuc.CanhBao
                 onTaiLai();
             }
         }
+        protected async Task onXuatExcel()
+        {
+            try
+            {
+                AppData?.loadingPanel?.show();
+
+                var exportProps = new ExcelExportProperties
+                {
+                    FileName = $"CanhBaoApLuc_{DateTime.Now:yyyyMMddHHmmss}.xlsx",
+                    ExportType = ExportType.AllPages,
+                    IncludeHiddenColumn = true,
+                    IncludeTemplateColumn = true
+                };
+
+                if (gdv != null)
+                {
+                    await gdv.ExportToExcelAsync(exportProps);
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Grid chưa sẵn sàng để xuất Excel.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Lỗi xuất Excel: {ex.Message}");
+            }
+            finally
+            {
+                AppData?.loadingPanel?.hide();
+            }
+        }
+
 
         protected void onXoa(int _ID)
         {

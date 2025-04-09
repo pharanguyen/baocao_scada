@@ -172,7 +172,7 @@
                 <ToolbarItem Type="ItemType.Separator" />
                 <ToolbarItem Type="ItemType.Button">
                     <Template>
-                        <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel">Xuất excel</SfButton>
+                        <SfButton CssClass="e-flat e-info" IconCss="icon-file-excel" @onclick="onXuatExcel">Xuất excel</SfButton>
                     </Template>
                 </ToolbarItem>
             </div>
@@ -183,6 +183,7 @@
             @ref="gdv"
             AllowPaging="true"
             EditSettings="@editSettings"
+            AllowExcelExport="true"
             Toolbar="@Toolbar">
 
         <GridEvents RowDataBound="@OnRowDataBound"

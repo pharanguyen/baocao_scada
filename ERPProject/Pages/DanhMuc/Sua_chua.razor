@@ -7,98 +7,124 @@
 @using Syncfusion.Blazor.DropDowns;
 @inherits Sua_chuaBase
 
-<div class="card m-2 p-3">
-    <h5>Thông tin sửa chữa</h5>
+<style>
+    .form-section {
+        margin-bottom: 1rem;
+    }
 
+        .form-section h5 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+    .btn-spacing > * {
+        margin-right: 8px;
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    }
+
+    .e-control.e-textbox,
+    .e-input-group {
+        height: 38px;
+    }
+</style>
+
+<div class="card m-2 p-3 form-section">
+    <h5>Thông tin sửa chữa</h5>
     <div class="row g-3">
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Chi nhánh</label>
             <CbChiNhanh @ref="CbChiNhanhNhap" Width="100%" ValueChanged="OnChiNhanhNhapChanged" />
-           
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Đồng hồ khối</label>
             <DhkCombo @ref="CbDhk" Width="100%" PopupWidth="300px" @bind-Value="SelectedDhk" DataSource="listDhkTheoChiNhanhNhap" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Ngày tìm kiếm</label>
-            <SfDatePicker @bind-Value="NgayTimKiem" Format="dd/MM/yyyy" />
+            <SfDatePicker @bind-Value="NgayTimKiem" Format="dd/MM/yyyy" Width="100%" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Ngày sửa chữa</label>
-            <SfDatePicker @bind-Value="NgaySuaChua" Format="dd/MM/yyyy" />
+            <SfDatePicker @bind-Value="NgaySuaChua" Format="dd/MM/yyyy" Width="100%" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Số điểm vỡ</label>
-            <input class="form-control" type="text" @bind="SoDiemVo" />
+            <SfTextBox @bind-Value="SoDiemVo" Placeholder="Nhập số điểm vỡ" FloatLabelType="FloatLabelType.Auto" />
         </div>
 
-        <div class="col-md-12">
+        <div class="col-12">
             <label>Mô tả điểm rò rỉ</label>
-            <input class="form-control" type="text" @bind="MoTa" />
+            <SfTextBox @bind-Value="MoTa" Placeholder="Chi tiết điểm rò rỉ" FloatLabelType="FloatLabelType.Auto" Multiline="true" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Tiêu thụ 13 Trước</label>
-            <input class="form-control" type="text" @bind="TieuThu13_Truoc" />
+            <SfNumericTextBox @bind-Value="TieuThu13_Truoc" Format="n2" FloatLabelType="FloatLabelType.Auto" Placeholder="Trước sửa" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Tiêu thụ 13 Sau</label>
-            <input class="form-control" type="text" @bind="TieuThu13_Sau" />
+            <SfNumericTextBox @bind-Value="TieuThu13_Sau" Format="n2" FloatLabelType="FloatLabelType.Auto" Placeholder="Sau sửa" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Tiêu thụ 07 Trước</label>
-            <input class="form-control" type="text" @bind="TieuThu07_Truoc" />
+            <SfNumericTextBox @bind-Value="TieuThu07_Truoc" Format="n2" FloatLabelType="FloatLabelType.Auto" Placeholder="Trước sửa" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Tiêu thụ 07 Sau</label>
-            <input class="form-control" type="text" @bind="TieuThu07_Sau" />
+            <SfNumericTextBox @bind-Value="TieuThu07_Sau" Format="n2" FloatLabelType="FloatLabelType.Auto" Placeholder="Sau sửa" />
         </div>
 
-        <div class="col-md-12">
+        <div class="col-12">
             <label>Ghi chú</label>
-            <textarea class="form-control" @bind="GhiChu"></textarea>
+            <SfTextBox @bind-Value="GhiChu" Placeholder="Ghi chú thêm" FloatLabelType="FloatLabelType.Auto" Multiline="true" />
         </div>
 
-        <div class="col-md-12 d-flex justify-content-end">
-            <SfButton CssClass="e-primary" @onclick="OnSave">Lưu</SfButton>
-            <SfButton CssClass="e-danger ml-2" @onclick="ClearFields">Hủy</SfButton>
+        <div class="col-12 d-flex justify-content-end btn-spacing mt-2">
+            <SfButton CssClass="e-primary" IconCss="e-icons e-save" @onclick="OnSave">Lưu</SfButton>
+            <SfButton CssClass="e-danger" IconCss="e-icons e-cancel" @onclick="ClearFields">Hủy</SfButton>
         </div>
     </div>
 </div>
 
-<div class="card m-2 p-3">
+<!-- Phần lọc dữ liệu -->
+<div class="card m-2 p-3 form-section">
+    <h5>Lọc dữ liệu sửa chữa</h5>
     <div class="row g-3">
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Chi nhánh</label>
             <CbChiNhanh @ref="CbChiNhanhLoc" Width="100%" ValueChanged="OnChiNhanhLocChanged" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Đồng hồ khối</label>
             <CbMultiDHK @ref="CbDhkMulti" Width="100%" PopupWidth="300px" Value="@SelectedDhkList" OnDataSent="ValueChangeHandlerDhk" DataSource="listDhkTheoChiNhanhLoc" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Từ ngày</label>
-            <SfDatePicker @bind-Value="TuNgay" Format="dd/MM/yyyy" />
+            <SfDatePicker @bind-Value="TuNgay" Format="dd/MM/yyyy" Width="100%" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-12 col-md-3">
             <label>Đến ngày</label>
-            <SfDatePicker @bind-Value="DenNgay" Format="dd/MM/yyyy" />
+            <SfDatePicker @bind-Value="DenNgay" Format="dd/MM/yyyy" Width="100%" />
         </div>
 
-        <div class="col-md-12 d-flex justify-content-start mt-2">
+        <div class="col-12 d-flex justify-content-start btn-spacing mt-2">
             <SfButton CssClass="e-success" IconCss="e-icons e-search" @onclick="LoadData">Xem dữ liệu</SfButton>
-            <SfButton CssClass="e-info ml-2" IconCss="e-icons e-export-excel" @onclick="onXuatExcel">Xuất Excel</SfButton>
+            <SfButton CssClass="e-info" IconCss="e-icons e-export-excel" @onclick="onXuatExcel">Xuất Excel</SfButton>
         </div>
     </div>
 </div>
